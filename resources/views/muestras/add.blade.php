@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>crud-laravel</title>
+    <link rel="shortcut icon" href="{{ asset('imgs/favicon.ico') }}" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+</head>
+
+<body>
+    <h1 class="text-center mt-5 mb-5 fw-bold">  </h1>
+    
+    <div class="container">
+
+    <h1 class="text-center">
+   <a class="float-start" title="Volver" href="{{ route('muestras.index') }}">
+      <i class="bi bi-arrow-left-circle"></i>
+   </a>
+   Registrar muestra <hr>
+</h1>
+
+        <form action="{{route('muestras.store') }}" method="POST" enctype="multipart/form-data">
+            {{ csrf_field() }}
+            
+            <!-- Campo para el nombre de la muestra -->
+            <div class="mb-3">
+                <label class="form-label">Nombre de la Muestra</label>
+                <input type="text" name="nombre_muestra" class="form-control" required />
+            </div>
+
+            <!-- Campo para la clasificacion (select) -->
+            <div class="mb-3">
+                <label class="form-label">Clasificación</label>
+                <select name="clasificacion_id" id="clasificacion_id" class="form-select" required>
+                    <option value="">Seleccione una clasificación</option>
+                    @foreach ($clasificaciones as $clasificacion)
+                        <option value="{{ $clasificacion->id }}">{{ $clasificacion->nombre_clasificacion }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Campo para la unidad de medida (input de texto) -->
+            <div class="mb-3">
+                <label class="form-label">Unidad de Medida</label>
+                <input type="text" name="unidad_de_medida" id="unidad_de_medida" class="form-control" readonly required />
+            </div>
+
+            <!-- Campo para el tipo de muestra (select) -->
+            <div class="mb-3">
+                <label class="form-label">Tipo de Muestra</label>
+                <select name="tipo_muestra" class="form-select" required>
+                    <option value="">Seleccione el tipo de muestra</option>
+                    <option value="frasco original">Frasco Original</option>
+                    <option value="frasco muestra">Frasco Muestra</option>
+                </select>
+            </div>
+        
+            <!-- Campo para la cantidad de muestras -->
+            <div class="mb-3">
+                <label class="form-label">Cantidad de Muestras</label>
+                <input type="number" id="cantidad_de_muestra" name="cantidad_de_muestra" class="form-control" required oninput="calcularPrecioTotal()" />
+            </div>
+
+            <!-- Campo para las observaciones -->
+            <div class="mb-3">
+                <label class="form-label">Observaciones</label>
+                <textarea name="observacion" class="form-control" rows="3" required></textarea>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn_add">
+                    Registrar Muestra
+                </button>
+                
+            </div>
+            
+        </form>
+            <script>
+                // Función para calcular el precio total basado en la cantidad y el precio por unidad
+                function calcularPrecioTotal() {
+                    var cantidad = parseFloat(document.getElementById('cantidad_de_muestra').value) || 0;
+                    var precioUni = parseFloat(document.getElementById('precioUni').value) || 0;
+                    var precioTotal = cantidad * precioUni;
+
+                    // Establecer el valor de 'Precio Total' en el campo correspondiente
+                    document.getElementById('precioTotal').value = precioTotal.toFixed(2); // Redondeado a 2 decimales
+                }
+
+                            document.getElementById('clasificacion_id').addEventListener('change', function() {
+                var clasificacionId = this.value;
+
+                if (clasificacionId) {
+                    fetch(`/get-unidades/${clasificacionId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Verificamos que la respuesta contenga la unidad de medida
+                            if (data && data.nombre_unidad_de_medida) {
+                                // Establecer la unidad de medida en el campo correspondiente
+                                document.getElementById('unidad_de_medida').value = data.nombre_unidad_de_medida;
+                            } else {
+                                document.getElementById('unidad_de_medida').value = '';
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    document.getElementById('unidad_de_medida').value = '';
+                }
+            });
+
+            </script>
+
+</body>
+
+</html>
+

@@ -37,7 +37,7 @@ class MuestrasController extends Controller
         $unidadmedida = UnidadMedida::all(); // Obtener todas las unidades de medida
         
         // Retornar la vista 'add.blade.php' y pasar los datos necesarios
-        return view('muestras.add', compact('clasificaciones', 'unidadmedida'));
+        return view('muestras.visitadoraMedica.add', compact('clasificaciones', 'unidadmedida'));
         }
 
             public function store(Request $request)
@@ -73,14 +73,14 @@ class MuestrasController extends Controller
                // Emitir el evento con la muestra creada
                  event(new MuestraCreada($muestra));
             // Redirigir con mensaje de éxito
-            return redirect()->route('muestras.index')->with('success', 'Muestra registrada exitosamente.');
+            return redirect()->route('muestras.visitadoraMedica.index')->with('success', 'Muestra registrada exitosamente.');
         }
 
         public function show($id)
         {
             //
             $muestras = Muestras::with('clasificacion','unidadDeMedida')->findOrFail($id);
-            return view('muestras.show', compact('muestras'));
+            return view('muestras.visitadoraMedica.show', compact('muestras'));
         }
 
         public function edit($id)
@@ -89,7 +89,7 @@ class MuestrasController extends Controller
             $unidadmedida = UnidadMedida::all(); 
             $clasificaciones = Clasificacion::all(); // Obtener todas las clasificaciones
 
-            return view('muestras.edit', compact('muestra', 'unidadmedida', 'clasificaciones'));
+            return view('muestras.visitadoraMedica.edit', compact('muestra', 'unidadmedida', 'clasificaciones'));
         }
 
         public function getUnidadesPorClasificacion($clasificacionId)
@@ -128,7 +128,7 @@ class MuestrasController extends Controller
             event(new MuestraActualizada($muestra));
             
             // Redirigir a la vista de índice con un mensaje de éxito
-            return redirect()->route('muestras.index')->with('success', 'Muestra actualizada exitosamente.');
+            return redirect()->route('muestras.visitadoraMedica.index')->with('success', 'Muestra actualizada exitosamente.');
         }
 
         public function destroy($id)
@@ -137,6 +137,6 @@ class MuestrasController extends Controller
             $muestra = Muestras::find($id);
             $muestra->delete();
 
-            return redirect()->route('muestras.index')->with('success', 'Muestra eliminada exitosamente.');
+            return redirect()->route('muestras.visitadoraMedica.index')->with('success', 'Muestra eliminada exitosamente.');
         }
 }

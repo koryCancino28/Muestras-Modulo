@@ -1,0 +1,162 @@
+body {
+    background-color: #f0f0f0 !important;
+}
+.container {
+    background-color: #fff !important;
+    padding: 20px;
+    border-radius: 10px;
+}
+label {
+    display: flex;
+    justify-content: flex-start;
+}
+.btn_add {
+    width: 100%;
+    border: 1px solid #333 !important;
+    background-color: #333 !important;
+}
+.btn_add:hover {
+    opacity: 0.8;
+} 
+.btn-success {
+    border: 1px solid #06c046 !important;
+    background-color: #06c046 !important;
+}
+hr {
+    height: 0.1px !important;
+    color: #06c046 !important;
+    width: 100% !important;
+    background-color: red;
+}
+.bi-arrow-right-circle {
+    font-size: 30px;
+}
+
+.flex_acciones {
+    list-style-type: none;
+    text-decoration: none;
+    display: flex;
+    justify-content: space-around;
+}
+
+/* Estilos específicos para las observaciones */
+.list-group-item strong {
+    word-wrap: break-word; 
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal; /* Asegura que el texto no se quede en una sola línea */
+    padding-right: 10px; 
+}
+
+.list-group-item {
+    padding: 10px 15px; 
+}
+
+.table-responsive {
+    -webkit-overflow-scrolling: touch; 
+}
+ 
+table th, table td {
+    word-wrap: break-word;  
+    word-break: break-word; 
+    white-space: nowrap; 
+}
+
+table td.observaciones {
+    max-width: 100px; /*  ancho máximo para la columna de observaciones */
+    overflow: hidden; 
+    text-overflow: ellipsis; /* Muestra '...' */
+    white-space: nowrap; /* Evita que el texto se divida en múltiples líneas */
+}
+
+.precio-input {
+    min-width: 120px; 
+    width: 100%; 
+    box-sizing: border-box; 
+}
+
+table td, table th {
+    padding: 10px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.th-small, .td-small {
+    width: 80px;
+    text-align: center;
+}
+
+
+/* Centrar texto en las celdas */
+table th, table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 8px;
+    white-space: nowrap; /* Evita saltos de línea en encabezados */
+}
+
+/* Estilo para checkboxes */
+input[type="checkbox"] {
+    transform: scale(1.2);
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table {
+        display: block;
+        width: 100%;
+    }
+
+    table th, table td {
+        font-size: 14px;
+        padding: 6px;
+    }
+
+    /* Reducir el tamaño de los checkboxes en móvil */
+    input[type="checkbox"] {
+        transform: scale(1);
+    }
+}
+
+/* Estilo base del checkbox============================ */
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 2px solid #dc3545;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    background-color: white;
+}
+
+/* ✅ Checkbox marcado: borde y fondo verde + check */
+input[type="checkbox"]:checked {
+    border: 2px solid #28a745; /* Verde cuando está marcado */
+    background-color: #94ffad;
+}
+
+/* Agregar ✔ dentro del checkbox cuando está marcado */
+input[type="checkbox"]:checked::before {
+    content: '✔';
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    display: block;
+}
+
+
+

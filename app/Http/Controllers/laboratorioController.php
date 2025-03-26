@@ -45,28 +45,22 @@ class laboratorioController extends Controller
     }
 
     // Método para actualizar el estado
-        public function actualizarEstado(Request $request, $id)
+    public function actualizarEstado(Request $request, $id)
     {
-        // Validar la entrada para asegurarse de que el estado sea válido
         $validated = $request->validate([
-            'estado' => 'required|string', // Cambia la validación según lo que necesites
+            'estado' => 'required|string|in:Pendiente,Elaborado',
         ]);
         
-        // Usamos DB para actualizar solo el campo 'estado' sin tocar 'updated_at'
+        // Actualización directa sin afectar timestamps
         DB::table('muestras')
             ->where('id', $id)
-            ->update([
-                'estado' => $request->estado,
-            ]);
-            // Recuperamos la muestra actualizada
-        $muestra = Muestras::find($id);
-        if (!$muestra) {
-            return redirect()->route('muestras.estado')->with('error', 'Muestra no encontrada.');
-        }
-        // Emitir el evento MuestraActualizada para notificar a los clientes
-        broadcast(new MuestraActualizada($muestra));
-
-        return redirect()->route('muestras.estado')->with('success', 'Estado actualizado correctamente.');
+            ->update(['estado' => $request->estado]);
+        
+        // Recuperar la muestra para el broadcast
+        $muestra = Muestras::findOrFail($id);
+        broadcast(new MuestraActualizada($muestra))->toOthers();
+        
+        return response()->json(['success' => true]);
     }
     
 }

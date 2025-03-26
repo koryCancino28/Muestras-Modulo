@@ -25,7 +25,7 @@
             @foreach($muestras as $index => $muestra)
                 <tr id="muestra_{{ $muestra->id }}">
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $muestra->nombre_muestra }}</td>
+                    <td class="observaciones">{{ $muestra->nombre_muestra }}</td>
                     <td>{{ $muestra->clasificacion ? $muestra->clasificacion->nombre_clasificacion : 'Sin clasificación' }}</td>
                     <td>{{ $muestra->unidadDeMedida->nombre_unidad_de_medida ?? 'No asignada' }}</td>
                     <td>{{ $muestra->tipo_muestra ?? 'No asignado' }}</td> <!-- Mostrar el tipo de muestra -->

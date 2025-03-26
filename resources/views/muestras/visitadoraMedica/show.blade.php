@@ -6,7 +6,7 @@
 
 @section('content')
 <h1 class="text-center">
-   <a class="float-start" title="Volver" href="{{ route('muestras.index') }}">
+   <a class="float-start" title="Volver" href="{{ route('muestras.visitadoraMedica.index') }}">
       <i class="bi bi-arrow-left-circle"></i>
    </a>
    Datos de la muestra <hr>

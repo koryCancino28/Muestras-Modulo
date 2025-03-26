@@ -12,7 +12,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 // Ruta principal que muestra todas las muestras
-Route::get('/muestras', [MuestrasController::class, 'index'])->name('muestras.index');
+Route::get('/muestras', [MuestrasController::class, 'index'])->name('muestras.visitadoraMedica.index');
 // Mostrar el formulario para agregar una nueva muestra
 Route::get('/muestras/create', [MuestrasController::class, 'create'])->name('muestras.create');
 // Ruta para almacenar una nueva muestra (POST)
@@ -25,11 +25,11 @@ Route::put('/muestras/update/{id}', [MuestrasController::class, 'update'])->name
 
 //laboratorio======================
 Route::get('/muestras/laboratorio', [laboratorioController::class, 'estado'])->name('muestras.estado');
-Route::put('/muestras/{id}/estado', [laboratorioController::class, 'actualizarEstado'])->name('muestras.actualizarEstado');
+Route::put('/muestras/{id}/actualizar-estado', [laboratorioController::class, 'actualizarEstado'])
+    ->name('muestras.actualizarEstado');
 Route::get('/muestras/laboratorio/{id}', [laboratorioController::class, 'showLab'])->name('muestras.showLab');
 Route::put('/muestras/{id}/actualizar-fecha', [laboratorioController::class, 'actualizarFechaEntrega'])->name('muestras.actualizarFechaEntrega');
 Route::get('/get-unidades/{clasificacionId}', [MuestrasController::class, 'getUnidadesPorClasificacion']);
-
 
 // Ruta para actualizar el precio de una muestra
 // Ruta para la gestión de precios en la vista de jefe de proyectos

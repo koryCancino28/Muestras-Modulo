@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reporte Clasificación</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/Reporte.css') }}">
 </head>
-
 <body>
     <div class="container">
         <div class="cont-report">
@@ -22,7 +20,9 @@
             </form>
 
             <!-- Gráfico de Barras -->
-            <canvas id="graficoBarras" width="400" height="200"></canvas>
+            <div class="chart-container">
+                <canvas id="graficoBarras"></canvas>
+            </div>
 
             <!-- Tabla de Clasificaciones y Monto Total -->
             <h3>Tabla de Clasificaciones y Monto Total</h3>
@@ -50,10 +50,10 @@
     </div>
 
     <script>
-        // Verificar si los datos están llegando correctamente al frontend
-        console.log("Clasificaciones:", @json($clasificacionLabels));
-        console.log("Montos Totales:", @json($montosTotales));
-        console.log("Cantidad Total:", @json($cantidadTotal));
+        // Configuración del gráfico con colores del tema
+        const primaryColor = '#d6254d';
+        const secondaryColor = '#ff5475';
+        const accentColor = '#fdeba9';
 
         // Obtener los datos pasados desde el controlador
         const clasificaciones = @json($clasificacionLabels);
@@ -70,23 +70,24 @@
         const graficoBarras = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: clasificaciones, // Etiquetas en el eje X (clasificaciones)
+                labels: clasificaciones,
                 datasets: [{
                     label: 'Monto Total en Soles',
-                    data: montosTotales, // Datos en el eje Y (monto total)
-                    backgroundColor: '#3498db',
-                    borderColor: '#2980b9',
+                    data: montosTotales,
+                    backgroundColor: secondaryColor,
+                    borderColor: primaryColor,
                     borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true,
                         ticks: {
                             callback: function (value) {
-                                return 'S/ ' + value.toLocaleString(); // Formato en soles
+                                return 'S/ ' + value.toLocaleString();
                             }
                         }
                     }
@@ -94,12 +95,18 @@
                 plugins: {
                     tooltip: {
                         callbacks: {
-                            // Muestra el monto total y la cantidad encima de cada barra
                             label: function (tooltipItem) {
                                 const index = tooltipItem.dataIndex;
                                 const monto = tooltipItem.raw;
                                 const cantidad = cantidadTotal[index];
                                 return 'Cantidad: ' + cantidad + ' - Monto Total: S/ ' + monto.toLocaleString();
+                            }
+                        }
+                    },
+                    legend: {
+                        labels: {
+                            font: {
+                                size: 14
                             }
                         }
                     }
@@ -114,7 +121,11 @@
                 }
             }
         });
+
+        // Función para redimensionar el gráfico al cambiar el tamaño de la ventana
+        window.addEventListener('resize', function() {
+            graficoBarras.resize();
+        });
     </script>
 </body>
-
 </html>

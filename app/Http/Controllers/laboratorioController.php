@@ -16,11 +16,14 @@ use App\Events\MuestraActualizada;
 class laboratorioController extends Controller
 {
         public function showLab($id)
-    {
-        $muestras = Muestras::with('clasificacion', 'unidadDeMedida')->findOrFail($id);
-        return view('muestras.laboratorio.showlab', compact('muestras'));
+    { 
+       // Cargar la muestra con sus relaciones
+       $muestra = Muestras::with(['clasificacion.unidadMedida'])->findOrFail($id);
+        
+       // Pasar la variable correctamente nombrada (en singular)
+       return view('muestras.laboratorio.showlab', ['muestra' => $muestra]);
     }
-    
+
         public function actualizarFechaEntrega(Request $request, $id)
     {
         // Validar la entrada para asegurarse de que la fecha y hora sean válidas

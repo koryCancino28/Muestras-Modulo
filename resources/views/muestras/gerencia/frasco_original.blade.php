@@ -274,7 +274,8 @@ tr:hover {
     .tabla-totales td {
         padding: 10px 8px;
     }
-}</style>
+}
+</style>
 </head>
 <body>
     <div class="container">

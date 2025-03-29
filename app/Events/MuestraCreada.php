@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Events;
 
 use App\Models\Muestras;
@@ -17,7 +18,8 @@ class MuestraCreada implements ShouldBroadcastNow
 
     public function __construct(Muestras $muestra)
     {
-        $this->muestra = $muestra;
+        // Cargamos las relaciones necesarias
+        $this->muestra = $muestra->load(['clasificacion.unidadMedida']);
     }
 
     /**
@@ -41,21 +43,20 @@ class MuestraCreada implements ShouldBroadcastNow
      */
     public function broadcastWith(): array
     {
-        // Enviamos los datos de la muestra como un objeto 'muestra'
         return [
             'muestra' => [
                 'id' => $this->muestra->id,
                 'nombre_muestra' => $this->muestra->nombre_muestra,
                 'clasificacion' => $this->muestra->clasificacion ? $this->muestra->clasificacion->nombre_clasificacion : null,
-                'unidad_de_medida' => $this->muestra->unidadDeMedida ? $this->muestra->unidadDeMedida->nombre_unidad_de_medida : null,
-        'tipo_muestra' => $this->muestra->tipo_muestra,
+                'unidad_de_medida' => $this->muestra->clasificacion && $this->muestra->clasificacion->unidadMedida 
+                    ? $this->muestra->clasificacion->unidadMedida->nombre_unidad_de_medida 
+                    : null,
+                'tipo_muestra' => $this->muestra->tipo_muestra,
                 'cantidad_de_muestra' => $this->muestra->cantidad_de_muestra,
                 'estado' => $this->muestra->estado,
                 'observacion' => $this->muestra->observacion,
                 'fecha_creacion' => $this->muestra->created_at->format('Y-m-d H:i:s'),
-                
             ]
         ];
     }
 }
-

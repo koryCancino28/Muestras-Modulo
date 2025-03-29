@@ -22,7 +22,7 @@
                 {{-- Si no hay contenido en la sección 'content', se incluirá la lista de empleados por defecto --}}
                 @if (empty(trim($__env->yieldContent('content'))))
                 <h1 class="text-center"> Muestras Registradas <hr></h1>
-                    @include('muestras.visitadoraMedica.index')
+                    @include('muestras')
                 @else
                     @yield('content')
                 @endif

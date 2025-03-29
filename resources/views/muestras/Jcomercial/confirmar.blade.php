@@ -48,7 +48,13 @@
                             <td class="observaciones">{{ $muestra->nombre_muestra }}</td>
                             <td>{{ $muestra->clasificacion ? $muestra->clasificacion->nombre_clasificacion : 'Sin clasificación' }}</td>
                             <td>{{ $muestra->tipo_muestra ?? 'No asignado' }}</td> <!-- Mostrar el tipo de muestra -->
-                            <td>{{ $muestra->unidadDeMedida->nombre_unidad_de_medida }}</td>
+                            <td>
+                                @if($muestra->clasificacion && $muestra->clasificacion->unidadMedida)
+                                    {{ $muestra->clasificacion->unidadMedida->nombre_unidad_de_medida }}
+                                @else
+                                    No asignada
+                                @endif
+                            </td>
                             <td>{{ $muestra->cantidad_de_muestra }}</td>
                             <td>
                                 <input type="checkbox" class="aprobacion-jefe" data-id="{{ $muestra->id }}" {{ $muestra->aprobado_jefe_comercial ? 'checked' : '' }}>
@@ -120,7 +126,7 @@
 
                         // Configuración de Pusher
             Pusher.logToConsole = true;
-            var pusher = new Pusher('f0c10c06466015ef4767', { cluster: 'us2' });
+            var pusher = new Pusher('260bec4d6a6754941503', { cluster: 'us2' });
             var channel = pusher.subscribe('muestras');
 
             // Configuración de notificaciones
@@ -138,9 +144,7 @@
                         
                         // Adjuntar manejadores de eventos después de refrescar
                         attachEventHandlers();
-                        
-                        // Verificar precios faltantes
-                        actualizarNotificacionPrecios();
+
                     }
                 });
             }
@@ -271,9 +275,6 @@
                 
                 // Adjuntar manejadores de eventos
                 attachEventHandlers();
-                
-                // Verificar precios faltantes
-                actualizarNotificacionPrecios();
                 
             });
         </script>

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reporte Clasificación</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="{{ asset('css/Reporte.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/muestras/Reporte.css') }}">
 </head>
 <body>
     <div class="container">
@@ -38,7 +38,7 @@
                     <tbody>
                         @foreach($muestrasData as $data)
                             <tr>
-                                <td>{{ $data['nombre_clasificacion'] }}</td>
+                                <td >{{ $data['nombre_clasificacion'] }}</td>
                                 <td>{{ $data['cantidad'] }}</td>
                                 <td>{{ number_format($data['monto_total'], 2) }}</td>
                             </tr>

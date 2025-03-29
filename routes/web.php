@@ -12,23 +12,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 // Ruta principal que muestra todas las muestras
-Route::get('/muestras', [MuestrasController::class, 'index'])->name('muestras.visitadoraMedica.index');
-// Mostrar el formulario para agregar una nueva muestra
-Route::get('/muestras/create', [MuestrasController::class, 'create'])->name('muestras.create');
-// Ruta para almacenar una nueva muestra (POST)
-Route::post('/muestras/store', [MuestrasController::class, 'store'])->name('muestras.store');
-Route::get('/muestras/show/{id}', [MuestrasController::class, 'show'])->name('muestras.show');
-Route::delete('/muestras/delete/{id}', [MuestrasController::class, 'destroy'])->name('muestras.destroy');
-Route::get('/muestras/edit/{id}', [MuestrasController::class, 'edit'])->name('muestras.edit');
-Route::put('/muestras/update/{id}', [MuestrasController::class, 'update'])->name('muestras.update');
 
+Route::resource('muestras', MuestrasController::class);
 
 //laboratorio======================
-Route::get('/muestras/laboratorio', [laboratorioController::class, 'estado'])->name('muestras.estado');
-Route::put('/muestras/{id}/actualizar-estado', [laboratorioController::class, 'actualizarEstado'])
+Route::get('/laboratorio', [laboratorioController::class, 'estado'])->name('muestras.estado');
+Route::put('/laboratorio/{id}/actualizar-estado', [laboratorioController::class, 'actualizarEstado'])
     ->name('muestras.actualizarEstado');
-Route::get('/muestras/laboratorio/{id}', [laboratorioController::class, 'showLab'])->name('muestras.showLab');
-Route::put('/muestras/{id}/actualizar-fecha', [laboratorioController::class, 'actualizarFechaEntrega'])->name('muestras.actualizarFechaEntrega');
+Route::get('/laboratorio/{id}', [laboratorioController::class, 'showLab'])->name('muestras.showLab');
+Route::put('/laboratorio/{id}/actualizar-fecha', [laboratorioController::class, 'actualizarFechaEntrega'])->name('muestras.actualizarFechaEntrega');
 Route::get('/get-unidades/{clasificacionId}', [MuestrasController::class, 'getUnidadesPorClasificacion']);
 
 // Ruta para actualizar el precio de una muestra
@@ -39,12 +31,12 @@ Route::put('/muestras/{id}/actualizar-precio', [jefe_proyectosController::class,
 
 //coordinadora 
 //Aprobaciones
-Route::get('/muestras/Coordinadora', [coordinadoraController::class, 'aprobacionCoordinadora'])->name('muestras.aprobacion.coordinadora');
+Route::get('/Coordinadora', [coordinadoraController::class, 'aprobacionCoordinadora'])->name('muestras.aprobacion.coordinadora');
 Route::put('/muestras/{id}/actualizar-aprobacion', [coordinadoraController::class, 'actualizarAprobacion'])->name('muestras.actualizarAprobacion');
 
 
 //Jcomercial
-Route::get('/muestras/jefe-comercial', [JcomercialController::class, 'confirmar'])->name('muestras.confirmar');
+Route::get('/jefe-comercial', [JcomercialController::class, 'confirmar'])->name('muestras.confirmar');
 
 
 //GERENCIACONTROLLER

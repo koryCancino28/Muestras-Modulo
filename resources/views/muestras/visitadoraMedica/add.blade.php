@@ -8,7 +8,7 @@
     <link rel="shortcut icon" href="{{ asset('imgs/favicon.ico') }}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/muestras/home.css') }}">
 </head>
 
 <body>
@@ -17,7 +17,7 @@
     <div class="container">
 
     <h1 class="text-center">
-   <a class="float-start" title="Volver" href="{{ route('muestras.visitadoraMedica.index') }}">
+   <a class="float-start" title="Volver" href="{{ route('muestras.index') }}">
       <i class="bi bi-arrow-left-circle"></i>
    </a>
    Registrar muestra <hr>
@@ -43,12 +43,11 @@
                 </select>
             </div>
 
-            <!-- Campo para la unidad de medida (input de texto) -->
-            <div class="mb-3">
-                <label class="form-label">Unidad de Medida</label>
-                <input type="text" name="unidad_de_medida" id="unidad_de_medida" class="form-control" readonly required />
-            </div>
-
+                            <!-- Campo para la unidad de medida -->
+        <div class="mb-3">
+            <label class="form-label">Unidad de Medida</label>
+            <input type="text" name="unidad_de_medida" id="unidad_de_medida" class="form-control" readonly required>
+        </div>
             <!-- Campo para el tipo de muestra (select) -->
             <div class="mb-3">
                 <label class="form-label">Tipo de Muestra</label>
@@ -79,40 +78,24 @@
             
         </form>
             <script>
-                // Función para calcular el precio total basado en la cantidad y el precio por unidad
-                function calcularPrecioTotal() {
-                    var cantidad = parseFloat(document.getElementById('cantidad_de_muestra').value) || 0;
-                    var precioUni = parseFloat(document.getElementById('precioUni').value) || 0;
-                    var precioTotal = cantidad * precioUni;
-
-                    // Establecer el valor de 'Precio Total' en el campo correspondiente
-                    document.getElementById('precioTotal').value = precioTotal.toFixed(2); // Redondeado a 2 decimales
-                }
-
-                            document.getElementById('clasificacion_id').addEventListener('change', function() {
-                var clasificacionId = this.value;
-
-                if (clasificacionId) {
-                    fetch(`/get-unidades/${clasificacionId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            // Verificamos que la respuesta contenga la unidad de medida
-                            if (data && data.nombre_unidad_de_medida) {
-                                // Establecer la unidad de medida en el campo correspondiente
-                                document.getElementById('unidad_de_medida').value = data.nombre_unidad_de_medida;
-                            } else {
-                                document.getElementById('unidad_de_medida').value = '';
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
-                } else {
-                    document.getElementById('unidad_de_medida').value = '';
-                }
-            });
+            document.addEventListener('DOMContentLoaded', function() {
+        const clasificacionSelect = document.getElementById('clasificacion_id');
+        const unidadMedidaInput = document.getElementById('unidad_de_medida');
+        
+        // Cargar las unidades de medida en las opciones del select
+        const clasificaciones = {!! json_encode($clasificaciones->mapWithKeys(function ($item) {
+            return [$item->id => $item->unidadMedida->nombre_unidad_de_medida ?? ''];
+        })) !!};
+        
+        clasificacionSelect.addEventListener('change', function() {
+            const clasificacionId = this.value;
+            unidadMedidaInput.value = clasificaciones[clasificacionId] || '';
+        });
+    });
 
             </script>
 
+<h1 class="text-center mt-5 mb-5 fw-bold">  </h1>
 </body>
 
 </html>
-

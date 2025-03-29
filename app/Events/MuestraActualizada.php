@@ -18,7 +18,8 @@ class MuestraActualizada implements ShouldBroadcastNow
 
     public function __construct(Muestras $muestra)
     {
-        $this->muestra = $muestra;
+        // Cargamos las relaciones necesarias
+        $this->muestra = $muestra->load(['clasificacion.unidadMedida']);
     }
 
     /**
@@ -42,23 +43,22 @@ class MuestraActualizada implements ShouldBroadcastNow
      */
     public function broadcastWith(): array
     {
-       // Asegúrate de que las relaciones están cargadas
-       return [
-        'muestra' => [
-            'id' => $this->muestra->id,
-            'nombre_muestra' => $this->muestra->nombre_muestra,
-            'clasificacion' => $this->muestra->clasificacion ? $this->muestra->clasificacion->nombre_clasificacion : null,
-            'unidad_de_medida' => $this->muestra->unidadDeMedida ? $this->muestra->unidadDeMedida->nombre_unidad_de_medida : null,
-            'tipo_muestra' => $this->muestra->tipo_muestra,
-            'cantidad_de_muestra' => $this->muestra->cantidad_de_muestra,
-            'estado' => $this->muestra->estado,
-            'observacion' => $this->muestra->observacion,
-            'fecha_actualizacion' => $this->muestra->updated_at->format('Y-m-d H:i:s'),
-            'aprobado_jefe_comercial' => $this->muestra->aprobado_jefe_comercial, // Nuevo campo
-            'aprobado_coordinadora' => $this->muestra->aprobado_coordinadora 
-        ]
-    ];
-
-   
+        return [
+            'muestra' => [
+                'id' => $this->muestra->id,
+                'nombre_muestra' => $this->muestra->nombre_muestra,
+                'clasificacion' => $this->muestra->clasificacion ? $this->muestra->clasificacion->nombre_clasificacion : null,
+                'unidad_de_medida' => $this->muestra->clasificacion && $this->muestra->clasificacion->unidadMedida 
+                    ? $this->muestra->clasificacion->unidadMedida->nombre_unidad_de_medida 
+                    : null,
+                'tipo_muestra' => $this->muestra->tipo_muestra,
+                'cantidad_de_muestra' => $this->muestra->cantidad_de_muestra,
+                'estado' => $this->muestra->estado,
+                'observacion' => $this->muestra->observacion,
+                'fecha_actualizacion' => $this->muestra->updated_at->format('Y-m-d H:i:s'),
+                'aprobado_jefe_comercial' => $this->muestra->aprobado_jefe_comercial,
+                'aprobado_coordinadora' => $this->muestra->aprobado_coordinadora 
+            ]
+        ];
     }
 }

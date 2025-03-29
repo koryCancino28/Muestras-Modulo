@@ -1,12 +1,20 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="es">
 
-@section('title')
-    | Editar Muestra
-@endsection
-
-@section('content')
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muestras</title>
+    <link rel="shortcut icon" href="{{ asset('imgs/favicon.ico') }}" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="{{ asset('css/muestras/home.css') }}">
+</head>
+<body>
+<h1 class="text-center mt-5 mb-5 fw-bold">  </h1>
+<div class="container">
 <h1 class="text-center">
-    <a class="float-start" title="Volver" href="{{ route('muestras.visitadoraMedica.index') }}">
+    <a class="float-start" title="Volver" href="{{ route('muestras.index') }}">
         <i class="bi bi-arrow-left-circle"></i>
     </a>
     Editar Muestra <hr>
@@ -38,12 +46,13 @@
         </select>
     </div>
 
-    <!-- Campo para la unidad de medida (input de texto) -->
-    <div class="mb-3">
-        <label class="form-label">Unidad de Medida</label>
-        <input type="text" name="unidad_de_medida" id="unidad_de_medida" class="form-control" readonly required value="{{ $muestra->unidadDeMedida->nombre_unidad_de_medida }}" />
-        <input type="hidden" name="unidad_de_medida_id" id="unidad_de_medida_id" value="{{ $muestra->unidad_de_medida_id }}" />
-    </div>
+                <!-- Campo para la unidad de medida (autocompletado desde la clasificación) -->
+                <div class="mb-3">
+                <label class="form-label">Unidad de Medida</label>
+                <input type="text" name="unidad_de_medida" id="unidad_de_medida" class="form-control" readonly required
+                    value="{{ $muestra->clasificacion->unidadMedida->nombre_unidad_de_medida ?? '' }}">
+            </div>
+
 
     <!-- Campo para el tipo de muestra (select) -->
     <div class="mb-3">
@@ -76,31 +85,26 @@
         </button>
     </div>
 </form>
-
+<h1 class="text-center mt-5 mb-5 fw-bold">  </h1>
 <script>
-    // Función para cargar la unidad de medida cuando se selecciona una clasificación
-    document.getElementById('clasificacion_id').addEventListener('change', function() {
-        var clasificacionId = this.value;
-
-        if (clasificacionId) {
-            fetch(`/get-unidades/${clasificacionId}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Verificamos que la respuesta contenga la unidad de medida
-                    if (data && data.nombre_unidad_de_medida) {
-                        // Establecer la unidad de medida en el campo correspondiente
-                        document.getElementById('unidad_de_medida').value = data.nombre_unidad_de_medida;
-                        document.getElementById('unidad_de_medida_id').value = data.id; // También actualizamos el hidden input con el ID
-                    } else {
-                        document.getElementById('unidad_de_medida').value = '';
-                        document.getElementById('unidad_de_medida_id').value = ''; // Limpiamos el ID si no hay unidad
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        } else {
-            document.getElementById('unidad_de_medida').value = '';
-            document.getElementById('unidad_de_medida_id').value = ''; // Limpiar el ID si no se selecciona ninguna clasificación
-        }
+      document.addEventListener('DOMContentLoaded', function() {
+        const clasificacionSelect = document.getElementById('clasificacion_id');
+        const unidadMedidaInput = document.getElementById('unidad_de_medida');
+        
+        // Cargar las unidades de medida en las opciones del select
+        const clasificaciones = {!! json_encode($clasificaciones->mapWithKeys(function ($item) {
+            return [$item->id => $item->unidadMedida->nombre_unidad_de_medida ?? ''];
+        })) !!};
+        
+        clasificacionSelect.addEventListener('change', function() {
+            const clasificacionId = this.value;
+            unidadMedidaInput.value = clasificaciones[clasificacionId] || '';
+        });
     });
 </script>
-@endsection
+
+
+
+</body>
+
+</html>

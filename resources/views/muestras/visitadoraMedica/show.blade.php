@@ -12,6 +12,8 @@
 </head>
 
 <body>
+<h1 class="text-center mt-5 mb-5 fw-bold">  </h1>
+
     <div class="container py-4">
         <h1 class="text-center mb-4">
             <a class="float-start text-decoration-none" title="Volver" href="{{ route('muestras.index') }}">

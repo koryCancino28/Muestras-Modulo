@@ -8,21 +8,49 @@
     <link rel="shortcut icon" href="{{ asset('imgs/favicon.ico') }}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="{{ asset('css/muestras/home.css') }}">
+    <style>
+        /* Estilos para el contenedor de herramientas */
+        .header-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        /* Estilo para el buscador de DataTables */
+        .dataTables_filter {
+            display: flex;
+            align-items: center;
+        }
+        
+        .dataTables_filter label {
+            margin-bottom: 0;
+            margin-right: 10px;
+        }
+        
+        .dataTables_filter input {
+            width: 250px !important;
+        }
+      
+    </style>
 </head>
 
 <body>
 <h1 class="text-center mt-5 mb-5 fw-bold">  </h1>
 
     <div class="container">
-    @include('messages')
+        @include('messages')
         <h1 class="text-center">Muestras Registradas <hr></h1>
 
-        <div class="d-flex justify-content-center mb-3">
-            <a href="{{ route('muestras.create') }}" class="btn btn-primary me-3">
+        <div class="header-tools">
+            <a href="{{ route('muestras.create') }}" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> Agregar Muestra
             </a>
-            <input type="text" id="searchInput" class="form-control w-75" placeholder="Buscar por las primeras 5 letras del nombre de la Muestra" onkeyup="filterTable()">
+            <!-- el buscador de DataTables se colocará aqui -->
         </div>
 
         <div class="table-responsive">
@@ -85,25 +113,37 @@
     </div>
 <h1 class="text-center mt-5 mb-5 fw-bold">  </h1>
 
+    <!-- Scripts necesarios para DataTables -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    
     <script>
-        function filterTable() {
-            const input = document.getElementById('searchInput');
-            const filter = input.value.toUpperCase();
-            const table = document.getElementById('table_muestras');
-            const tr = table.getElementsByTagName('tr');
-            
-            for (let i = 1; i < tr.length; i++) {
-                const td = tr[i].getElementsByTagName('td')[1]; // Nombre de la muestra
-                if (td) {
-                    const txtValue = td.textContent || td.innerText;
-                    if (txtValue.substring(0, 5).toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
+  $(document).ready(function() {
+    $('#table_muestras').DataTable({
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json',
+        },
+        ordering: false,
+        responsive: true,
+        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
+        pageLength: 10,
+        initComplete: function() {
+            $('.dataTables_filter')
+                .appendTo('.header-tools')
+                .find('input')  // Selecciona el input de búsqueda
+                .attr('placeholder', 'Buscar por nombre de la muestra')  // Agrega el placeholder
+                .end()  // Vuelve al contenedor del filtro
+                .find('label')
+                .contents().filter(function() {
+                    return this.nodeType === 3;
+                }).remove()
+                .end()
+                .prepend('Buscar:');
         }
+    });
+});
     </script>
 </body>
 </html>

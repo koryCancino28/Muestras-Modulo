@@ -179,7 +179,25 @@
                         } else {
                             $(this).removeAttr('title'); // Eliminar el título si el checkbox no está deshabilitado
                         }
-                    });
+                    }); 
+                        //habilitar/deshabilitar los campos
+                        function verificarCheckboxes() {
+                            $('tr').each(function() {
+                                var row = $(this);
+                                var aprobadoCoordinadora = row.find('.aprobado_coordinadora').prop('checked');
+                                var aprobadoJefe = row.find('.aprobacion-jefe').prop('checked');
+                                
+                                // select de estado y fecha de entrega
+                                row.find('select[name="estado"]').prop('disabled', !(aprobadoCoordinadora && aprobadoJefe));
+                                row.find('input[name="fecha_hora_entrega"]').prop('disabled', !(aprobadoCoordinadora && aprobadoJefe));
+                            });
+                    }
+
+                    // Verificar al cargar la página
+                    verificarCheckboxes();
+
+                    // Verificar cuando cambia cualquier checkbox
+                    $('.aprobado_coordinadora, .aprobacion-jefe').change(verificarCheckboxes);
                 }
 
                 // Configuración de Pusher----

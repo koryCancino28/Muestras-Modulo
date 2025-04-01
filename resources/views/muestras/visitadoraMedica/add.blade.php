@@ -61,7 +61,7 @@
             <!-- Campo para la cantidad de muestras -->
             <div class="mb-3">
                 <label class="form-label">Cantidad de Muestras</label>
-                <input type="number" id="cantidad_de_muestra" name="cantidad_de_muestra" class="form-control" required oninput="calcularPrecioTotal()" />
+                <input type="number" id="cantidad_de_muestra" name="cantidad_de_muestra" class="form-control" required min="1"/>
             </div>
 
             <!-- Campo para las observaciones -->

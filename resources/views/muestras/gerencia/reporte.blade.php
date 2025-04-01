@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <div class="cont-report">
-            <h1>Reporte de Clasificaciones y Montos Totales</h1>
+            <h1>Reporte de Clasificaciones</h1>
 
             <!-- Filtro de Mes -->
             <form class="form-graf" method="get" action="{{ route('muestras.reporte') }}">
@@ -25,7 +25,7 @@
             </div>
 
             <!-- Tabla de Clasificaciones y Monto Total -->
-            <h3>Tabla de Clasificaciones y Monto Total</h3>
+            <h3>Clasificaciones y Monto Total</h3>
             <div class="table-responsive">
                 <table>
                     <thead>

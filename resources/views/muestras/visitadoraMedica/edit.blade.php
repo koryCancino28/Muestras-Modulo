@@ -67,7 +67,7 @@
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label">Cantidad de Muestras</label>
-            <input type="number" id="cantidad_de_muestra" name="cantidad_de_muestra" class="form-control" required value="{{ $muestra->cantidad_de_muestra }}" oninput="calcularPrecioTotal()" />
+            <input type="number" id="cantidad_de_muestra" name="cantidad_de_muestra" class="form-control" required value="{{ $muestra->cantidad_de_muestra }}" oninput="calcularPrecioTotal()" min="1" />
         </div>
     </div>
 

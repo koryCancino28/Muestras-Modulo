@@ -24,22 +24,6 @@ class laboratorioController extends Controller
        return view('muestras.laboratorio.showlab', ['muestra' => $muestra]);
     }
 
-        public function actualizarFechaEntrega(Request $request, $id)
-    {
-        // Validar la entrada para asegurarse de que la fecha y hora sean válidas
-        $validated = $request->validate([
-            'fecha_hora_entrega' => 'required|date',
-        ]);
-        // Usar DB para actualizar solo el campo fecha_hora_entrega sin modificar los timestamps
-        DB::table('muestras')
-            ->where('id', $id)
-            ->update([
-                'fecha_hora_entrega' => $request->fecha_hora_entrega,
-            ]);
-        // Redirigir a la ruta 'muestras.estado' con un mensaje de éxito
-        return redirect()->route('muestras.estado')->with('success', 'Fecha de entrega actualizada correctamente.');
-    }
-
         public function estado()
     {
         // Obtén todas las muestras

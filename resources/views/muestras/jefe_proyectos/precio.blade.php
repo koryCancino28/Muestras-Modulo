@@ -141,11 +141,12 @@
                         // Adjuntar manejadores de eventos después de refrescar
                         attachEventHandlers();
                         
-                        // Verificar precios faltantes
+                        // verificar precios
                         actualizarNotificacionPrecios();
                     }
                 });
             }
+
 
             // Función para adjuntar los manejadores de eventos
             function attachEventHandlers() {

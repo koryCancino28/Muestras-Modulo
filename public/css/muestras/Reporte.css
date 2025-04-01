@@ -212,3 +212,37 @@ tr:hover {
         font-size: 0.85rem;
     }
 }
+
+.btn-exportar, .btn-filtrar {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: clamp(0.9rem, 3vw, 1rem);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+}
+
+.btn-exportar {
+    background-color: var(--primary);
+    color: var(--text-light);
+}
+
+.btn-filtrar {
+    background-color: var(--secondary);
+    color: var(--text-light);
+}
+
+.btn-exportar:hover, .btn-filtrar:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 7px 20px rgba(214, 37, 77, 0.4);
+}
+
+.btn-exportar:active, .btn-filtrar:active {
+    transform: translateY(-2px);
+}

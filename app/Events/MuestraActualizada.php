@@ -57,7 +57,11 @@ class MuestraActualizada implements ShouldBroadcastNow
                 'observacion' => $this->muestra->observacion,
                 'fecha_actualizacion' => $this->muestra->updated_at->format('Y-m-d H:i:s'),
                 'aprobado_jefe_comercial' => $this->muestra->aprobado_jefe_comercial,
-                'aprobado_coordinadora' => $this->muestra->aprobado_coordinadora 
+                'aprobado_coordinadora' => $this->muestra->aprobado_coordinadora,
+                'fecha_hora_entrega' => $this->muestra->fecha_hora_entrega 
+                ? \Carbon\Carbon::parse($this->muestra->fecha_hora_entrega)->format('Y-m-d H:i:s')
+                : null,
+                
             ]
         ];
     }

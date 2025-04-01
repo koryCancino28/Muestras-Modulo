@@ -60,6 +60,26 @@ class coordinadoraController extends Controller
             // Respuesta de éxito
             return response()->json(['success' => true, 'message' => 'Aprobación actualizada exitosamente.']);
         }
+        
+            public function actualizarFechaEntrega(Request $request, $id)
+    {
+        // Buscar la muestra en la base de datos
+        $muestra = Muestras::find($id);
+         // Validar la entrada para asegurarse de que la fecha y hora sean válidas y no anterior a la fecha actual
+        $validated = $request->validate([
+            'fecha_hora_entrega' => 'required|date|after_or_equal:' . \Carbon\Carbon::now()->format('Y-m-d\TH:i'),
+        ]);
+        // Usar DB para actualizar solo el campo fecha_hora_entrega sin modificar los timestamps
+        DB::table('muestras')
+            ->where('id', $id)
+            ->update([
+                'fecha_hora_entrega' => $request->fecha_hora_entrega,
+            ]);
+            // Disparar evento de actualización
+            event(new MuestraActualizada($muestra));
+        // Redirigir a la ruta 'muestras.estado' con un mensaje de éxito
+        return redirect()->route('muestras.aprobacion.coordinadora')->with('success', 'Fecha de entrega actualizada correctamente.');
+    }
 
         public function aprobacionCoordinadora()
     {

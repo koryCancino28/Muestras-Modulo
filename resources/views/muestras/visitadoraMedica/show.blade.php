@@ -1,81 +1,118 @@
-<!DOCTYPE html>
-<html lang="es">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalles de Muestra</title>
-    <link rel="shortcut icon" href="{{ asset('imgs/favicon.ico') }}" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{{ asset('css/muestras/home.css') }}">
-</head>
+<div class="container py-4">
+    <h1 class="flex-grow-1 text-center">
+        <a class="float-start text-decoration-none" title="Volver" href="{{ route('muestras.index') }}">
+            <i class="bi bi-arrow-left-circle fs-1 text-primary"></i>
+        </a>
+        Detalles de la Muestra
+        <hr class="mt-3">
+    </h1>
 
-<body>
-<h1 class="text-center mt-5 mb-5 fw-bold">  </h1>
-
-    <div class="container py-4">
-        <h1 class="text-center mb-4">
-            <a class="float-start text-decoration-none" title="Volver" href="{{ route('muestras.index') }}">
-                <i class="bi bi-arrow-left-circle fs-1 text-primary"></i>
-            </a>
-            Detalles de la Muestra
-            <hr class="mt-3">
-        </h1>
-
-        <div class="card shadow-sm">
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item d-flex justify-content-between align-items-center"> 
-                    <span class="text-muted">Nombre de la muestra:</span>
-                    <strong class="text-end">{{ $muestra->nombre_muestra }}</strong>
-                </li>
-                
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <span class="text-muted">Clasificación:</span>
-                    <strong class="text-end">
-                        {{ $muestra->clasificacion ? $muestra->clasificacion->nombre_clasificacion : 'No disponible' }}
-                    </strong>
-                </li>
-
-                <li class="list-group-item d-flex justify-content-between align-items-center"> 
-                    <span class="text-muted">Unidad de medida:</span>
-                    <strong class="text-end">
+    <div class="row">
+        <!-- Card 1: Información general -->
+        <div class="col-md-6 mb-4">
+            <div class="card" style="border-radius: 10px;">
+                <div class="card-header" style="background-color: #fe495f; color: white;">
+                    <h5><i class="bi bi-info-circle me-2"></i> Información General</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong style="color:rgb(224, 61, 80);">Nombre de la muestra:</strong> {{ $muestra->nombre_muestra }}</p>
+                    <p><strong style="color:rgb(224, 61, 80);">Clasificación:</strong> {{ $muestra->clasificacion ? $muestra->clasificacion->nombre_clasificacion : 'No disponible' }}</p>
+                    <p><strong style="color:rgb(224, 61, 80);">Tipo de muestra:</strong> {{ ucfirst($muestra->tipo_muestra) }}</p>
+                    <p><strong style="color:rgb(224, 61, 80);">Unidad de medida:</strong>
                         @if($muestra->clasificacion && $muestra->clasificacion->unidadMedida)
                             {{ $muestra->clasificacion->unidadMedida->nombre_unidad_de_medida }}
                         @else
                             No disponible
                         @endif
-                    </strong>
-                </li>
-                
-                <li class="list-group-item d-flex justify-content-between align-items-center"> 
-                    <span class="text-muted">Cantidad:</span>
-                    <strong class="text-end">{{ $muestra->cantidad_de_muestra }}</strong>
-                </li>
-                
-                <li class="list-group-item d-flex justify-content-between align-items-center"> 
-                    <span class="text-muted">Tipo de muestra:</span>
-                    <strong class="text-end">{{ ucfirst($muestra->tipo_muestra) }}</strong>
-                </li>
-                
-                <li class="list-group-item d-flex justify-content-between align-items-center"> 
-                    <span class="text-muted">Observaciones:</span>
-                    <strong class="text-end">{{ $muestra->observacion ?? 'Sin observaciones' }}</strong>
-                </li>
-                
-                <li class="list-group-item d-flex justify-content-between align-items-center"> 
-                    <span class="text-muted">Fecha de registro:</span>
-                    <strong class="text-end">{{ $muestra->created_at->format('d/m/Y H:i') }}</strong>
-                </li>
-                
-                <li class="list-group-item d-flex justify-content-between align-items-center"> 
-                    <span class="text-muted">Última actualización:</span>
-                    <strong class="text-end">{{ $muestra->updated_at->format('d/m/Y H:i') }}</strong>
-                </li>
-            </ul>
+                    </p>
+                    <p><strong style="color:rgb(224, 61, 80);">Cantidad:</strong> {{ $muestra->cantidad_de_muestra }}</p>
+                    <p><strong style="color:rgb(224, 61, 80);">Observaciones:</strong> {{ $muestra->observacion ?? 'Sin observaciones' }}</p>
+                    <p><strong style="color:rgb(224, 61, 80);">Doctor:</strong> {{ $muestra->name_doctor ?? 'No disponible' }}</p>
+                    <p><strong style="color:rgb(224, 61, 80);">Creado por:</strong> {{ $muestra->creator ? $muestra->creator->name : 'Desconocido' }}</p>
+                    <p><strong style="color:rgb(224, 61, 80);">Comentario de Laboratorio:</strong> {{ $muestra->comentarios ?? 'No hay comentarios' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Fechas + Foto -->
+        <div class="col-md-6 mb-4">
+            <div class="card" style="border-radius: 10px;">
+                <div class="card-header" style="background-color: #fe495f; color: white;">
+                    <h5><i class="bi bi-calendar-event me-2"></i> Fechas y Foto</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong style="color:rgb(224, 61, 80);">Fecha de registro:</strong></p>
+                    <input type="text" class="form-control mb-2"
+                        value="{{ $muestra->created_at->format('d/m/Y H:i') }}"
+                        readonly style="background-color:rgb(251, 239, 252); color: #555; border: 2px solid #ccc; font-weight: bold;">
+
+                    <p><strong style="color:rgb(224, 61, 80);">Última actualización:</strong></p>
+                    <input type="text" class="form-control mb-4"
+                        value="{{ $muestra->updated_at->format('d/m/Y H:i') }}"
+                        readonly style="background-color:rgb(244, 232, 255); color: #555; border: 2px solid #ccc; font-weight: bold;">
+
+                    <!-- Foto -->
+                    <p><strong style="color:rgb(224, 61, 80);">Foto de la Receta:</strong></p>
+                    @if($muestra->foto)
+                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#fotoModal">
+                            <i class="bi bi-eye"></i> Ver Foto
+                        </button>
+                    @else
+                        <p class="text-muted">No hay foto disponible</p>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
-</html>
+    <!-- Modal para mostrar la foto -->
+    <div class="modal fade" id="fotoModal" tabindex="-1" aria-labelledby="fotoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-4">
+                <div class="modal-header" style="background-color: #fe495f; color: white;">
+                    <h5 class="modal-title" id="fotoModalLabel">Foto de la Receta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="{{ asset($muestra->foto) }}" class="img-fluid rounded" style="max-height: 500px;" alt="Foto de la muestra">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('css/muestras/home.css') }}">
+<style>
+    .card-header {
+        background-color: #fe495f;
+        color: white;
+        font-weight: bold;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .card {
+        border-radius: 10px;
+    }
+
+    .modal-content {
+        border-radius: 15px;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #fe495f;
+        color: white;
+        transition: 0.3s ease;
+    }
+
+    .form-control[readonly] {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script> console.log('Vista cargada con foto integrada.'); </script>
+

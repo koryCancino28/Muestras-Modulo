@@ -14,14 +14,14 @@ use App\Events\MuestraCreada;
 use App\Events\MuestraActualizada;
 //imprimir reportes
 use PDF;
+
 class jefe_proyectosController extends Controller
 {
     
          public function precio()
     {
         // Obtén todas las muestras
-        $muestras = Muestras::all();
-        
+        $muestras = Muestras::orderBy('created_at', 'desc')->paginate(10);
         return view('muestras.jefe_proyectos.precio', compact('muestras'));
     }
 
@@ -53,4 +53,14 @@ class jefe_proyectosController extends Controller
             'precio' => $request->precio
         ]);
     }
+
+    public function showJO($id)
+    {
+        // Cargar la muestra con su clasificación y la unidad de medida asociada
+        $muestra = Muestras::with(['clasificacion.unidadMedida'])->findOrFail($id);
+        
+        // Retornar la vista de "Detalles de Muestra" con los datos
+        return view('muestras.jefe_proyectos.showJO', compact('muestra'));
+    }
 }
+

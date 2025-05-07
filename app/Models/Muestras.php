@@ -14,7 +14,7 @@ class Muestras extends Model
 
     // Eliminamos 'unidad_de_medida_id' del fillable ya que no existirá
     protected $fillable = [
-        'nombre_muestra',
+       'nombre_muestra',
         'observacion',
         'cantidad_de_muestra',
         'precio',
@@ -23,7 +23,10 @@ class Muestras extends Model
         'fecha_hora_entrega',
         'tipo_muestra',
         'aprobado_jefe_comercial',
-        'aprobado_coordinadora'
+        'aprobado_coordinadora',
+        'name_doctor',
+        'created_by',
+        'foto',
     ];
 
     // Relación con Clasificacion

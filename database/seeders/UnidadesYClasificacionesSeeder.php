@@ -15,9 +15,18 @@ class UnidadesYClasificacionesSeeder extends Seeder
     {
         // 1. Crear las unidades de medida
         $unidades = [
-            ['nombre_unidad_de_medida' => 'und', 'abreviatura' => 'und'],
-            ['nombre_unidad_de_medida' => 'ml', 'abreviatura' => 'ml'],
-            ['nombre_unidad_de_medida' => 'gr', 'abreviatura' => 'gr']
+            ['nombre_unidad_de_medida' => 'und'],
+            ['nombre_unidad_de_medida' => 'ml'],
+            ['nombre_unidad_de_medida' => 'gr'],
+            //SIN RELACION CON LAS CLISIFICACIONES
+            ['nombre_unidad_de_medida' => 'mcg'],
+            ['nombre_unidad_de_medida' => 'ml'],
+            ['nombre_unidad_de_medida' => 'ui'],
+            ['nombre_unidad_de_medida' => '%'],
+            ['nombre_unidad_de_medida' => 'g'],
+            ['nombre_unidad_de_medida' => 'mg'],
+            ['nombre_unidad_de_medida' => 'L'],
+            ['nombre_unidad_de_medida' => 'kg'],
         ];
 
         foreach ($unidades as $unidad) {

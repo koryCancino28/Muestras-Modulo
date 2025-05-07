@@ -1,248 +1,183 @@
 
-:root {
-    --primary: #d6254d;
-    --secondary: #ff5475;
-    --accent:#fff1be;
-    --text-dark: #333;
-    --text-light: #fff;
-    --bg-light: #fff9f0;
-    --border-radius: 8px;
-    --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    --transition: all 0.3s ease;
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    -webkit-tap-highlight-color: transparent;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-light);
-    color: var(--text-dark);
-    line-height: 1.6;
-    padding: 10px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-.container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 15px;
-    background-color: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    flex: 1;
-}
-
-h1, h3 {
-    color: var(--primary);
-    text-align: center;
-    word-wrap: break-word;
-    margin-bottom: 15px;
-}
-
-h1 {
-    font-size: clamp(1.5rem, 5vw, 2rem);
-}
-
-h3 {
-    font-size: clamp(1.2rem, 4vw, 1.5rem);
-    margin-top: 20px;
-}
-
-.form-graf {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 25px;
-    width: 100%;
-}
-
-.form-graf label {
-    font-size: clamp(0.9rem, 3vw, 1rem);
-    flex: 1 1 100%;
-    text-align: center;
-}
-
-.form-graf input[type="month"] {
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: var(--border-radius);
-    font-size: clamp(0.9rem, 3vw, 1rem);
-    width: 100%;
-    max-width: 280px;
-    transition: var(--transition);
-}
-
-.form-graf input[type="month"]:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 2px rgba(214, 37, 77, 0.2);
-}
-
-.form-graf button {
-    padding: 10px 20px;
-    background-color: var(--secondary);
-    color: var(--text-light);
-    border: none;
-    border-radius: 30px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    font-size: clamp(0.9rem, 3vw, 1rem);
-    white-space: nowrap;
-}
-
-.form-graf button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(214, 37, 77, 0.3);
-}
-
-.form-graf button:active {
-    transform: translateY(1px);
-}
-
-.chart-container {
-    position: relative;
-    width: 100%;
-    height: auto;
-    min-height: 250px;
-    margin: 20px 0;
-}
-
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
-    margin: 25px 0;
-    -webkit-overflow-scrolling: touch;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    border-radius: var(--border-radius);
-}
-
-table {
-    width: 100%;
-    min-width: 320px;
-    border-collapse: collapse;
-}
-
-th, td {
-    padding: 12px 10px;
-    text-align: center;
-    border-bottom: 1px solid #eee;
-    font-size: clamp(0.85rem, 3vw, 1rem);
-}
-
-th {
-    background-color: var(--primary);
-    color: var(--text-light);
-    font-weight: 600;
-    position: sticky;
-    top: 0;
-}
-
-td {
-    text-align: center;
-}
-
-td:first-child {
-    text-align: left;
-    word-break: break-word;
-}
-
-tr:nth-child(even) {
-    background-color: var(--accent);
-}
-
-tr:hover {
-    background-color: rgba(255, 84, 117, 0.1);
-}
-
-/* Media Queries */
-@media (max-width: 768px) {
-    .container {
-        padding: 12px;
+    :root {
+        --primary: #fe495f;
+        --secondary: #ff5475;
+        --accent: #fcfadc;
+        --text-dark: #333;
+        --text-light: #fff;
+        --bg-light: #fff9f0;
+        --border-radius: 8px;
+        --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        --transition: all 0.3s ease;
     }
-    
+   
+    /* Contenido principal sin afectar sidebar */
+    .content-wrapper {
+        background-color: var(--bg-light);
+        min-height: calc(100vh - calc(3.5rem + 1px));
+        padding: 15px;
+    }
+
+    /* Contenedor específico para el contenido */
+    .content-container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+    }
+    label{
+        color: var(--primary);
+    }
+    /* Encabezados */
+    .content-container h1, 
+    .content-container h3 {
+        color: var(--primary);
+        text-align: center;
+        word-wrap: break-word;
+        margin-bottom: 15px;
+        font-weight: bold; 
+    }
+
+    .content-container h1 {
+        font-size: clamp(1.5rem, 5vw, 2rem);
+    }
+
+    .content-container h3 {
+        font-size: clamp(1.2rem, 4vw, 1.5rem);
+        margin-top: 20px;
+    }
+
+    /* Formulario */
     .form-graf {
-        flex-direction: column;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 25px;
+        width: 100%;
     }
-    
+
+    .form-graf label {
+        font-size: clamp(0.9rem, 3vw, 1rem);
+        flex: 1 1 100%;
+        text-align: center;
+    }
+
     .form-graf input[type="month"] {
-        max-width: 100%;
-    }
-    
-    .form-graf button {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: var(--border-radius);
+        font-size: clamp(0.9rem, 3vw, 1rem);
         width: 100%;
         max-width: 280px;
+        transition: var(--transition);
     }
-    
-    th, td {
-        padding: 10px 8px;
-    }
-}
 
-@media (max-width: 480px) {
-    body {
-        padding: 8px;
+    .form-graf input[type="month"]:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(214, 37, 77, 0.2);
     }
-    
-    h1 {
-        font-size: 1.5rem;
-    }
-    
-    h3 {
-        font-size: 1.2rem;
-    }
-    
+
     .form-graf button {
+        padding: 10px 20px;
+        background-color: var(--secondary);
+        color: var(--text-light);
+        border: none;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: clamp(0.9rem, 3vw, 1rem);
+        white-space: nowrap;
+    }
+
+    .form-graf button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(214, 37, 77, 0.3);
+    }
+
+    /* Tablas */
+    .table-responsive {
         width: 100%;
-        padding: 10px 15px;
+        overflow-x: auto;
+        margin: 25px 0;
+        -webkit-overflow-scrolling: touch;
+        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        border-radius: var(--border-radius);
     }
-    
+
+    table {
+        width: 100%;
+        min-width: 320px;
+        border-collapse: collapse;
+    }
+
     th, td {
-        padding: 8px 6px;
-        font-size: 0.85rem;
+        padding: 12px 10px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+        font-size: clamp(0.85rem, 3vw, 1rem);
     }
-}
 
-.btn-exportar, .btn-filtrar {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 30px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    font-size: clamp(0.9rem, 3vw, 1rem);
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 120px;
-}
+    th {
+        background-color: var(--primary);
+        color: var(--text-light);
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+    }
 
-.btn-exportar {
-    background-color: var(--primary);
-    color: var(--text-light);
-}
+    td:first-child {
+        text-align: left;
+        word-break: break-word;
+    }
 
-.btn-filtrar {
-    background-color: var(--secondary);
-    color: var(--text-light);
-}
+    tr:nth-child(even) {
+        background-color: var(--accent);
+    }
 
-.btn-exportar:hover, .btn-filtrar:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 7px 20px rgba(214, 37, 77, 0.4);
-}
+    /* Media Queries */
+    @media (max-width: 768px) {
+        .content-container {
+            padding: 15px;
+        }
+        
+        .form-graf {
+            flex-direction: column;
+        }
+        
+        .form-graf input[type="month"] {
+            max-width: 100%;
+        }
+        
+        .form-graf button {
+            width: 100%;
+            max-width: 280px;
+        }
+    }
 
-.btn-exportar:active, .btn-filtrar:active {
-    transform: translateY(-2px);
-}
+    @media (max-width: 480px) {
+        .content-wrapper {
+            padding: 10px;
+        }
+        
+        .content-container h1 {
+            font-size: 1.5rem;
+        }
+        
+        .content-container h3 {
+            font-size: 1.2rem;
+        }
+        
+        .form-graf button {
+            width: 100%;
+            padding: 10px 15px;
+        }
+    }
+
+    

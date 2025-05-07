@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Muestras;
 use App\Models\UnidadMedida;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use App\Models\Clasificacion;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -16,9 +17,9 @@ use Illuminate\Support\Str;
 class MuestrasController extends Controller
 {
     public function index()
-    {
+    { 
         // Cargamos las muestras con su clasificación y la unidad de medida asociada
-        $muestras = Muestras::with(['clasificacion.unidadMedida'])->get();
+        $muestras = Muestras::with(['clasificacion.unidadMedida'])->orderBy('created_at', 'desc')->get();
         $clasificaciones = Clasificacion::all();
         
         return view('muestras.visitadoraMedica.index', compact('muestras', 'clasificaciones'));
@@ -32,24 +33,42 @@ class MuestrasController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nombre_muestra' => 'required|string|max:255',
             'clasificacion_id' => 'required|exists:clasificaciones,id',
-            'cantidad_de_muestra' => 'required|numeric|min:1',
+            'cantidad_de_muestra' => 'required|numeric|min:1|max:10000',
             'observacion' => 'nullable|string',
             'tipo_muestra' => 'required|in:frasco original,frasco muestra',
+            'name_doctor' => 'nullable|string|max:80',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048', // VALIDACIÓN DE IMAGEN
         ]);
+        
+        // Manejar la subida de la imagen si existe
+        $fotoPath = null;
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $timestamp = Carbon::now()->format('m-d_H-i');
+            $filename = Str::slug($validated['nombre_muestra']) . "_$timestamp." . $file->getClientOriginalExtension();
+            $relativePath = 'images/muestras_fotos';
+            $fullPath = public_path($relativePath);
+            if (!file_exists($fullPath)) {mkdir($fullPath, 0755, true);} //crea directorio si no existe
+            $file->move($fullPath, $filename);
+            $fotoPath = $relativePath.'/'.$filename;
+        }
+
+        $muestra = Muestras::create([
+            'nombre_muestra' => $validated['nombre_muestra'],
+            'clasificacion_id' => $validated['clasificacion_id'],
+            'cantidad_de_muestra' => $validated['cantidad_de_muestra'],
+            'observacion' => $validated['observacion'],
+            'tipo_muestra' => $validated['tipo_muestra'],
+            'name_doctor' => $validated['name_doctor'],
+            'foto' => $fotoPath, 
+            'created_by' => auth()->id(),
+        ]);
+            event(new MuestraCreada($muestra));
     
-        $muestra = Muestras::create($request->only([
-            'nombre_muestra',
-            'clasificacion_id',
-            'cantidad_de_muestra',
-            'observacion',
-            'tipo_muestra'
-        ]));
-    
-        event(new MuestraCreada($muestra));
-        return redirect()->route('muestras.index')->with('success', 'Muestra registrada exitosamente.');
+            return redirect()->route('muestras.index')->with('success', 'Muestra registrada exitosamente.');
     }
 
     public function show($id)
@@ -76,28 +95,39 @@ class MuestrasController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $request->validate([
-            'nombre_muestra' => 'required|string|max:255',
-            'clasificacion_id' => 'required|exists:clasificaciones,id',
-            'cantidad_de_muestra' => 'required|numeric|min:1',
-            'observacion' => 'nullable|string',
-            'tipo_muestra' => 'required|in:frasco original,frasco muestra',
-        ]);
-        
-        $muestra = Muestras::findOrFail($id);
-        $muestra->update($request->only([
-            'nombre_muestra',
-            'clasificacion_id',
-            'cantidad_de_muestra',
-            'observacion',
-            'tipo_muestra'
-        ]));
+{
+    $validated = $request->validate([
+        'nombre_muestra' => 'required|string|max:255',
+        'clasificacion_id' => 'required|exists:clasificaciones,id',
+        'cantidad_de_muestra' => 'required|numeric|min:1|max:10000',
+        'observacion' => 'nullable|string',
+        'tipo_muestra' => 'required|in:frasco original,frasco muestra',
+        'name_doctor' => 'nullable|string|max:80',
+        'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+    ]);
+
+    $muestra = Muestras::findOrFail($id);
+
+    if ($request->hasFile('foto')) {
+        $file = $request->file('foto');
+        $nombreMuestra = Str::slug($validated['nombre_muestra'], '_');
+        $fecha = now()->format('m-d_H-i');
+        $extension = $file->getClientOriginalExtension();
+        $fileName = "{$nombreMuestra}-{$fecha}.{$extension}";
+        $destinationPath = public_path('images/muestras_fotos');
+        if (!File::exists($destinationPath)) {File::makeDirectory($destinationPath, 0755, true); }
+        if (isset($muestra->foto) && $muestra->foto) {
+            $oldFilePath = public_path($muestra->foto);
+            if (File::exists($oldFilePath)) { File::delete($oldFilePath); }}
+        $file->move($destinationPath, $fileName);
+        $validated['foto'] = 'images/muestras_fotos/' . $fileName;}
+
+    $muestra->update($validated);
+
+    event(new MuestraActualizada($muestra));
     
-         event(new MuestraActualizada($muestra));
-        
-        return redirect()->route('muestras.index')->with('success', 'Muestra actualizada exitosamente.');
-    }
+    return redirect()->route('muestras.index')->with('success', 'Muestra actualizada exitosamente.');
+}
 
     public function destroy($id)
     {

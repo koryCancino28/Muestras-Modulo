@@ -11,9 +11,11 @@ label {
     justify-content: flex-start;
 }
 .btn_add {
-    width: 100%;
-    border: 1px solid #333 !important;
-    background-color: #333 !important;
+    width:50%;
+    border: 1px solid#fe495f !important;
+    background-color: #fe495f!important;
+    display: block;
+    margin: 0 auto;
 }
 .btn_add:hover {
     opacity: 0.8;
@@ -31,7 +33,9 @@ hr {
 .bi-arrow-right-circle {
     font-size: 30px;
 }
-
+h1{
+    color: #fe495f; font-weight: bold; margin: 0;
+}
 .flex_acciones {
     list-style-type: none;
     text-decoration: none;
@@ -46,6 +50,11 @@ hr {
     overflow-wrap: break-word;
     white-space: normal; /* Asegura que el texto no se quede en una sola línea */
     padding-right: 10px; 
+}
+
+.btn:hover {
+    transform: scale(1.03);
+    transition: transform 0.3s ease;
 }
 
 .list-group-item {
@@ -158,5 +167,8 @@ input[type="checkbox"]:checked::before {
     display: block;
 }
 
-
+label {
+    color:rgb(237, 100, 116);
+    font-weight: bold;
+}
 

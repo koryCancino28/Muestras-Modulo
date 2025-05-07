@@ -13,16 +13,21 @@ return new class extends Migration
     {
         Schema::create('muestras', function (Blueprint $table) {
              $table->id();
-            $table->string('nombre_muestra', 255); // Nombre del producto
-            $table->text('observacion')->nullable(); // Observaciones del producto
-            $table->integer('cantidad_de_muestra')->nullable(); // Cantidad de muestra
-            $table->decimal('precio', 10, 2)->nullable(); // Precio del producto
-            $table->string('estado', 50)->nullable(); // Estado del producto
-            $table->enum('tipo_muestra', ['Frasco Original', 'Frasco Muestra'])->nullable(); // Tipo de muestra (valores corregidos)
-            $table->foreignId('clasificacion_id')->nullable()->constrained('clasificaciones')->onDelete('set null'); // Relación con clasificaciones
-            $table->timestamp('fecha_hora_entrega')->nullable(); // Fecha y hora de entrega
-            $table->boolean('aprobado_jefe_comercial')->default(false); // Aprobación jefe comercial
-            $table->boolean('aprobado_coordinadora')->default(false); // Aprobación Ángela
+            $table->string('nombre_muestra', 255); 
+            $table->text('observacion')->nullable(); 
+            $table->integer('cantidad_de_muestra')->nullable(); 
+            $table->decimal('precio', 10, 2)->nullable(); 
+            $table->string('estado', 50)->nullable(); 
+            $table->text('comentarios')->nullable();
+            $table->enum('tipo_muestra', ['Frasco Original', 'Frasco Muestra'])->nullable(); 
+            $table->foreignId('clasificacion_id')->nullable()->constrained('clasificaciones')->onDelete('set null'); 
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null'); 
+            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null'); 
+            $table->timestamp('fecha_hora_entrega')->nullable();
+            $table->string('foto')->nullable();
+            $table->boolean('aprobado_jefe_comercial')->default(false); 
+            $table->boolean('aprobado_coordinadora')->default(false); 
+            $table->string('name_doctor', 50)->nullable();
             $table->timestamps();
 
         });

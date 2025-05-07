@@ -8,7 +8,8 @@
     <link rel="shortcut icon" href="{{ asset('imgs/favicon.ico') }}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="{{ asset('css/muestras/aprobacion.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="{{ asset('css/muestras/labora.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
@@ -23,7 +24,7 @@
             | Laboratorio - Muestras
         @endsection
 
-        <h1 class="text-center"> Estado de las Muestras<hr></h1>
+        <h1 class="flex-grow-1 text-center"> Estado de las Muestras<hr></h1>
         <div class="table-responsive">
             <table class="table table-hover" id="table_muestras">
                 <thead>
@@ -31,14 +32,15 @@
                         <th scope="col">#</th>
                         <th scope="col">Nombre de la Muestra</th>
                         <th scope="col">Clasificación</th>
-                        <th scope="col">Tipo de Muestra</th> <!-- Nueva columna -->
-                        <th scope="col" class="th-small">Unidad <br> de Medida</th>
+                        <th scope="col">Tipo de Muestra</th>
                         <th scope="col">Cantidad</th>
                         <th scope="col" class="th-small">Aprobado por <br> Jefe Comercial</th>
                         <th scope="col" class="th-small">Aprobado por<br> Coordinadora</th>
-                        <th scope="col">Observaciones</th>
+                        <th>Creado por</th>
+                        <th>Doctor</th>
                         <th scope="col">Fecha/hora Recibida</th>
                         <th scope="col">Acciones</th> <!-- Columna para mostrar el estado con color -->
+                        <th scope="col">Ver</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,13 +50,6 @@
                             <td class="observaciones">{{ $muestra->nombre_muestra }}</td>
                             <td>{{ $muestra->clasificacion ? $muestra->clasificacion->nombre_clasificacion : 'Sin clasificación' }}</td>
                             <td>{{ $muestra->tipo_muestra ?? 'No asignado' }}</td> <!-- Mostrar el tipo de muestra -->
-                            <td>
-                                @if($muestra->clasificacion && $muestra->clasificacion->unidadMedida)
-                                    {{ $muestra->clasificacion->unidadMedida->nombre_unidad_de_medida }}
-                                @else
-                                    No asignada
-                                @endif
-                            </td>
                             <td>{{ $muestra->cantidad_de_muestra }}</td>
                             <td>
                                 <input type="checkbox" class="aprobacion-jefe" data-id="{{ $muestra->id }}" {{ $muestra->aprobado_jefe_comercial ? 'checked' : '' }}>
@@ -62,7 +57,8 @@
                             <td>
                                 <input type="checkbox" class="aprobado_coordinadora" data-id="{{ $muestra->id }}" {{ $muestra->aprobado_coordinadora ? 'checked' : '' }}>
                             </td>
-                            <td class="observaciones">{{ $muestra->observacion }}</td>
+                            <td>{{ $muestra->creator ? $muestra->creator->name : 'Desconocido' }}</td>
+                            <td class="observaciones">{{ $muestra->name_doctor }}</td>
                             <td>
                             {{ $muestra->updated_at ? $muestra->updated_at->format('Y-m-d') : $muestra->created_at->format('Y-m-d') }} <br>
                             {{ $muestra->updated_at ? $muestra->updated_at->format('H:i:s') : $muestra->created_at->format('H:i:s') }}</td>
@@ -73,12 +69,17 @@
                                     {{ $muestra->estado }}
                                 </span>
                             </td>
+                            <td>
+                                <a title="Ver detalles" href="{{ route('muestras.showJC', $muestra->id) }}" class="btn btn-success btn-sm">
+                                    <i class="bi bi-binoculars"></i>
+                                </a>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+            {!!$muestras->appends(request()->except('page'))->links()!!}
         </div>
-
     </div>
 </body>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

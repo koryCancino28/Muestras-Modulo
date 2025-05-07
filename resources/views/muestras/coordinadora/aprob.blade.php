@@ -8,18 +8,27 @@
     <link rel="shortcut icon" href="{{ asset('imgs/favicon.ico') }}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="{{ asset('css/muestras/aprobacion.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="{{ asset('css/muestras/labora.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 </head>
 
 <body>
     <h1 class="text-center mt-5 mb-5 fw-bold"></h1>
     
     <div class="container">
-        <h1 class="text-center">Estado de las Muestras<hr></h1>
+    @include('messages')
+        <h1 class="flex-grow-1 text-center">Estado de las Muestras<hr></h1>
+        <div class="header-tools">
+            <a title="Ver detalles" href="{{ route('muestras.createCO') }}" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Agregar Muestra
+            </a>
+        </div> 
         <div class="table-responsive">
             <table class="table table-hover" id="table_muestras">
                 <thead>
@@ -28,14 +37,14 @@
                         <th scope="col">Nombre de la Muestra</th>
                         <th scope="col">Clasificación</th>
                         <th scope="col">Tipo de Muestra</th>
-                        <th scope="col" class="th-small">Unidad <br> de Medida</th>
                         <th scope="col">Cantidad</th>
-                        <th scope="col" class="th-small">Aprobado por <br> Jefe Comercial</th>
-                        <th scope="col" class="th-small">Aprobado por<br> Coordinadora</th>
-                        <th scope="col">Observaciones</th>
-                        <th scope="col">Fecha/hora Recibida</th>
+                        <th scope="col" class="th-small">Aprobado<br> J. Comercial</th>
+                        <th scope="col" class="th-small">Aprobado<br> Coordinadora</th>
+                        <th>Creado por</th>
+                        <th>Doctor</th>
                         <th scope="col">Estado</th>
                         <th scope="col">Fecha/hora Entrega</th>
+                        <th scope="col">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,13 +54,6 @@
                             <td class="observaciones">{{ $muestra->nombre_muestra }}</td>
                             <td>{{ $muestra->clasificacion ? $muestra->clasificacion->nombre_clasificacion : 'Sin clasificación' }}</td>
                             <td>{{ $muestra->tipo_muestra ?? 'No asignado' }}</td>
-                            <td>
-                                @if($muestra->clasificacion && $muestra->clasificacion->unidadMedida)
-                                    {{ $muestra->clasificacion->unidadMedida->nombre_unidad_de_medida }}
-                                @else
-                                    No asignada
-                                @endif
-                            </td>
                             <td>{{ $muestra->cantidad_de_muestra }}</td>
                             <td>
                                 <input type="checkbox" class="aprobacion-jefe" disabled {{ $muestra->aprobado_jefe_comercial ? 'checked' : '' }}>
@@ -59,10 +61,8 @@
                             <td>
                                 <input type="checkbox" class="aprobado-coordinadora" data-id="{{ $muestra->id }}" {{ $muestra->aprobado_coordinadora ? 'checked' : '' }} {{ !$muestra->aprobado_jefe_comercial ? 'disabled' : '' }}>
                             </td>
-                            <td class="observaciones">{{ $muestra->observacion }}</td>
-                            <td>{{ $muestra->updated_at ? $muestra->updated_at->format('Y-m-d') : $muestra->created_at->format('Y-m-d') }} <br>
-                            {{ $muestra->updated_at ? $muestra->updated_at->format('H:i:s') : $muestra->created_at->format('H:i:s') }}
-                            </td>
+                            <td>{{ $muestra->creator ? $muestra->creator->name : 'Desconocido' }}</td>
+                            <td class="observaciones">{{ $muestra->name_doctor }}</td>
                             <td>
                                 <span class="badge" style="background-color: {{ $muestra->estado == 'Pendiente' ? 'red' : 'green' }}; color: white; padding: 5px;">
                                     {{ $muestra->estado }}
@@ -79,10 +79,28 @@
                                         min="{{ \Carbon\Carbon::now()->format('Y-m-d\TH:i') }}">
                                 </form>
                             </td>
+                            <td>
+                            <div class="d-flex gap-2">
+                                <a title="Ver detalles" href="{{ route('muestras.showCo', $muestra->id) }}" class="btn btn-success btn-sm">
+                                    <i class="bi bi-binoculars"></i>
+                                </a>
+                                <a href="{{ route('muestras.editCO', $muestra->id) }}" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-pencil-square"></i>   
+                                </a>
+                                    <form action="{{ route('muestras.destroyCO', $muestra->id) }}" method="post">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Desea eliminar esta muestra?');">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                    </div>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+            {!!$muestras->appends(request()->except('page'))->links()!!}
         </div>
     </div>
     <h1 class="text-center mt-5 mb-5 fw-bold"></h1>

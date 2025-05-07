@@ -1,52 +1,26 @@
-<!DOCTYPE html>
-<html lang="es">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muestras</title>
-    <link rel="shortcut icon" href="{{ asset('imgs/favicon.ico') }}" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="{{ asset('css/muestras/home.css') }}">
-    <style>
-        /* Estilo adicional para el modal */
-        .modal-content {
-            border-radius: 15px;
-        }
-
-        .modal-header {
-            background-color: #fe495f;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-<h1 class="text-center mt-5 mb-5 fw-bold">  </h1>
 <div class="container">
-<h1 class="text-center">
-    <a class="float-start" title="Volver" href="{{ route('muestras.index') }}">
+<h1 class="flex-grow-1 text-center">
+    <a class="float-start" title="Volver" href="{{ route('muestras.aprobacion.coordinadora') }}">
         <i class="bi bi-arrow-left-circle"></i>
     </a>
     Editar Muestra <hr>
 </h1>
 
-<form action="{{ route('muestras.update', $muestra->id) }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('muestras.updateCO', $muestra->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method("PUT")
 
-    <!-- Campo para el nombre de la muestra -->
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Nombre de la Muestra</label>
-            <input type="text" name="nombre_muestra" class="form-control" required value="{{ $muestra->nombre_muestra }}" />
+        <!-- Campo para el nombre de la muestra -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Nombre de la Muestra</label>
+                <input type="text" name="nombre_muestra" class="form-control" required value="{{ $muestra->nombre_muestra }}" />
+            </div>
         </div>
-    </div>
 
-     <!--FOTO CON MODAL -->
-     <div class="mb-3">
+         <!--FOTO CON MODAL -->
+         <div class="mb-3">
                     <label for="foto" class="form-label">Foto de la muestra (opcional)</label>
                     <div class="d-flex align-items-center">
                         <input type="file" name="foto" id="foto" class="form-control me-2" style="max-width: 80%;" accept="images/*">
@@ -74,27 +48,26 @@
                     </div>
                 </div>
 
-    <!-- Campo para la clasificación (select) -->
-    <div class="mb-3">
-        <label class="form-label">Clasificación</label>
-        <select name="clasificacion_id" id="clasificacion_id" class="form-select" required>
-            <option value="">Seleccione una clasificación</option>
-            @foreach ($clasificaciones as $clasificacion)
-                <option value="{{ $clasificacion->id }}" 
-                    {{ $clasificacion->id == $muestra->clasificacion_id ? 'selected' : '' }}>
-                    {{ $clasificacion->nombre_clasificacion }}
-                </option>
-            @endforeach
-        </select>
-    </div>
+        <!-- Campo para la clasificación (select) -->
+        <div class="mb-3">
+            <label class="form-label">Clasificación</label>
+            <select name="clasificacion_id" id="clasificacion_id" class="form-select" required>
+                <option value="">Seleccione una clasificación</option>
+                @foreach ($clasificaciones as $clasificacion)
+                    <option value="{{ $clasificacion->id }}" 
+                        {{ $clasificacion->id == $muestra->clasificacion_id ? 'selected' : '' }}>
+                        {{ $clasificacion->nombre_clasificacion }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
                 <!-- Campo para la unidad de medida (autocompletado desde la clasificación) -->
                 <div class="mb-3">
-                <label class="form-label">Unidad de Medida</label>
-                <input type="text" name="unidad_de_medida" id="unidad_de_medida" class="form-control" readonly required
-                    value="{{ $muestra->clasificacion->unidadMedida->nombre_unidad_de_medida ?? '' }}">
-            </div>
-
+                    <label class="form-label">Unidad de Medida</label>
+                    <input type="text" name="unidad_de_medida" id="unidad_de_medida" class="form-control" readonly required
+                        value="{{ $muestra->clasificacion->unidadMedida->nombre_unidad_de_medida ?? '' }}">
+                </div>
 
             <div class="mb-3">
                 <label for="name_doctor" class="form-label">Nombre del doctor</label>
@@ -132,8 +105,23 @@
         </button>
     </div>
 </form>
-<h1 class="text-center mt-5 mb-5 fw-bold">  </h1>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="{{ asset('css/muestras/home.css') }}">
+    <style>
+        /* Estilo adicional para el modal */
+        .modal-content {
+            border-radius: 15px;
+        }
+
+        .modal-header {
+            background-color: #fe495f;
+            color: white;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
     <script>
      document.addEventListener('DOMContentLoaded', function() {
@@ -151,9 +139,3 @@
             });
         });
 </script>
-
-
-
-</body>
-
-</html>

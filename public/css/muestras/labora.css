@@ -1,70 +1,49 @@
-body {
-    background-color: #f0f0f0 !important;
-    margin: 0;
-    padding: 0;
-}
-
+/* Estilos para el contenedor principal */
 .container {
-    background-color: #fff !important;
-    padding: 20px;
-    border-radius: 10px;
-    width: 100%;
-    max-width: 90vw; /* Ajuste para usar casi todo el ancho de la ventana */
-    margin: 0 auto;
-    overflow: hidden;
-    box-sizing: border-box;
+    background-color: #fff !important; /* Fondo blanco */
+    padding: 20px; /* Padding alrededor del contenido */
+    border-radius: 10px; /* Bordes redondeados */
+    width: 100%; /* Ocupa todo el ancho disponible */
+    max-width: 90vw; /* Ocupa el 90% del ancho de la ventana */
+    margin: 0 auto; /* Centrado automático */
+    overflow: hidden; /* Para evitar que el contenido se desborde */
+    box-sizing: border-box; /* Asegura que el padding no aumente el tamaño del contenedor */
 }
 
-label {
-    display: flex;
-    justify-content: flex-start;
+/* Estilo para el contenedor en pantallas más pequeñas */
+@media (max-width: 1400px) {
+    .container {
+        padding: 15px; /* Reducir padding en pantallas más pequeñas */
+    }
 }
 
-.btn_add {
-    width: 100%;
-    border: 1px solid #333 !important;
-    background-color: #333 !important;
+/* Estilo para el contenedor en pantallas pequeñas */
+@media (max-width: 1200px) {
+    .container {
+        padding: 10px; /* Reducir aún más el padding */
+        max-width: 100%; /* Para pantallas muy pequeñas, aseguramos que el contenedor ocupe todo el ancho */
+    }
+}
+.btn:hover {
+    transform: scale(1.03);
+    transition: transform 0.3s ease;
 }
 
-.btn_add:hover {
-    opacity: 0.8;
-} 
-
-.btn-success {
-    border: 1px solid #06c046 !important;
-    background-color: #06c046 !important;
+h1{
+    color: #fe495f; font-weight: bold; margin: 0;
 }
-
-hr {
-    height: 0.1px !important;
-    color: #06c046 !important;
-    width: 100% !important;
-    background-color: red;
-}
-
-.bi-arrow-right-circle {
-    font-size: 30px;
-}
-
-.flex_acciones {
-    list-style-type: none;
-    text-decoration: none;
-    display: flex;
-    justify-content: space-around;
-}
-
-/* ========== ESTILOS ESPECÍFICOS PARA LA TABLA ========== */
+/* Estilos generales para la tabla */
 .table-responsive {
     width: 100%;
-    overflow-x: visible; /* Cambiado de auto a visible */
+    overflow-x: auto; /* Permite el desplazamiento horizontal en pantallas pequeñas */
     -webkit-overflow-scrolling: touch;
 }
 
 #table_muestras {
     width: 100%;
-    table-layout: fixed; /* Forzar distribución uniforme del ancho */
+    table-layout: auto; /* Deja que las celdas se ajusten automáticamente */
     border-collapse: collapse;
-    font-size: 0.9em; /* Reducir ligeramente el tamaño de fuente */
+    font-size: 0.9em; /* Ajuste de tamaño de fuente */
 }
 
 #table_muestras th, 
@@ -75,92 +54,20 @@ hr {
     word-wrap: break-word;
 }
 
-/* Ajustes específicos para columnas */
-#table_muestras th:nth-child(1), 
-#table_muestras td:nth-child(1) {
-    width: 3%; /* Columna # */
+#table_muestras th{
+    color: rgb(237, 100, 116);
+    font-weight: bold;
 }
 
-#table_muestras th:nth-child(2), 
-#table_muestras td:nth-child(2) {
-    width: 10%; /* Nombre de la Muestra */
-}
-
-#table_muestras th:nth-child(3), 
-#table_muestras td:nth-child(3) {
-    width: 8%; /* Clasificación */
-}
-
-#table_muestras th:nth-child(4), 
-#table_muestras td:nth-child(4) {
-    width: 8%; /* Tipo de Muestra */
-}
-
-#table_muestras th:nth-child(5), 
-#table_muestras td:nth-child(5) {
-    width: 9%; /* Unidad de Medida */
-}
-
-#table_muestras th:nth-child(6), 
-#table_muestras td:nth-child(6),
-#table_muestras th:nth-child(7), 
-#table_muestras td:nth-child(7) {
-    width: 9%; /* Columnas de aprobación */
-}
-
-#table_muestras th:nth-child(8), 
-#table_muestras td:nth-child(8) {
-    width: 8%; /* Cantidad */
-}
-
-#table_muestras th:nth-child(9), 
-#table_muestras td:nth-child(9) {
-    width: 10%; /* Observaciones */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-#table_muestras th:nth-child(10), 
-#table_muestras td:nth-child(10) {
-    width: 8%; /* Fecha/hora Recibida */
-}
-
-#table_muestras th:nth-child(11), 
-#table_muestras td:nth-child(11) {
-    width: 9%; /* Estado */
-}
-
-#table_muestras th:nth-child(12), 
-#table_muestras td:nth-child(12) {
-    width: 8%; /* Acciones */
-}
-
-#table_muestras th:nth-child(13), 
-#table_muestras td:nth-child(13) {
-    width: 8%; /* Fecha/hora Entrega */
-}
-
-#table_muestras th:nth-child(14), 
-#table_muestras td:nth-child(14) {
-    width: 8%; /* Ver Muestras */
-}
-
+/* Estilos para celdas y texto largo en columnas */
 table td.observaciones {
-    max-width: 100px; /*  ancho máximo para la columna de observaciones */
+    max-width: 100px; /* Ancho máximo para la columna de observaciones */
     overflow: hidden; 
     text-overflow: ellipsis; /* Muestra '...' */
     white-space: nowrap; /* Evita que el texto se divida en múltiples líneas */
 }
 
-/* Estilos para elementos específicos dentro de la tabla */
-.precio-input {
-    min-width: 120px; 
-    width: 100%; 
-    box-sizing: border-box; 
-}
-
-/* Estilo para checkboxes */
+/* Estilos para checkboxes */
 input[type="checkbox"] {
     transform: scale(1.1);
     margin: 0 auto;
@@ -197,41 +104,61 @@ input[type="checkbox"]:checked::before {
     display: block;
 }
 
+.flex_acciones {
+    list-style-type: none;
+    text-decoration: none;
+    display: flex;
+    justify-content: space-around;
+}
 /* ========== RESPONSIVIDAD ========== */
+
+/* Para pantallas grandes */
 @media (max-width: 1600px) {
     #table_muestras {
         font-size: 0.85em;
     }
-    
+
     #table_muestras th, 
     #table_muestras td {
         padding: 6px 3px;
     }
 }
 
+/* Para pantallas medianas */
 @media (max-width: 1400px) {
     .container {
         padding: 15px;
     }
-    
+
     #table_muestras {
         font-size: 0.8em;
     }
 }
 
+/* Para pantallas pequeñas (tablets, móviles) */
 @media (max-width: 1200px) {
-    /* Cambiar a scroll horizontal en pantallas muy pequeñas */
     .table-responsive {
-        overflow-x: auto;
+        overflow-x: auto; /* Permitir scroll horizontal */
     }
-    
+
     #table_muestras {
-        table-layout: auto;
-        width: max-content;
+        table-layout: auto; /* Dejar que las celdas se ajusten automáticamente */
+        width: max-content; /* El ancho de la tabla será lo mínimo necesario */
     }
-    
+
     #table_muestras th, 
     #table_muestras td {
-        white-space: nowrap;
+        white-space: nowrap; /* Evitar saltos de línea innecesarios */
+    }
+
+    /* Reduces el tamaño de las celdas y ajusta la tabla en pantallas pequeñas */
+    #table_muestras th:nth-child(9), 
+    #table_muestras td:nth-child(9) {
+        width: auto; /* Elimina el ancho fijo de la columna */
+    }
+
+    /* Si deseas ajustar aún más las celdas de observaciones */
+    table td.observaciones {
+        width: auto;
     }
 }

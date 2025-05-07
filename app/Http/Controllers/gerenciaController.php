@@ -84,7 +84,7 @@ class gerenciaController extends Controller
        $muestras = Muestras::where('tipo_muestra', 'Frasco Original')
            ->whereMonth('created_at', Carbon::parse($mesSeleccionado)->month)
            ->whereYear('created_at', Carbon::parse($mesSeleccionado)->year)
-           ->get();
+           ->paginate(10);
 
        // Crear los datos para la tabla
        $muestrasData = [];
@@ -98,11 +98,12 @@ class gerenciaController extends Controller
                'cantidad' => $muestra->cantidad_de_muestra,
                'precio_unidad' => $muestra->precio,
                'precio_total' => $montoTotal,
+               'creator' => $muestra->creator,
            ];
            $totalCantidad += $muestra->cantidad_de_muestra;
            $totalPrecio += $montoTotal;
        }
-        return view('muestras.gerencia.frasco_original', compact('muestrasData', 'mesSeleccionado', 'totalCantidad', 'totalPrecio'));
+        return view('muestras.gerencia.frasco_original', compact('muestrasData', 'mesSeleccionado', 'totalCantidad', 'totalPrecio', 'muestras'));
     }
 
     //Método para el reporte frasco Muestra
@@ -114,7 +115,7 @@ class gerenciaController extends Controller
         $muestras = Muestras::where('tipo_muestra', 'Frasco Muestra')
                         ->whereMonth('created_at', Carbon::parse($mesSeleccionado)->month)
                         ->whereYear('created_at', Carbon::parse($mesSeleccionado)->year)
-                        ->get();
+                        ->paginate(10);
         $muestrasData = [];
         $totalCantidad = 0;
         $totalPrecio = 0;
@@ -131,27 +132,62 @@ class gerenciaController extends Controller
             'cantidad' => $cantidad,
             'precio_unidad' => $precioUnidad,
             'precio_total' => $precioTotal,
+            'creator' => $muestra->creator,
         ];
         $totalCantidad += $cantidad;
         $totalPrecio += $precioTotal;
         }
-        return view('muestras.gerencia.frasco_muestra', compact('muestrasData', 'mesSeleccionado', 'totalCantidad', 'totalPrecio'));
+        return view('muestras.gerencia.frasco_muestra', compact('muestrasData', 'mesSeleccionado', 'totalCantidad', 'totalPrecio', 'muestras'));
     }
 
     //===================Imprimir reporte-frascoMuestra
     public function exportarPDF(Request $request)
+{
+    $mesSeleccionado = $request->get('mes', Carbon::now()->format('Y-m')); 
+    $muestras = Muestras::where('tipo_muestra', 'Frasco Muestra')
+                        ->whereMonth('created_at', Carbon::parse($mesSeleccionado)->month)
+                        ->whereYear('created_at', Carbon::parse($mesSeleccionado)->year)
+                        ->get();  
+    
+    // Crear arrays para los datos
+    $muestrasData = [];
+    $totalCantidad = 0;
+    $totalPrecio = 0;    
+    
+    foreach ($muestras as $muestra) {
+        $cantidad = is_numeric($muestra->cantidad_de_muestra) ? $muestra->cantidad_de_muestra : 0;
+        $precioUnidad = is_numeric($muestra->precio) ? $muestra->precio : 0;
+        $precioTotal = $cantidad * $precioUnidad;
+
+        $muestrasData[] = [
+            'nombre_muestra' => $muestra->nombre_muestra,
+            'cantidad' => $cantidad,
+            'precio_unidad' => $precioUnidad,
+            'precio_total' => $precioTotal,
+            'creator' => $muestra->creator,
+        ];
+
+        $totalCantidad += $cantidad;
+        $totalPrecio += $precioTotal;
+    }
+    // Cargar la vista específica para PDF
+    $pdf = PDF::loadView('muestras.gerencia.pdf_muestra', compact('muestrasData', 'mesSeleccionado', 'totalCantidad', 'totalPrecio'));
+
+    // Descargar el archivo PDF
+    return $pdf->download('reporte_frasco_muestra_'.Carbon::parse($mesSeleccionado)->format('m_Y').'.pdf');
+}
+    public function exportarPDFFrascoOriginal(Request $request)
     {
-        $mesSeleccionado = $request->get('mes', Carbon::now()->format('Y-m')); 
-        $muestras = Muestras::where('tipo_muestra', 'Frasco Muestra')
+        $mesSeleccionado = $request->get('mes', Carbon::now()->format('Y-m'));
+        $muestras = Muestras::where('tipo_muestra', 'Frasco Original')
                             ->whereMonth('created_at', Carbon::parse($mesSeleccionado)->month)
                             ->whereYear('created_at', Carbon::parse($mesSeleccionado)->year)
-                            ->get();  
+                            ->get();
         
-        // Crear arrays para los datos
         $muestrasData = [];
         $totalCantidad = 0;
-        $totalPrecio = 0;    
-        
+        $totalPrecio = 0;
+    
         foreach ($muestras as $muestra) {
             $cantidad = is_numeric($muestra->cantidad_de_muestra) ? $muestra->cantidad_de_muestra : 0;
             $precioUnidad = is_numeric($muestra->precio) ? $muestra->precio : 0;
@@ -162,55 +198,23 @@ class gerenciaController extends Controller
                 'cantidad' => $cantidad,
                 'precio_unidad' => $precioUnidad,
                 'precio_total' => $precioTotal,
+                'creator' => $muestra->creator,
             ];
     
             $totalCantidad += $cantidad;
             $totalPrecio += $precioTotal;
         }
-        // Cargar la vista específica para PDF
-        $pdf = PDF::loadView('muestras.gerencia.pdf_muestra', compact('muestrasData', 'mesSeleccionado', 'totalCantidad', 'totalPrecio'));
     
-        // Descargar el archivo PDF
-        return $pdf->download('reporte_frasco_muestra_'.Carbon::parse($mesSeleccionado)->format('m_Y').'.pdf');
+        $pdf = PDF::loadView('muestras.gerencia.pdf_original', compact('muestrasData', 'mesSeleccionado', 'totalCantidad', 'totalPrecio'));
+        
+        // Opciones para mejorar la visualización en PDF
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'defaultFont' => 'sans-serif'
+        ]);
+        
+        return $pdf->download('reporte_frasco_original_'.str_replace('/', '-', $mesSeleccionado).'.pdf');
     }
-        public function exportarPDFFrascoOriginal(Request $request)
-        {
-            $mesSeleccionado = $request->get('mes', Carbon::now()->format('Y-m'));
-            $muestras = Muestras::where('tipo_muestra', 'Frasco Original')
-                                ->whereMonth('created_at', Carbon::parse($mesSeleccionado)->month)
-                                ->whereYear('created_at', Carbon::parse($mesSeleccionado)->year)
-                                ->get();
-            
-            $muestrasData = [];
-            $totalCantidad = 0;
-            $totalPrecio = 0;
-        
-            foreach ($muestras as $muestra) {
-                $cantidad = is_numeric($muestra->cantidad_de_muestra) ? $muestra->cantidad_de_muestra : 0;
-                $precioUnidad = is_numeric($muestra->precio) ? $muestra->precio : 0;
-                $precioTotal = $cantidad * $precioUnidad;
-        
-                $muestrasData[] = [
-                    'nombre_muestra' => $muestra->nombre_muestra,
-                    'cantidad' => $cantidad,
-                    'precio_unidad' => $precioUnidad,
-                    'precio_total' => $precioTotal,
-                ];
-        
-                $totalCantidad += $cantidad;
-                $totalPrecio += $precioTotal;
-            }
-        
-            $pdf = PDF::loadView('muestras.gerencia.pdf_original', compact('muestrasData', 'mesSeleccionado', 'totalCantidad', 'totalPrecio'));
-            
-            // Opciones para mejorar la visualización en PDF
-            $pdf->setPaper('A4', 'portrait');
-            $pdf->setOptions([
-                'isHtml5ParserEnabled' => true,
-                'isRemoteEnabled' => true,
-                'defaultFont' => 'sans-serif'
-            ]);
-            
-            return $pdf->download('reporte_frasco_original_'.str_replace('/', '-', $mesSeleccionado).'.pdf');
-        }
 }

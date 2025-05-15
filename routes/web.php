@@ -7,7 +7,9 @@ use App\Http\Controllers\JcomercialController;
 use App\Http\Controllers\jefe_proyectosController;
 use App\Http\Controllers\laboratorioController;
 use App\Http\Controllers\gerenciaController;
-
+//COTIZADOR GENERAL
+use App\Http\Controllers\ProductoFinalController;
+use App\Http\Controllers\BaseController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -60,3 +62,27 @@ Route::get('/reporte/frasco-muestra', [gerenciaController::class, 'mostrarReport
 Route::get('reporte/PDF-frascoMuestra', [gerenciaController::class, 'exportarPDF'])->name('muestras.exportarPDF');
 Route::get('reporte/PDF-frascoOriginal', [gerenciaController::class, 'exportarPDFFrascoOriginal'])->name('muestras.frasco.original.pdf');
 
+//COTIZADOR GENERAL----------
+
+
+// Rutas estándar del CRUD
+Route::resource('productos-finales', ProductoFinalController::class)->names([
+    'index' => 'productos-finales.index',
+    'create' => 'productos-finales.create',
+    'store' => 'productos-finales.store',
+    'show' => 'productos-finales.show',
+    'edit' => 'productos-finales.edit',
+    'update' => 'productos-finales.update',
+    'destroy' => 'productos-finales.destroy',
+]);
+
+// Ruta adicional para obtener bases según la clasificación
+Route::get('/productos-finales/bases/{clasificacionId}', [ProductoFinalController::class, 'getBasesByClasificacion'])
+    ->name('productos-finales.getBasesByClasificacion');
+
+//laboratorio 
+Route::resource('bases', BaseController::class);
+use App\Http\Controllers\InsumoEmpaqueController;
+
+//administración
+Route::resource('insumo_empaque', InsumoEmpaqueController::class);

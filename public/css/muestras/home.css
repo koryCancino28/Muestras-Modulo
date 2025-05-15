@@ -17,12 +17,19 @@ label {
     display: block;
     margin: 0 auto;
 }
+
 .btn_add:hover {
     opacity: 0.8;
 } 
 .btn-success {
     border: 1px solid #06c046 !important;
     background-color: #06c046 !important;
+}
+.btn_crear {
+    border: 1px solid#fe495f !important;
+    background-color:rgb(255, 113, 130); 
+    color: white;
+    margin: 0 auto;
 }
 hr {
     height: 0.1px !important;
@@ -92,7 +99,10 @@ table td, table th {
     width: 100%;
     border-collapse: collapse;
 }
-
+.table th{
+    color: rgb(237, 100, 116);
+    font-weight: bold;
+}
 .th-small, .td-small {
     width: 80px;
     text-align: center;

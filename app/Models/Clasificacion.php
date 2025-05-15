@@ -16,18 +16,24 @@ class Clasificacion extends Model
         'unidad_de_medida_id',
     ];
 
-    // Si el nombre de la tabla no sigue la convención de pluralización
     protected $table = 'clasificaciones';
 
-    // Relación con las unidades de medida
-    public function unidadMedida() // Método en minúsculas y singular
+
+    public function unidadMedida() 
     {
-        return $this->belongsTo(UnidadMedida::class, 'unidad_de_medida_id'); // Relación con la tabla 'unidad_de_medida'
+        return $this->belongsTo(UnidadMedida::class, 'unidad_de_medida_id'); 
     }
 
-    // Define la relación con la tabla de muestras
     public function muestras()
     {
-        return $this->hasMany(Muestras::class); // Reemplazado Muestra::class por Muestras::class
+        return $this->hasMany(Muestras::class);
+    }
+    public function volumenes()
+    {
+        return $this->hasMany(Volumen::class, 'clasificacion_id');
+    }
+    public function bases()
+    {
+        return $this->hasMany(Base::class);
     }
 }

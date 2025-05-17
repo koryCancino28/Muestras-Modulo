@@ -1,7 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-    <h3>Crear Insumo, Material o Envase</h3>
+     <div class="form-check mb-3">
+            <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('insumo_empaque.index') }}">
+            <i class="bi bi-arrow-left-circle"></i></a>
+            Crear Insumos</h1>
+        </div>
     <form action="{{ route('insumo_empaque.store') }}" method="POST">
         @csrf
 

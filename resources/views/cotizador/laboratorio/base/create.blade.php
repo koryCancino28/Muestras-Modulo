@@ -2,14 +2,18 @@
 
 @section('content')
 <div class="container">
+    
 <div class="form-check mb-3">
     <input type="checkbox" class="form-check-input" id="toggle-producto_final" name="agregar_producto_final">
     <label class="form-check-label" for="toggle-producto_final">Agregar PRODUCTO FINAL</label>
-     <h1 class="text-center">Crear Base</h1>
 </div>
 
     <div id="formulario-normal">
-       
+        <div class="form-check mb-3">
+            <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('bases.index') }}">
+            <i class="bi bi-arrow-left-circle"></i></a>
+            Crear Base</h1>
+        </div>
     <!-- Incluir CSS de Select2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <form method="POST" action="{{ route('bases.store') }}">

@@ -2,9 +2,11 @@
 
 @section('content')
 <div class="container">
-    <div class="form-check mb-3">
-         <h1 class="text-center">Editar Base</h1>
-    </div>
+     <div class="form-check mb-3">
+            <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('bases.index') }}">
+            <i class="bi bi-arrow-left-circle"></i></a>
+            Editar Base</h1>
+        </div>
 
 <form method="POST" action="{{ route('bases.update', $base->id) }}">
     @csrf
@@ -44,7 +46,7 @@
                     @foreach($volumenes as $volumen)
                         <option value="{{ $volumen->id }}" 
                                 {{ $base->volumen_id == $volumen->id ? 'selected' : '' }}>
-                            {{ $volumen->nombre_volumen }}
+                            {{ $volumen->nombre }}
                         </option>
                     @endforeach
                 </select>
@@ -54,6 +56,11 @@
                 <label for="cantidad">Stock de la base</label>
                 <input type="number" step="any" class="form-control" name="cantidad" value="{{ $base->cantidad }}" required>
             </div>
+            @if($errors->has('tipo'))
+                <div class="alert alert-danger">
+                    {{ $errors->first('tipo') }}
+                </div>
+            @endif
         </div>
 
         <!-- Columna derecha: insumos -->
@@ -507,4 +514,5 @@ $(document).ready(function() {
     });
 });
 </script>
+
 @endsection

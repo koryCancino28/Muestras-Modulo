@@ -84,7 +84,7 @@ class BaseController extends Controller
 
             $empaques = $request->input('empaques', []);
             foreach ($empaques as $empaque) {
-                $modeloEmpaque = \App\Models\Empaque::find($empaque['id']);
+                $modeloEmpaque = Empaque::find($empaque['id']);
                 if ($modeloEmpaque) {
                     $precioTotal += $modeloEmpaque->costo * $empaque['cantidad'];
                 }

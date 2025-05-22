@@ -13,7 +13,7 @@ class ProductoFinal extends Model
     protected $fillable = [
         'nombre', 'clasificacion_id', 'unidad_de_medida_id',
         'costo_total_produccion', 'costo_total_real', 'costo_total_publicado',
-        'estado', 'stock', 'created_by', 'updated_by'
+        'estado', 'volumen_id', 'stock', 'created_by', 'updated_by'
     ];
 
     public function clasificacion()

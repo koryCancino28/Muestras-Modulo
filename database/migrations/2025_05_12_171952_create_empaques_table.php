@@ -14,7 +14,7 @@ return new class extends Migration
             $table->enum('tipo', ['material', 'envase']); // Columna discriminadora
             $table->decimal('costo', 10, 2);
             $table->boolean('estado')->default(true); // true = con stock, false = sin stock
-             $table->integer('cantidad');
+            $table->integer('cantidad');
             $table->text('descripcion')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');

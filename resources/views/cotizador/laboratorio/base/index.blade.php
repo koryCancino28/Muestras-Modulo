@@ -6,7 +6,7 @@
                 <div class="mb-3">
                     <a href="{{ route('bases.create') }}" class="btn btn_crear">+ Crear Nueva</a>
                 </div>
-            <table class="table table-bordered table-responsive">
+            <table class="table table-bordered table-responsive" id="table_muestras">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -46,11 +46,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <style>
         .btn-sm {
-        font-size: 1rem; 
-        padding: 8px 14px; 
-        border-radius: 8px;
-        display: flex; 
-        align-items: center; 
+            font-size: 1rem; 
+            padding: 8px 14px; 
+            border-radius: 8px;
+            display: flex; 
+            align-items: center; 
         }
 
         .btn-sm i {
@@ -86,4 +86,33 @@
             white-space: nowrap; 
         }
     </style>
+      <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#table_muestras').DataTable({
+                    language: {
+                        url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json',
+                    },
+                    ordering: false,
+                    responsive: true,
+                    // quitamos "l" del DOM para eliminar el selector de cantidad de registros
+                    dom: '<"row"<"col-sm-12 col-md-12"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                    pageLength: 10,
+                    initComplete: function() {
+                        $('.dataTables_filter')
+                            .addClass('mb-3')
+                            .find('input')
+                            .attr('placeholder', 'Buscar por nombre del insumo') // <- aquí el placeholder
+                            .end()
+                            .find('label')
+                            .contents().filter(function() {
+                                return this.nodeType === 3;
+                            }).remove()
+                            .end()
+                            .prepend('Buscar:');
+                    }
+                });
+            });
+    </script>
 @endsection

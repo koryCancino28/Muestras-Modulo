@@ -14,6 +14,7 @@ class Insumo extends Model
         'nombre',
         'precio',
         'unidad_de_medida_id',
+        'estado',
         'stock',
         'created_by',
         'updated_by',
@@ -29,6 +30,10 @@ class Insumo extends Model
     {
         return $this->belongsToMany(ProductoFinal::class, 'producto_final_insumo')
                     ->withPivot('cantidad', 'precio');
+    }
+    public function unidadMedida()
+    {
+        return $this->belongsTo(UnidadMedida::class, 'unidad_de_medida_id');
     }
 
 }

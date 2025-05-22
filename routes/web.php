@@ -66,15 +66,8 @@ Route::get('reporte/PDF-frascoOriginal', [gerenciaController::class, 'exportarPD
 
 
 // Rutas estándar del CRUD
-Route::resource('productos-finales', ProductoFinalController::class)->names([
-    'index' => 'productos-finales.index',
-    'create' => 'productos-finales.create',
-    'store' => 'productos-finales.store',
-    'show' => 'productos-finales.show',
-    'edit' => 'productos-finales.edit',
-    'update' => 'productos-finales.update',
-    'destroy' => 'productos-finales.destroy',
-]);
+Route::resource('producto_final', ProductoFinalController::class);
+
 
 // Ruta adicional para obtener bases según la clasificación
 Route::get('/productos-finales/bases/{clasificacionId}', [ProductoFinalController::class, 'getBasesByClasificacion'])

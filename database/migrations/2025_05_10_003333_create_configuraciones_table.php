@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('configuraciones', function (Blueprint $table) {
             $table->id();
             $table->string('nombre'); // Ejemplo: 'costo_humano'
-            $table->decimal('valor', 10, 2); // El valor del costo fijo, por ejemplo, 26.3
+            $table->decimal('valor', 10, 3); // El valor del costo fijo, por ejemplo, 26.3
             $table->text('descripcion')->nullable(); // Descripción opcional
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');

@@ -31,19 +31,19 @@ class ConfiguracionesSeeder extends Seeder
             [
                 'id' => 4,
                 'nombre' => 'margen_publico',
-                'valor' => 1.702,  // El margen público, por ejemplo
+                'valor' => 1.702,  
                 'descripcion' => 'Margen de venta para público',
             ],
             [
                 'id' => 5,
                 'nombre' => 'margen_medico_estandar',
-                'valor' => 1.05,  // Margen de venta estándar para médicos
+                'valor' => 1.05,  
                 'descripcion' => 'Margen de venta estándar para médicos',
             ],
             [
                 'id' => 6,
                 'nombre' => 'margen_medico_con_insumos_caros',
-                'valor' => 1.5,  // Margen de venta para médicos con insumos caros
+                'valor' => 1.5,  
                 'descripcion' => 'Margen de venta para médicos con insumos caros',
             ],
         ]);

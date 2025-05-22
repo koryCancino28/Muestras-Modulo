@@ -20,7 +20,7 @@ class BaseController extends Controller
         $empaques = Empaque::all();
         $prebases = Base::where('tipo', 'prebase')->get();
         $volumenesAgrupados = Volumen::all()->groupBy('clasificacion_id');
-
+        
         return view('cotizador.laboratorio.base.create', compact(
             'clasificaciones',
             'insumos',
@@ -43,15 +43,27 @@ class BaseController extends Controller
             'cantidad' => 'required|numeric|min:0',
             'tipo' => 'required|in:prebase,final',
         ]);
-
         $tipo = $request->input('tipo');
         $precioTotal = 0;
-
-        // 🔹 Calcular unidad_de_medida_id desde la clasificación
+        //controla queal menos se ingresen lo que se necesita para crear cada tipo de base
+            if ($tipo === 'final') { 
+                    if (empty($request->insumos) || empty($request->prebases) || empty($request->empaques)) {
+                        return back()->withInput()->withErrors([
+                            'llenar' => 'Debe ingresar al menos un insumo, una prebase y un empaque para una Base Final.',
+                        ]);
+                    }
+                } elseif ($tipo === 'prebase') {
+                    if (empty($request->insumos)) {
+                        return back()->withInput()->withErrors([
+                            'llenar' => 'Debe ingresar al menos un insumo para una Prebase.',
+                        ]);
+                    }
+                }
+        // unidad_de_medida_id desde la clasificación
         $clasificacion = Clasificacion::find($request->clasificacion_id);
         $unidadDeMedidaId = $clasificacion?->unidad_de_medida_id;
 
-        // 🔹 Calcular el precio total de insumos
+        //precio total de insumos
         $insumos = $request->input('insumos', []);
         foreach ($insumos as $insumo) {
             $modeloInsumo = Insumo::find($insumo['id']);
@@ -60,7 +72,7 @@ class BaseController extends Controller
             }
         }
 
-        // 🔹 Si es base final, sumar también prebases y empaques
+        //Si es base final, sumar también prebases y empaques
         if ($tipo === 'final') {
             $prebases = $request->input('prebases', []);
             foreach ($prebases as $prebase) {
@@ -79,7 +91,7 @@ class BaseController extends Controller
             }
         }
 
-        // 🔸 Crear la base con unidad_de_medida_id derivada de la clasificación
+        //Crear la base con unidad_de_medida_id derivada de la clasificación
         $base = Base::create([
             'nombre' => $request->nombre,
             'clasificacion_id' => $request->clasificacion_id,
@@ -96,7 +108,6 @@ class BaseController extends Controller
                 $base->insumos()->attach($insumo['id'], ['cantidad' => $insumo['cantidad']]);
             }
         }
-
         // Relacionar prebases y empaques si es final
         if ($tipo === 'final') {
             if (!empty($prebases)) {
@@ -104,7 +115,6 @@ class BaseController extends Controller
                     $base->prebases()->attach($prebase['id'], ['cantidad' => $prebase['cantidad']]);
                 }
             }
-
             if (!empty($empaques)) {
                 foreach ($empaques as $empaque) {
                     $base->empaques()->attach($empaque['id'], ['cantidad' => $empaque['cantidad']]);
@@ -114,186 +124,200 @@ class BaseController extends Controller
 
         return redirect()->route('bases.index')->with('success', 'Base creada exitosamente.');
     }
-public function edit($id)
-{
-    $base = Base::with(['insumos', 'prebases', 'empaques', 'clasificacion.unidadMedida'])->findOrFail($id);
-    
-    $clasificaciones = Clasificacion::all();
-    $volumenes = Volumen::where('clasificacion_id', $base->clasificacion_id)->get();
-    $insumos = Insumo::all();
-    
-    // Excluir esta base de las prebases disponibles
-    $prebases = Base::where('tipo', 'prebase')
-                   ->where('id', '!=', $id) // ← Excluye la base actual
-                   ->get();
-    
-    $empaques = Empaque::all();
-    $volumenesAgrupados = Volumen::all()->groupBy('clasificacion_id');
-    
-    return view('cotizador.laboratorio.base.edit', compact(
-        'base', 
-        'clasificaciones', 
-        'volumenes', 
-        'insumos', 
-        'prebases', 
-        'empaques',
-        'volumenesAgrupados'
-    ));
-}
 
-    public function update(Request $request, $id)
-{
-    $request->validate([
-        'nombre' => 'required|string|max:255',
-        'clasificacion_id' => 'required|exists:clasificaciones,id',
-        'volumen_id' => 'required|exists:volumenes,id',
-        'cantidad' => 'required|numeric|min:0',
-        'tipo' => 'required|in:final,prebase',
-        'insumos' => 'required|array',
-        'insumos.*.cantidad' => 'required|numeric|min:0.01',
-    ]);
-    
-    $base = Base::findOrFail($id);
-    $tipo = $request->input('tipo');
-    // Verificar si está cambiando de prebase a base final y si es usada como prebase
-    if ($base->tipo == 'prebase' && $tipo == 'final') {
-        $basesDependientes = Base::whereHas('prebases', function($query) use ($id) {
-            $query->where('prebase_id', $id);
-        })->get();
+        public function edit($id)
+    {
+        $base = Base::with(['insumos', 'prebases', 'empaques', 'clasificacion.unidadMedida'])->findOrFail($id);
         
-        if ($basesDependientes->isNotEmpty()) {
-            $nombresBases = $basesDependientes->pluck('nombre')->implode(', ');
-            return back()->withInput()->withErrors([
-                'tipo' => 'No puedes cambiar esta prebase a base final porque es utilizada en las siguientes bases: '.$nombresBases.'. Primero debes eliminar estas dependencias.'
-            ]);
-        }
+        $clasificaciones = Clasificacion::all();
+        $volumenes = Volumen::where('clasificacion_id', $base->clasificacion_id)->get();
+        $insumos = Insumo::all();
+        
+        // Excluir esta base de las prebases disponibles
+        $prebases = Base::where('tipo', 'prebase')
+                    ->where('id', '!=', $id) // ← Excluye la base actual
+                    ->get();
+        
+        $empaques = Empaque::all();
+        $volumenesAgrupados = Volumen::all()->groupBy('clasificacion_id');
+        
+        return view('cotizador.laboratorio.base.edit', compact(
+            'base', 
+            'clasificaciones', 
+            'volumenes', 
+            'insumos', 
+            'prebases', 
+            'empaques',
+            'volumenesAgrupados'
+        ));
     }
-    $precioTotal = 0;
-    
-    DB::beginTransaction();
-    try {
-        // Calcular unidad_de_medida_id desde la clasificación
-        $clasificacion = Clasificacion::find($request->clasificacion_id);
-        $unidadDeMedidaId = $clasificacion?->unidad_de_medida_id;
-        
-        // Actualizar datos básicos
-        $base->update([
-            'nombre' => $request->nombre,
-            'clasificacion_id' => $request->clasificacion_id,
-            'volumen_id' => $request->volumen_id,
-            'unidad_de_medida_id' => $unidadDeMedidaId,
-            'cantidad' => $request->cantidad,
-            'tipo' => $tipo,
+
+        public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'clasificacion_id' => 'required|exists:clasificaciones,id',
+            'volumen_id' => 'required|exists:volumenes,id',
+            'cantidad' => 'required|numeric|min:1',
+            'tipo' => 'required|in:final,prebase',
+            'insumos' => 'required|array',
+            'insumos.*.cantidad' => 'required|numeric|min:0.01',
         ]);
         
-        // 🔹 Calcular el precio total de insumos
-        $insumosSync = [];
-        foreach ($request->insumos as $insumoId => $data) {
-            $modeloInsumo = Insumo::find($insumoId);
-            if ($modeloInsumo) {
-                $precioTotal += $modeloInsumo->precio * $data['cantidad'];
-            }
-            $insumosSync[$insumoId] = ['cantidad' => $data['cantidad']];
-        }
-        $base->insumos()->sync($insumosSync);
-        
-        // Para bases finales, sincronizar prebases y empaques
-        if ($tipo == 'final') {
-            $request->validate([
-                'prebases' => 'required|array',
-                'prebases.*.cantidad' => 'required|numeric|min:0.01',
-                'empaques' => 'required|array',
-                'empaques.*.cantidad' => 'required|numeric|min:1',
-            ]);
-
-             // Validación adicional para evitar que se incluya a sí misma
-        if (array_key_exists($id, $request->prebases)) {
-            return back()->withErrors([
-                'prebases' => 'No puedes incluir esta base como prebase de sí misma'
-            ]);
-        }    
-            // 🔹 Calcular precio de prebases
-            $prebasesSync = [];
-            foreach ($request->prebases as $prebaseId => $data) {
-                $modeloPrebase = Base::find($prebaseId);
-                if ($modeloPrebase) {
-                    $precioTotal += $modeloPrebase->precio * $data['cantidad'];
-                }
-                $prebasesSync[$prebaseId] = ['cantidad' => $data['cantidad']];
-            }
-            $base->prebases()->sync($prebasesSync);
+        $base = Base::findOrFail($id);
+        $tipo = $request->input('tipo');
+        // Verificar si está cambiando de prebase a base final y si es usada como prebase
+        if ($base->tipo == 'prebase' && $tipo == 'final') {
+            $basesDependientes = Base::whereHas('prebases', function($query) use ($id) {
+                $query->where('prebase_id', $id);
+            })->get();
             
-            // 🔹 Calcular precio de empaques
-            $empaquesSync = [];
-            foreach ($request->empaques as $empaqueId => $data) {
-                $modeloEmpaque = Empaque::find($empaqueId);
-                if ($modeloEmpaque) {
-                    $precioTotal += $modeloEmpaque->costo * $data['cantidad'];
-                }
-                $empaquesSync[$empaqueId] = ['cantidad' => $data['cantidad']];
+            if ($basesDependientes->isNotEmpty()) {
+                $nombresBases = $basesDependientes->pluck('nombre')->implode(', ');
+                return back()->withInput()->withErrors([
+                    'tipo' => 'No puedes cambiar esta prebase a base final porque es utilizada en las siguientes bases: '.$nombresBases.'. Primero debes eliminar estas dependencias.'
+                ]);
             }
-            $base->empaques()->sync($empaquesSync);
-        } else {
-            // Si es prebase, eliminar relaciones con prebases y empaques
-            $base->prebases()->detach();
-            $base->empaques()->detach();
         }
-        
-        // Actualizar precio total
-        $base->update(['precio' => $precioTotal]);
-        
-        DB::commit();
-        
-        return redirect()->route('bases.index')->with('success', 'Base actualizada correctamente.');
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return back()->with('error', 'Error al actualizar la base: ' . $e->getMessage());
-    }
-}
-
-public function show($id)
-{
-    // Cargar la base con todas sus relaciones
-    $base = Base::with([
-        'insumos',
-        'prebases',
-        'empaques',
-        'clasificacion',
-        'unidadDeMedida',
-        'volumen'
-    ])->findOrFail($id);
-
-    return view('cotizador.laboratorio.base.show', compact('base'));
-}
-
-public function destroy($id)
-{
-    $base = Base::findOrFail($id);
-
-    // Verificar si es prebase y tiene dependencias
-    if ($base->tipo == 'prebase') {
-        $basesDependientes = Base::whereHas('prebases', function($query) use ($id) {
-            $query->where('prebase_id', $id);
-        })->pluck('nombre')->toArray();
-
-        if (!empty($basesDependientes)) {
-            $mensajeError = 'No se puede eliminar esta prebase porque es utilizada en las siguientes bases: '
-                . implode(', ', $basesDependientes) 
-                . '. Por favor, actualiza esas bases primero.';
+        $precioTotal = 0;
+        //controla queal menos se ingresen lo que se necesita para crear cada tipo de base
+            if ($tipo === 'final') { 
+                    if (empty($request->insumos) || empty($request->prebases) || empty($request->empaques)) {
+                        return back()->withInput()->withErrors([
+                            'tipo' => 'Debe ingresar al menos un insumo, una prebase y un empaque para una Base Final.',
+                        ]);
+                    }
+                } elseif ($tipo === 'prebase') {
+                    if (empty($request->insumos)) {
+                        return back()->withInput()->withErrors([
+                            'tipo' => 'Debe ingresar al menos un insumo para una Prebase.',
+                        ]);
+                    }
+                }
+        DB::beginTransaction();
+        try {
+            // Calcular unidad_de_medida_id desde la clasificación
+            $clasificacion = Clasificacion::find($request->clasificacion_id);
+            $unidadDeMedidaId = $clasificacion?->unidad_de_medida_id;
             
-            return back()->with('error', $mensajeError);
+            // Actualizar datos básicos
+            $base->update([
+                'nombre' => $request->nombre,
+                'clasificacion_id' => $request->clasificacion_id,
+                'volumen_id' => $request->volumen_id,
+                'unidad_de_medida_id' => $unidadDeMedidaId,
+                'cantidad' => $request->cantidad,
+                'tipo' => $tipo,
+            ]);
+            
+            // 🔹 Calcular el precio total de insumos
+            $insumosSync = [];
+            foreach ($request->insumos as $insumoId => $data) {
+                $modeloInsumo = Insumo::find($insumoId);
+                if ($modeloInsumo) {
+                    $precioTotal += $modeloInsumo->precio * $data['cantidad'];
+                }
+                $insumosSync[$insumoId] = ['cantidad' => $data['cantidad']];
+            }
+            $base->insumos()->sync($insumosSync);
+            
+            // Para bases finales, sincronizar prebases y empaques
+            if ($tipo == 'final') {
+                $request->validate([
+                    'prebases' => 'required|array',
+                    'prebases.*.cantidad' => 'required|numeric|min:0.01',
+                    'empaques' => 'required|array',
+                    'empaques.*.cantidad' => 'required|numeric|min:1',
+                ]);
+
+                // Validación adicional para evitar que se incluya a sí misma
+            if (array_key_exists($id, $request->prebases)) {
+                return back()->withErrors([
+                    'prebases' => 'No puedes incluir esta base como prebase de sí misma'
+                ]);
+            }    
+                // 🔹 Calcular precio de prebases
+                $prebasesSync = [];
+                foreach ($request->prebases as $prebaseId => $data) {
+                    $modeloPrebase = Base::find($prebaseId);
+                    if ($modeloPrebase) {
+                        $precioTotal += $modeloPrebase->precio * $data['cantidad'];
+                    }
+                    $prebasesSync[$prebaseId] = ['cantidad' => $data['cantidad']];
+                }
+                $base->prebases()->sync($prebasesSync);
+                
+                // 🔹 Calcular precio de empaques
+                $empaquesSync = [];
+                foreach ($request->empaques as $empaqueId => $data) {
+                    $modeloEmpaque = Empaque::find($empaqueId);
+                    if ($modeloEmpaque) {
+                        $precioTotal += $modeloEmpaque->costo * $data['cantidad'];
+                    }
+                    $empaquesSync[$empaqueId] = ['cantidad' => $data['cantidad']];
+                }
+                $base->empaques()->sync($empaquesSync);
+            } else {
+                // Si es prebase, eliminar relaciones con prebases y empaques
+                $base->prebases()->detach();
+                $base->empaques()->detach();
+            }
+            
+            // Actualizar precio total
+            $base->update(['precio' => $precioTotal]);
+            
+            DB::commit();
+            
+            return redirect()->route('bases.index')->with('success', 'Base actualizada correctamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Error al actualizar la base: ' . $e->getMessage());
         }
     }
 
-    // Eliminar relaciones primero
-    $base->insumos()->detach();
-    $base->prebases()->detach();
-    $base->empaques()->detach();
+    public function show($id)
+    {
+        // Cargar la base con todas sus relaciones
+        $base = Base::with([
+            'insumos',
+            'prebases',
+            'empaques',
+            'clasificacion',
+            'unidadDeMedida',
+            'volumen'
+        ])->findOrFail($id);
 
-    // Eliminar la base
-    $base->delete();
+        return view('cotizador.laboratorio.base.show', compact('base'));
+    }
 
-    return redirect()->route('bases.index')
-        ->with('success', 'Base eliminada correctamente.');
-}
+    public function destroy($id)
+    {
+        $base = Base::findOrFail($id);
+
+        // Verificar si es prebase y tiene dependencias
+        if ($base->tipo == 'prebase') {
+            $basesDependientes = Base::whereHas('prebases', function($query) use ($id) {
+                $query->where('prebase_id', $id);
+            })->pluck('nombre')->toArray();
+
+            if (!empty($basesDependientes)) {
+                $mensajeError = 'No se puede eliminar esta prebase porque es utilizada en las siguientes bases: '
+                    . implode(', ', $basesDependientes) 
+                    . '. Por favor, actualiza esas bases primero.';
+                
+                return back()->with('error', $mensajeError);
+            }
+        }
+
+        // Eliminar relaciones primero
+        $base->insumos()->detach();
+        $base->prebases()->detach();
+        $base->empaques()->detach();
+
+        // Eliminar la base
+        $base->delete();
+
+        return redirect()->route('bases.index')
+            ->with('success', 'Base eliminada correctamente.');
+    }
 }

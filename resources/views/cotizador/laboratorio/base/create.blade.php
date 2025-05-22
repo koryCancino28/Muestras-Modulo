@@ -12,7 +12,7 @@
         <div class="form-check mb-3">
             <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('bases.index') }}">
             <i class="bi bi-arrow-left-circle"></i></a>
-            Crear Base</h1>
+            Crear Formulación</h1>
         </div>
     <!-- Incluir CSS de Select2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -46,15 +46,20 @@
 
                     <div class="mb-3">
                         <label for="volumen_id">Volumen</label>
-                        <select class="form-control" name="volumen_id" id="volumen_id" required>
+                        <select class="form-control" name="volumen_id" id="volumen_id" >
                             <option value="">-- Selecciona una Clasificación primero --</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label for="cantidad">Stock de la base</label>
-                        <input type="number" step="any" class="form-control" name="cantidad" required>
+                        <input type="number" step="any" min="1" class="form-control" name="cantidad" required>
                     </div>
+                     @if($errors->has('llenar'))
+                    <div class="alert alert-danger">
+                        {{ $errors->first('llenar') }}
+                    </div>
+                    @endif
                 </div>
 
                 <!-- Columna derecha: insumos -->
@@ -83,7 +88,7 @@
                             </select>
                         </div>
                         <div class="col-3">
-                            <input type="number" id="insumoCantidad" class="form-control" placeholder="Cantidad" step="any">
+                            <input type="number" id="insumoCantidad" min="1" class="form-control" placeholder="Cantidad" step="any">
                         </div>
                         <div class="col-2">
                             <button type="button" class="btn btn-primary w-100" id="agregarInsumo">+</button>
@@ -122,7 +127,7 @@
                             </select>
                         </div>
                         <div class="col-3">
-                            <input type="number" id="prebaseCantidad" class="form-control" placeholder="Cantidad" step="any">
+                            <input type="number" min="1" id="prebaseCantidad" class="form-control" placeholder="Cantidad" step="any">
                         </div>
                         <div class="col-2">
                             <button type="button" class="btn btn-primary w-100" id="agregarPrebase">+</button>
@@ -164,7 +169,7 @@
                                 </select>
                             </div>
                             <div class="col-3">
-                                <input type="number" id="empaqueCantidad" class="form-control" placeholder="Cantidad" step="any">
+                                <input type="number" min="1" id="empaqueCantidad" class="form-control" placeholder="Cantidad" step="any">
                             </div>
                             <div class="col-2">
                                 <button type="button" class="btn btn-primary w-100" id="agregarEmpaque">+</button>
@@ -176,6 +181,7 @@
                                 <tr>
                                     <th>Empaque</th>
                                     <th>Cantidad</th>
+                                    <th>Precio (S/)</th>
                                     <th>Acción</th>
                                 </tr>
                             </thead>
@@ -194,11 +200,7 @@
         </form>
     </div>
 
-    <!-- INCLUYE EL FORMULARIO DE PREBASE -->
-    {{-- 🔽 Aquí colocas el formulario de producto_final --}}
-    <div id="formulario-producto_final" class="d-none">
-        @include('cotizador.laboratorio.base.producto_final')
-    </div>
+    
 <!-- Incluir jQuery (requerido por Select2) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Incluir JS de Select2 -->
@@ -311,6 +313,9 @@
                 <td>
                     <input type="number" name="empaques[${empaqueIndex}][cantidad]" class="form-control cantidad-input"
                         data-empaque-id="${empaqueId}" value="${cantidad}" step="any" required>
+                </td>
+                <td>
+                    S/ ${empaquePrecio.toFixed(2)}
                 </td>
                 <td>
                     <button type="button" class="btn btn-danger btn-sm" onclick="eliminarEmpaque('${empaqueId}')">X</button>
@@ -513,18 +518,16 @@
 
 </script>
 <script>
-    //MANEJA EL FORMULARIO Poducto final
-    const togglePrebase = document.getElementById('toggle-producto_final');
-    const normalForm = document.getElementById('formulario-normal');
-    const prebaseForm = document.getElementById('formulario-producto_final');
-
-    togglePrebase.addEventListener('change', function () {
+    const checkbox = document.getElementById('toggle-producto_final');
+    window.addEventListener('DOMContentLoaded', function () {
+        checkbox.checked = false;
+    });
+    window.addEventListener('pageshow', function () {
+        checkbox.checked = false;
+    });
+     document.getElementById('toggle-producto_final').addEventListener('change', function () {
         if (this.checked) {
-            normalForm.classList.add('d-none');
-            prebaseForm.classList.remove('d-none');
-        } else {
-            prebaseForm.classList.add('d-none');
-            normalForm.classList.remove('d-none');
+            window.location.href = "{{ route('producto_final.index') }}";
         }
     });
 

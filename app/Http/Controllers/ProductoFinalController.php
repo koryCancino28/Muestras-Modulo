@@ -4,85 +4,153 @@ namespace App\Http\Controllers;
 use App\Models\UnidadMedida;
 use App\Models\ProductoFinal;
 use App\Models\Base;
+use App\Models\Volumen;
 use App\Models\Insumo;
 use App\Models\Empaque;
 use App\Models\Configuracion;
 use App\Models\Clasificacion;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 class ProductoFinalController extends Controller
 {
     public function index()
     {
-        $productos = ProductoFinal::with(['bases', 'insumos', 'empaques'])->get();
-        return view('cotizador.counter.index', compact('productos'));
+        $clasificaciones = Clasificacion::with('unidadMedida')->get();
+        $productos = ProductoFinal::with(['clasificacion', 'unidadDeMedida'])
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10); 
+        $bases = Base::where('tipo', 'final')->get();
+        $insumos = Insumo::all();
+        
+        return view('cotizador.producto_final.index', compact('productos', 'clasificaciones', 'bases', 'insumos'));
     }
 
     public function create()
     {
-        $clasificaciones = Clasificacion::with('unidadMedida', 'volumenes')->get();
-        $bases = Base::with('clasificacion')->get()->groupBy('clasificacion.nombre');
+        $clasificaciones = Clasificacion::with('unidadMedida')->get();
+        $bases = Base::where('tipo', 'final')->get();
         $insumos = Insumo::all();
-        $empaques = Empaque::all();
-        $unidadMedida = UnidadMedida::all(); // Obtén las unidades de medida
-
-        return view('cotizador.counter.counter', compact('clasificaciones', 'bases', 'insumos', 'empaques', 'unidadMedida'));
+        $volumenesAgrupados = Volumen::all()->groupBy('clasificacion_id');
+        return view('cotizador.producto_final.create', compact('clasificaciones', 'bases', 'insumos','volumenesAgrupados'));
     }
 
-    public function store(Request $request)
+        public function store(Request $request)
     {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'clasificacion_id' => 'required|exists:clasificaciones,id',
-            'unidad_de_medida_id' => 'required|exists:unidad_de_medida,id',
-            'bases' => 'array',
-            'bases.*.id' => 'exists:bases,id',
-            'bases.*.cantidad' => 'numeric|min:0.01',
+        //dd($request->all());
+        $validated = $request->validate([
+            'nombre' => 'required',
+            'clasificacion_id' => 'required',
+            'unidad_de_medida_id' => 'required',
+            'bases' => 'required|array|min:1',
             'insumos' => 'array',
-            'insumos.*.id' => 'exists:insumos,id',
-            'insumos.*.cantidad' => 'numeric|min:0.01',
-            'empaques' => 'array',
-            'empaques.*.id' => 'exists:empaques,id',
-            'empaques.*.cantidad' => 'numeric|min:0.01',
+            'costo_total_produccion' => 'required|numeric', 
+            'costo_total_real' => 'required|numeric',
+            'volumen_id' => 'nullable|exists:volumenes,id',
+            'cantidad' => 'nullable|numeric|min:0',
         ]);
-
         $producto = ProductoFinal::create([
-            'nombre' => $request->nombre,
-            'clasificacion_id' => $request->clasificacion_id,
-            'unidad_de_medida_id' => $request->unidad_de_medida_id,
-            'costo_maquina_id' => Configuracion::where('nombre', 'costo_maquina')->first()->id,
-            'costo_humano_id' => Configuracion::where('nombre', 'costo_humano')->first()->id,
-            'costo_fijo_id' => Configuracion::where('nombre', 'costo_fijo')->first()->id,
-            'estado' => 'activo',
+            'nombre' => $validated['nombre'],
+            'clasificacion_id' => $validated['clasificacion_id'],
+            'unidad_de_medida_id' => $validated['unidad_de_medida_id'],
             'created_by' => auth()->id(),
+            'stock' => 1,
+            'costo_total_produccion' => $request->costo_total_produccion,
+            'costo_total_real' => $request->costo_total_real,
+            'costo_total_publicado' => 0, 
+            'estado' => 'activo',
+            'volumen_id' => $validated['volumen_id'] ?? null,
+            'cantidad' => $validated['cantidad'] ?? 0,
         ]);
 
-        // Asociar bases
-        foreach ($request->bases ?? [] as $base) {
-            $producto->bases()->attach($base['id'], ['cantidad' => $base['cantidad']]);
+        // Relacionar las bases con sus cantidades
+        foreach ($request->bases as $baseId => $baseData) {
+            $producto->bases()->attach($baseId, ['cantidad' => $baseData['cantidad']]);
         }
 
-        // Asociar insumos
-        foreach ($request->insumos ?? [] as $insumo) {
-            $producto->insumos()->attach($insumo['id'], ['cantidad' => $insumo['cantidad']]);
+        // Relacionar los insumos con sus cantidades (si existen)
+        if ($request->has('insumos')) {
+            foreach ($request->insumos as $insumoId => $insumoData) {
+                $producto->insumos()->attach($insumoId, ['cantidad' => $insumoData['cantidad']]);
+            }
         }
 
-        // Asociar empaques
-        foreach ($request->empaques ?? [] as $empaque) {
-            $producto->empaques()->attach($empaque['id'], ['cantidad' => $empaque['cantidad']]);
-        }
+        // Calcular y guardar el costo total de producción
+        $producto->calcularCostos();
 
-        // Calcular costos
-        $producto->calcularCostoTotalProduccion();
-        $producto->calcularCostoTotalReal();
-
-        return redirect()->route('productos-finales.index')
-            ->with('success', 'Producto final creado correctamente');
+        return redirect()->route('producto_final.index')->with('success', 'Producto creado correctamente');
     }
 
-    public function getBasesByClasificacion($clasificacionId)
+    public function show($id)
     {
-        $bases = Base::where('clasificacion_id', $clasificacionId)->get();
-        return response()->json($bases);
+        $producto = ProductoFinal::with(['clasificacion', 'unidadDeMedida', 'bases', 'insumos'])->findOrFail($id);
+    return view('cotizador.producto_final.show', compact('producto'));
+    
+    }
+
+        public function edit($id)
+    {
+        $producto = ProductoFinal::with(['clasificacion.unidadMedida', 'insumos', 'bases'])->findOrFail($id);
+        
+        $clasificaciones = Clasificacion::with('unidadMedida')->get();
+        $bases = Base::where('tipo', 'final')->get();
+        $insumos = Insumo::all();
+        $volumenesAgrupados = Volumen::all()->groupBy('clasificacion_id');
+
+        return view('cotizador.producto_final.edit', compact(
+            'producto',
+            'clasificaciones',
+            'bases',
+            'insumos',
+            'volumenesAgrupados'
+        ));
+    }
+
+         public function update(Request $request, ProductoFinal $producto_final)
+    {
+        $producto = $producto_final;
+        $validated = $request->validate([
+            'nombre' => 'required',
+            'clasificacion_id' => 'required',
+            'unidad_de_medida_id' => 'required',
+            'bases' => 'required|array|min:1',
+            'insumos' => 'array',
+            'costo_total_produccion' => 'required|numeric',
+            'costo_total_real' => 'required|numeric',
+            'volumen_id' => 'nullable|exists:volumenes,id',
+        ]);
+
+        $producto->update([
+            'nombre' => $validated['nombre'],
+            'clasificacion_id' => $validated['clasificacion_id'],
+            'unidad_de_medida_id' => $validated['unidad_de_medida_id'],
+            'volumen_id' => $validated['volumen_id'] ?? null,
+            'costo_total_produccion' => $request->costo_total_produccion,
+            'costo_total_real' => $request->costo_total_real,
+        ]);
+
+        $producto = ProductoFinal::findOrFail($producto->id);
+
+        $producto->bases()->detach();
+        foreach ($request->bases as $baseId => $baseData) {
+            $producto->bases()->attach($baseId, ['cantidad' => $baseData['cantidad']]);
+        }
+
+        $producto->insumos()->detach();
+        if ($request->has('insumos')) {
+            foreach ($request->insumos as $insumoId => $insumoData) {
+                $producto->insumos()->attach($insumoId, ['cantidad' => $insumoData['cantidad']]);
+            }
+        }
+
+        $producto->calcularCostos();
+
+        return redirect()->route('producto_final.index')->with('success', 'Producto actualizado correctamente');
+    }
+
+    public function destroy($id)
+    {
+        ProductoFinal::destroy($id);
+        return redirect()->route('producto_final.index')->with('success', 'Eliminado');
     }
 }
+

@@ -2,18 +2,26 @@
 
 @section('content')
 <div class="container">
-    <h1>Detalles de la Base: {{ $base->nombre }}</h1>
-
-    <div class="card">
-        <div class="card-header">
-            Información General
+    <div class="form-check mb-3">
+            <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('bases.index') }}">
+            <i class="bi bi-arrow-left-circle"></i></a>
+           Detalles: {{ $base->nombre }}</h1>
         </div>
+     <div class="card mb-4">
         <div class="card-body">
-            <p><strong>Tipo:</strong> {{ ucfirst($base->tipo) }}</p>
-            <p><strong>Clasificación:</strong> {{ $base->clasificacion->nombre_clasificacion ?? '—' }}</p>
-            <p><strong>Volumen:</strong> {{ $base->volumen->nombre ?? '-' }} {{ $base->unidadDeMedida->nombre_unidad_de_medida ?? '—' }}</p>
-            <p><strong>Precio:</strong> S/ {{ number_format($base->precio, 2) }}</p>
-            <p><strong>Cantidad en stock:</strong> {{ $base->cantidad }}</p>
+            <div class="row">
+                <!-- Primera columna -->
+                <div class="col-md-6">
+                    <p><label>Tipo:</label> {{ ucfirst($base->tipo) }}</p>
+                    <p><label>Clasificación:</label> {{ $base->clasificacion->nombre_clasificacion ?? '—' }}</p>
+                    <p><label>Volumen:</label> {{ $base->volumen->nombre ?? '-' }} {{ $base->unidadDeMedida->nombre_unidad_de_medida ?? '—' }}</p>
+                </div>
+                <!-- Segunda columna -->
+                <div class="col-md-6">
+                    <p><label>Precio:</label> S/ {{ number_format($base->precio, 2) }}</p>
+                    <p><label>Cantidad en stock:</label> {{ $base->cantidad }}</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -23,7 +31,7 @@
             Insumos Utilizados
         </div>
         <div class="card-body">
-            <table class="table">
+            <table class="table table-responsive">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -53,7 +61,7 @@
             Prebases Utilizadas
         </div>
         <div class="card-body">
-            <table class="table">
+            <table class="table table-responsive">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -83,7 +91,7 @@
             Empaques Utilizados
         </div>
         <div class="card-body">
-            <table class="table">
+            <table class="table table-responsive">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -106,9 +114,4 @@
         </div>
     </div>
     @endif
-
-    <div class="mt-4">
-        <a href="{{ route('bases.index') }}" class="btn btn-secondary">Volver al listado</a>
-    </div>
-</div>
 @endsection

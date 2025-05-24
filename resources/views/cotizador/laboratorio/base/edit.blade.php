@@ -18,6 +18,11 @@
             <div class="mb-3">
                 <label for="nombre">Nombre</label>
                 <input type="text" class="form-control" name="nombre" value="{{ $base->nombre }}" required>
+                @error('nombre')
+                    <div class="text-success">
+                        <i class="fa-solid fa-triangle-exclamation"></i> {{ $message }}
+                    </div>
+                @enderror
             </div>
 
             <div class="mb-3">
@@ -92,7 +97,7 @@
                     <input type="number" id="insumoCantidad" class="form-control" placeholder="Cantidad" step="any">
                 </div>
                 <div class="col-2">
-                    <button type="button" class="btn btn-primary w-100" id="agregarInsumo">+</button>
+                    <button type="button" class="btn btn_crear w-100" id="agregarInsumo"><i class="fa-solid fa-circle-plus"></i></button>
                 </div>
             </div>
             
@@ -146,7 +151,7 @@
                     <input type="number" id="prebaseCantidad" class="form-control" placeholder="Cantidad" step="any">
                 </div>
                 <div class="col-2">
-                    <button type="button" class="btn btn-primary w-100" id="agregarPrebase">+</button>
+                    <button type="button" class="btn btn_crear w-100" id="agregarPrebase"><i class="fa-solid fa-circle-plus"></i></button>
                 </div>
             </div>
 
@@ -206,7 +211,7 @@
                         <input type="number" id="empaqueCantidad" class="form-control" placeholder="Cantidad" step="any">
                     </div>
                     <div class="col-2">
-                        <button type="button" class="btn btn-primary w-100" id="agregarEmpaque">+</button>
+                        <button type="button" class="btn btn_crear w-100" id="agregarEmpaque"><i class="fa-solid fa-circle-plus"></i></button>
                     </div>
                 </div>
 
@@ -245,7 +250,7 @@
         </div>
     </div>
 
-    <button type="submit" class="btn btn-success mt-3">Actualizar Base</button>
+    <button type="submit" class="btn btn_crear mt-3">Actualizar Base</button>
 </form>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -359,8 +364,6 @@ $(document).ready(function() {
                 $('#prebaseCantidad').val('');
             }
         });
-
-        // Agregar empaque
         // Agregar empaque (modificado para incluir el precio)
 $('#agregarEmpaque').click(function() {
     var empaqueId = $('#empaqueSelect').val();

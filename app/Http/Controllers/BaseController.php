@@ -37,11 +37,13 @@ class BaseController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255|unique:base,nombre',
             'clasificacion_id' => 'required|exists:clasificaciones,id',
             'volumen_id' => 'required|exists:volumenes,id',
             'cantidad' => 'required|numeric|min:0',
             'tipo' => 'required|in:prebase,final',
+        ], [ 
+            'nombre.unique'=> 'Ya existe una base con este nombre.'
         ]);
         $tipo = $request->input('tipo');
         $precioTotal = 0;
@@ -318,6 +320,6 @@ class BaseController extends Controller
         $base->delete();
 
         return redirect()->route('bases.index')
-            ->with('success', 'Base eliminada correctamente.');
+            ->with('error', 'Base eliminada correctamente.');
     }
 }

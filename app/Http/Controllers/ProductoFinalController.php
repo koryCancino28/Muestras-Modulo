@@ -17,8 +17,8 @@ class ProductoFinalController extends Controller
     {
         $clasificaciones = Clasificacion::with('unidadMedida')->get();
         $productos = ProductoFinal::with(['clasificacion', 'unidadDeMedida'])
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(10); 
+               ->orderBy('created_at', 'desc')
+               ->get();
         $bases = Base::where('tipo', 'final')->get();
         $insumos = Insumo::all();
         
@@ -38,15 +38,17 @@ class ProductoFinalController extends Controller
     {
         //dd($request->all());
         $validated = $request->validate([
-            'nombre' => 'required',
+            'nombre' => 'required|string|unique:producto_final,nombre',
             'clasificacion_id' => 'required',
             'unidad_de_medida_id' => 'required',
             'bases' => 'required|array|min:1',
             'insumos' => 'array',
             'costo_total_produccion' => 'required|numeric', 
             'costo_total_real' => 'required|numeric',
-            'volumen_id' => 'nullable|exists:volumenes,id',
+            'volumen_id' => 'requerid|exists:volumenes,id',
             'cantidad' => 'nullable|numeric|min:0',
+        ], [ 
+                'nombre.unique'=> 'Ya existe un Producto Final con este nombre'
         ]);
         $producto = ProductoFinal::create([
             'nombre' => $validated['nombre'],
@@ -83,8 +85,7 @@ class ProductoFinalController extends Controller
     public function show($id)
     {
         $producto = ProductoFinal::with(['clasificacion', 'unidadDeMedida', 'bases', 'insumos'])->findOrFail($id);
-    return view('cotizador.producto_final.show', compact('producto'));
-    
+        return view('cotizador.producto_final.show', compact('producto'));
     }
 
         public function edit($id)
@@ -109,7 +110,7 @@ class ProductoFinalController extends Controller
     {
         $producto = $producto_final;
         $validated = $request->validate([
-            'nombre' => 'required',
+            'nombre' => 'required|string|unique:producto_final,nombre',
             'clasificacion_id' => 'required',
             'unidad_de_medida_id' => 'required',
             'bases' => 'required|array|min:1',
@@ -117,6 +118,8 @@ class ProductoFinalController extends Controller
             'costo_total_produccion' => 'required|numeric',
             'costo_total_real' => 'required|numeric',
             'volumen_id' => 'nullable|exists:volumenes,id',
+        ], [
+            'nombre.unique'=> 'Ya existe un Producto Final con este nombre',
         ]);
 
         $producto->update([

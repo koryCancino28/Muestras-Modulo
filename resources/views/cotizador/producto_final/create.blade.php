@@ -17,6 +17,11 @@
                     <div class="mb-3">
                         <label for="nombre">Nombre</label>
                         <input type="text" class="form-control" name="nombre" required>
+                        @error('nombre')
+                            <div class="text-success">
+                                <i class="fa-solid fa-triangle-exclamation"></i> {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
@@ -40,9 +45,13 @@
 
                     <div class="mb-3">
                         <label for="volumen_id">Volumen</label>
-                        <select class="form-control" name="volumen_id" id="volumen_id" >
+                        <select class="form-control" name="volumen_id" id="volumen_id" required>
                             <option value="">-- Selecciona una Clasificación primero --</option>
                         </select>
+                        <div class="text-success" style="font-size: 0.7rem;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Si no existe un volumen 
+                            asociado a la clasificación registrar mediante el módulo "Volúmenes"
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -77,7 +86,7 @@
                             <input type="number" id="insumoCantidad" min="1" class="form-control" placeholder="Cantidad" step="any">
                         </div>
                         <div class="col-2">
-                            <button type="button" class="btn btn-primary w-100" id="agregarInsumo">+</button>
+                            <button type="button" class="btn btn_crear w-100" id="agregarInsumo"><i class="fa-solid fa-circle-plus"></i></button>
                         </div>
                     </div>
                     
@@ -86,7 +95,7 @@
                             <tr>
                                 <th>Insumo</th>
                                 <th>Cantidad</th>
-                                <th>Subtotal (S/)</th> 
+                                <th>Precio (S/)</th> 
                                 <th>Acción</th>
                             </tr>
                         </thead>
@@ -116,7 +125,7 @@
                             <input type="number" min="1" id="baseCantidad" class="form-control" placeholder="Cantidad" step="any">
                         </div>
                         <div class="col-2">
-                            <button type="button" class="btn btn-primary w-100" id="agregarBase">+</button>
+                            <button type="button" class="btn btn_crear w-100" id="agregarBase"><i class="fa-solid fa-circle-plus"></i></button>
                         </div>
                     </div>
 
@@ -125,7 +134,7 @@
                             <tr>
                                 <th>base</th>
                                 <th>Cantidad</th>
-                                <th>Subtotal (S/)</th>
+                                <th>Precio (S/)</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
@@ -141,7 +150,7 @@
             <!-- Dentro del formulario, antes del botón de submit -->
             <input type="hidden" name="costo_total_produccion" id="costo_total_produccion" value="0">
             <input type="hidden" name="costo_total_real" id="costo_total_real" value="0">
-            <button type="submit" class="btn btn-success mt-3">Guardar Producto Final</button>
+            <button type="submit" class="btn btn_crear mt-3">Guardar Producto Final</button>
         </form>
     </div>
     <script>
@@ -224,6 +233,7 @@ $(document).ready(function () {
 
         basesSeleccionadas.forEach((base, index) => {
             const total = base.precio * base.cantidad;
+            const precio = base.precio;
             subtotal += total;
 
             tbody.append(`
@@ -236,7 +246,7 @@ $(document).ready(function () {
                         ${base.cantidad}
                         <input type="hidden" name="bases[${base.id}][cantidad]" value="${base.cantidad}">
                     </td>
-                    <td>S/ ${total.toFixed(2)}</td>
+                    <td>S/ ${precio.toFixed(2)}</td>
                     <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarBase(${index})">X</button></td>
                 </tr>
             `);

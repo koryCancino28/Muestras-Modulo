@@ -10,6 +10,8 @@ use App\Http\Controllers\gerenciaController;
 //COTIZADOR GENERAL
 use App\Http\Controllers\ProductoFinalController;
 use App\Http\Controllers\BaseController;
+use App\Http\Controllers\InsumoEmpaqueController;
+use App\Http\Controllers\VolumenController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -68,6 +70,9 @@ Route::get('reporte/PDF-frascoOriginal', [gerenciaController::class, 'exportarPD
 // Rutas estándar del CRUD
 Route::resource('producto_final', ProductoFinalController::class);
 
+//crud volumen
+Route::resource('volumen', VolumenController::class);
+
 
 // Ruta adicional para obtener bases según la clasificación
 Route::get('/productos-finales/bases/{clasificacionId}', [ProductoFinalController::class, 'getBasesByClasificacion'])
@@ -75,7 +80,6 @@ Route::get('/productos-finales/bases/{clasificacionId}', [ProductoFinalControlle
 
 //laboratorio 
 Route::resource('bases', BaseController::class);
-use App\Http\Controllers\InsumoEmpaqueController;
 
 //administración
 Route::resource('insumo_empaque', InsumoEmpaqueController::class);

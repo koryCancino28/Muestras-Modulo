@@ -16,6 +16,11 @@
             <div class="mb-3">
                 <label for="nombre">Nombre</label>
                 <input type="text" class="form-control" name="nombre" value="{{ old('nombre', $producto->nombre) }}" required>
+                @error('nombre')
+                    <div class="text-success">
+                        <i class="fa-solid fa-triangle-exclamation"></i> {{ $message }}
+                    </div>
+                @enderror
             </div>
 
             <div class="mb-3">
@@ -43,7 +48,7 @@
 
             <div class="mb-3">
                 <label for="volumen_id">Volumen</label>
-                <select class="form-control" name="volumen_id" id="volumen_id">
+                <select class="form-control" name="volumen_id" id="volumen_id" required>
                     <option value="">-- Seleccionar Volumen --</option>
                     @foreach($volumenesAgrupados[$producto->clasificacion_id] ?? [] as $volumen)
                         <option value="{{ $volumen->id }}" {{ $producto->volumen_id == $volumen->id ? 'selected' : '' }}>
@@ -87,7 +92,7 @@
                     <input type="number" id="insumoCantidad" min="1" class="form-control" placeholder="Cantidad" step="any">
                 </div>
                 <div class="col-2">
-                    <button type="button" class="btn btn-primary w-100" id="agregarInsumo">+</button>
+                    <button type="button" class="btn btn_crear w-100" id="agregarInsumo"><i class="fa-solid fa-circle-plus"></i></button>
                 </div>
             </div>
 
@@ -105,7 +110,7 @@
                         <tr data-id="{{ $insumo->id }}">
                             <td>{{ $insumo->nombre }}</td>
                             <td>{{ $insumo->pivot->cantidad }}</td>
-                            <td>S/ {{ number_format($insumo->precio * $insumo->pivot->cantidad, 2) }}</td>
+                            <td>S/ {{ $insumo->precio }}</td>
                             <td><button type="button" class="btn btn-danger btn-sm eliminarInsumo">×</button></td>
                             <input type="hidden" name="insumos[{{ $insumo->id }}][cantidad]" value="{{ $insumo->pivot->cantidad }}">
                         </tr>
@@ -133,7 +138,7 @@
                         <input type="number" min="1" id="baseCantidad" class="form-control" placeholder="Cantidad" step="any">
                     </div>
                     <div class="col-2">
-                        <button type="button" class="btn btn-primary w-100" id="agregarBase">+</button>
+                        <button type="button" class="btn btn_crear w-100" id="agregarBase"><i class="fa-solid fa-circle-plus"></i></button>
                     </div>
                 </div>
 
@@ -151,7 +156,7 @@
                             <tr data-id="{{ $base->id }}">
                                 <td>{{ $base->nombre }}</td>
                                 <td>{{ $base->pivot->cantidad }}</td>
-                                <td>S/ {{ number_format($base->precio * $base->pivot->cantidad, 2) }}</td>
+                                <td>S/ {{ $base->precio }}</td>
                                 <td><button type="button" class="btn btn-danger btn-sm eliminarBase">×</button></td>
                                 <input type="hidden" name="bases[{{ $base->id }}][cantidad]" value="{{ $base->pivot->cantidad }}">
                             </tr>
@@ -172,7 +177,7 @@
 
     <input type="hidden" name="costo_total_produccion" id="costo_total_produccion" value="{{ $producto->costo_total_produccion }}">
     <input type="hidden" name="costo_total_real" id="costo_total_real" value="{{ $producto->costo_total_real }}">
-    <button type="submit" class="btn btn-success mt-3">Actualizar Producto Final</button>
+    <button type="submit" class="btn btn_crear mt-3">Actualizar Producto Final</button>
 </form>
  <script>
          const volumenesPorClasificacion = @json($volumenesAgrupados);
@@ -218,7 +223,6 @@ $(document).ready(function () {
 
         insumosSeleccionados.forEach((insumo, index) => {
             const total = insumo.precio * insumo.cantidad;
-            const precio = insumo.precio;
             subtotal += total;
 
             tbody.append(`
@@ -231,7 +235,7 @@ $(document).ready(function () {
                         ${insumo.cantidad}
                         <input type="hidden" name="insumos[${insumo.id}][cantidad]" value="${insumo.cantidad}">
                     </td>
-                    <td>S/ ${precio.toFixed(2)}</td>
+                    <td>S/ ${total.toFixed(2)}</td>
                     <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarInsumo(${index})">X</button></td>
                 </tr>
             `);

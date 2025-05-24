@@ -1,45 +1,44 @@
-@extends('layouts.app')
+@extends('layouts.app') {{-- O el layout que uses --}}
 
 @section('content')
     <div class="container">
-            <h1 class="text-center fw-bold">Formulaciones Registradas</h1>
-                <div class="mb-3">
-                    <a href="{{ route('bases.create') }}" class="btn btn_crear">+ Crear Nueva</a>
-                </div>
-            <table class="table table-bordered table-responsive" id="table_muestras">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Presentación<br> Farmaceutica</th>
-                        <th>Volumen</th>
-                        <th>Tipo</th>
-                        <th>Precio</th>
-                        <th>Stock</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-            <tbody>
-                @foreach($bases as $base)
+        <h1 class="text-center fw-bold">Lista de Volúmenes</h1>
+            <button type="button" class="btn btn_crear mb-3" data-bs-toggle="modal" data-bs-target="#crearVolumenModal">
+                Nuevo Volumen
+            </button>
+            @include('cotizador.laboratorio.volumen.create')
+            @include('cotizador.laboratorio.volumen.edit')
+        <table class="table table-bordered table-responsive" id="table_muestras">
+            <thead>
                 <tr>
-                    <td>{{ $base->nombre }}</td>
-                    <td>{{ $base->clasificacion->nombre_clasificacion ?? '—' }}</td>
-                    <td>{{ $base->volumen->nombre ?? '- ' }} {{ $base->unidadDeMedida->nombre_unidad_de_medida ?? '—' }}</td>
-                    <td>{{ ucfirst($base->tipo) }}</td> 
-                    <td>S/ {{ number_format($base->precio, 2) }}</td>
-                    <td>{{ $base->cantidad }}</td>
+                    <th>ID</th>
+                    <th>Volumen</th>
+                    <th>Clasificación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach($volumenes as $volumen)
+                <tr>
+                    <td>{{ $volumen->id }}</td>
+                    <td>{{ $volumen->nombre }}</td>
+                    <td>{{ $volumen->clasificacion->nombre_clasificacion ?? 'Sin clasificación' }}</td>
                     <td>
                         <div class="w">
-                            <a href="{{ route('bases.show', $base->id) }}" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8; color: white;"><i class="fa-regular fa-eye"></i>Ver</a>
-                            <a href="{{ route('bases.edit', $base->id) }}" class="btn btn-warning btn-sm" style="background-color: #ffc107; border-color: #ffc107; color: white;"><i class="fa-solid fa-pen"></i>Editar</a>
-                            <form action="{{ route('bases.destroy', $base->id) }}" method="POST" class="d-inline">
+                            <button class="btn btn-warning btn-sm"
+            onclick="abrirModalEditar({{ json_encode(['id' => $volumen->id, 'nombre' => $volumen->nombre, 'clasificacion_id' => $volumen->clasificacion_id]) }})">
+    Editar
+    </button>
+
+                            <form action="{{ route('volumen.destroy', $volumen->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" style="background-color: #dc3545; border-color: #dc3545;"><i class="fa-solid fa-trash"></i>Eliminar</button>
+                                <button type="submit" onclick="return confirm('¿Eliminar?')" class="btn btn-danger btn-sm" style="background-color: #dc3545; border-color: #dc3545;"><i class="fa-solid fa-trash"></i>Eliminar</button>
                             </form>
                         </div>
                     </td>
                 </tr>
-                @endforeach
+            @endforeach
             </tbody>
         </table>
     </div>
@@ -86,7 +85,7 @@
             white-space: nowrap; 
         }
     </style>
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script>
         $(document).ready(function() {

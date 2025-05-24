@@ -212,12 +212,12 @@ class InsumoEmpaqueController extends Controller
             }
 
             $insumo->delete();
-            return redirect()->route('insumo_empaque.index')->with('success', 'Insumo eliminado correctamente.');
+            return redirect()->route('insumo_empaque.index')->with('error', 'Insumo eliminado correctamente.');
         }
         $empaque = Empaque::find($id);
         if ($empaque) {
             $empaque->delete();
-            return redirect()->route('insumo_empaque.index')->with('success', 'Empaque eliminado correctamente.');
+            return redirect()->route('insumo_empaque.index')->with('error', 'Empaque eliminado correctamente.');
         }
 
         return redirect()->route('insumo_empaque.index')->withErrors('Elemento no encontrado.');

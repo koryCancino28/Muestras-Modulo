@@ -14,7 +14,7 @@
             <!-- Primera columna -->
             <div class="col-md-6">
                 <p><label>Clasificación:</label> {{ $producto->clasificacion->nombre_clasificacion ?? 'N/A' }}</p>
-                <p><label>Unidad de Medida:</label> {{ $producto->unidadDeMedida->nombre_unidad_de_medida ?? 'N/A' }}</p>
+                <p><label>Volumen:</label> {{ $producto->volumen->nombre ?? ' - ' }}{{ $producto->unidadDeMedida->nombre_unidad_de_medida ?? 'N/A' }}</p>
                 <p><label>Stock:</label> {{ $producto->stock }}</p>
             </div>
 

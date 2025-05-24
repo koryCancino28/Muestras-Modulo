@@ -25,6 +25,11 @@
                     <div class="mb-3">
                         <label for="nombre">Nombre</label>
                         <input type="text" class="form-control" name="nombre" required>
+                        @error('nombre')
+                            <div class="text-success">
+                                <i class="fa-solid fa-triangle-exclamation"></i>{{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
@@ -46,21 +51,25 @@
 
                     <div class="mb-3">
                         <label for="volumen_id">Volumen</label>
-                        <select class="form-control" name="volumen_id" id="volumen_id" >
+                        <select class="form-control" name="volumen_id" id="volumen_id"  required>
                             <option value="">-- Selecciona una Clasificación primero --</option>
                         </select>
+                            <div class="text-success" style="font-size: 0.7rem;">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Si no existe un volumen 
+                                asociado a la clasificación registrar mediante el módulo "Volúmenes"
+                            </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="cantidad">Stock de la base</label>
                         <input type="number" step="any" min="1" class="form-control" name="cantidad" required>
                     </div>
-                     @if($errors->has('llenar'))
-                    <div class="alert alert-danger">
-                        {{ $errors->first('llenar') }}
-                    </div>
-                    @endif
-                </div>
+                        @if($errors->has('llenar'))
+                        <div class="alert alert-danger">
+                            {{ $errors->first('llenar') }}
+                        </div>
+                        @endif
+                </div>  
 
                 <!-- Columna derecha: insumos -->
                 <div class="col-md-6">
@@ -91,7 +100,7 @@
                             <input type="number" id="insumoCantidad" min="1" class="form-control" placeholder="Cantidad" step="any">
                         </div>
                         <div class="col-2">
-                            <button type="button" class="btn btn-primary w-100" id="agregarInsumo">+</button>
+                            <button type="button" class="btn btn_crear w-100" id="agregarInsumo"><i class="fa-solid fa-circle-plus"></i></button>
                         </div>
                     </div>
                     
@@ -130,7 +139,7 @@
                             <input type="number" min="1" id="prebaseCantidad" class="form-control" placeholder="Cantidad" step="any">
                         </div>
                         <div class="col-2">
-                            <button type="button" class="btn btn-primary w-100" id="agregarPrebase">+</button>
+                            <button type="button" class="btn btn_crear w-100" id="agregarPrebase"><i class="fa-solid fa-circle-plus"></i></button>
                         </div>
                     </div>
 
@@ -172,7 +181,7 @@
                                 <input type="number" min="1" id="empaqueCantidad" class="form-control" placeholder="Cantidad" step="any">
                             </div>
                             <div class="col-2">
-                                <button type="button" class="btn btn-primary w-100" id="agregarEmpaque">+</button>
+                                <button type="button" class="btn btn_crear w-100" id="agregarEmpaque"><i class="fa-solid fa-circle-plus"></i></button>
                             </div>
                         </div>
 
@@ -196,7 +205,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-success mt-3">Guardar Base</button>
+            <button type="submit" class="btn btn_crear mt-3">Guardar Base</button>
         </form>
     </div>
 

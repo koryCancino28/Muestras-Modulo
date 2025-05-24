@@ -17,66 +17,55 @@
             </a>
         </div>
     </div>
-
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Clasificación</th>
-                            <th>Unidad de Medida</th>
-                            <th>Costo Producción</th>
-                            <th>Costo Real</th>
-                            <th>Stock</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($productos as $producto)
-                            <tr>
-                                <td>{{ $producto->id }}</td>
-                                <td>{{ $producto->nombre }}</td>
-                                <td>{{ $producto->clasificacion->nombre_clasificacion ?? 'N/A' }}</td>
-                                <td>{{ $producto->unidadDeMedida->nombre_unidad_de_medida ?? 'N/A' }}</td>
-                                <td>S/ {{ number_format($producto->costo_total_produccion, 2) }}</td>
-                                <td>S/ {{ number_format($producto->costo_total_real, 2) }}</td>
-                                <td>{{ $producto->stock }}</td>
-                                <td>
-                                    <span class="badge bg-{{ $producto->estado == 'activo' ? 'success' : 'danger' }}">
-                                        {{ ucfirst($producto->estado) }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="w">
-                                        <a href="{{ route('producto_final.show', $producto->id) }}" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8; color: white;"><i class="fa-regular fa-eye"></i>Ver</a>
-                                        <a href="{{ route('producto_final.edit', $producto->id) }}" class="btn btn-warning btn-sm" style="background-color: #ffc107; border-color: #ffc107; color: white;"><i class="fa-solid fa-pen"></i>Editar</a>
-                                        <form action="{{ route('producto_final.destroy', $producto->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" style="background-color: #dc3545; border-color: #dc3545;" title="Eliminar" onclick="return confirm('¿Estás seguro?')"><i class="fa-solid fa-trash"></i>Eliminar</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="9" class="text-center">No hay productos finales registrados</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            @if($productos->hasPages())
-                <div class="mt-3">
-                    {{ $productos->links() }}
-                </div>
-            @endif
-        </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover" id="table_muestras">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Clasificación</th>
+                    <th>Volumen</th>
+                    <th>Costo Producción</th>
+                    <th>Costo Real</th>
+                    <th>Stock</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($productos as $producto)
+                    <tr>
+                        <td>{{ $producto->id }}</td>
+                        <td>{{ $producto->nombre }}</td>
+                        <td>{{ $producto->clasificacion->nombre_clasificacion ?? 'N/A' }}</td>
+                        <td>{{ $producto->volumen->nombre ?? '- ' }}{{ $producto->unidadDeMedida->nombre_unidad_de_medida ?? 'N/A' }}</td>
+                        <td>S/ {{ number_format($producto->costo_total_produccion, 2) }}</td>
+                        <td>S/ {{ number_format($producto->costo_total_real, 2) }}</td>
+                        <td>{{ $producto->stock }}</td>
+                        <td>
+                            <span class="badge bg-{{ $producto->estado == 'activo' ? 'success' : 'danger' }}">
+                                {{ ucfirst($producto->estado) }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="w">
+                                <a href="{{ route('producto_final.show', $producto->id) }}" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8; color: white;"><i class="fa-regular fa-eye"></i>Ver</a>
+                                <a href="{{ route('producto_final.edit', $producto->id) }}" class="btn btn-warning btn-sm" style="background-color: #ffc107; border-color: #ffc107; color: white;"><i class="fa-solid fa-pen"></i>Editar</a>
+                                <form action="{{ route('producto_final.destroy', $producto->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" style="background-color: #dc3545; border-color: #dc3545;" title="Eliminar" onclick="return confirm('¿Estás seguro?')"><i class="fa-solid fa-trash"></i>Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="9" class="text-center">No hay productos finales registrados</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 </div>
 <style>
@@ -119,5 +108,34 @@
         white-space: nowrap; 
     }
 </style>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#table_muestras').DataTable({
+                    language: {
+                        url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json',
+                    },
+                    ordering: false,
+                    responsive: true,
+                    // quitamos "l" del DOM para eliminar el selector de cantidad de registros
+                    dom: '<"row"<"col-sm-12 col-md-12"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                    pageLength: 10,
+                    initComplete: function() {
+                        $('.dataTables_filter')
+                            .addClass('mb-3')
+                            .find('input')
+                            .attr('placeholder', 'Buscar por nombre del insumo') // <- aquí el placeholder
+                            .end()
+                            .find('label')
+                            .contents().filter(function() {
+                                return this.nodeType === 3;
+                            }).remove()
+                            .end()
+                            .prepend('Buscar:');
+                    }
+                });
+            });
+    </script>
 @endsection
 

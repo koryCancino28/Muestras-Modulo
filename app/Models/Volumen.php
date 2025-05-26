@@ -19,4 +19,5 @@ class Volumen extends Model
     {
         return $this->belongsTo(Clasificacion::class);
     }
+  
 }

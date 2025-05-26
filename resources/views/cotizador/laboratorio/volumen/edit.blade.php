@@ -21,11 +21,6 @@
           <div class="mb-3">
             <label for="editar_nombre" class="form-label">Volumen</label>
             <input type="number" name="nombre" id="editar_nombre" class="form-control" min="1" required>
-             @error('nombre')
-                <div class="text-success">
-                    <i class="fa-solid fa-triangle-exclamation"></i> {{ $message }}
-                </div>
-             @enderror
           </div>
         </div>
         <div class="modal-footer">

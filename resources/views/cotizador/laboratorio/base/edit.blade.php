@@ -364,32 +364,32 @@ $(document).ready(function() {
                 $('#prebaseCantidad').val('');
             }
         });
-        // Agregar empaque (modificado para incluir el precio)
-$('#agregarEmpaque').click(function() {
-    var empaqueId = $('#empaqueSelect').val();
-    var empaqueNombre = $('#empaqueSelect option:selected').data('nombre');
-    var empaquePrecio = $('#empaqueSelect option:selected').data('precio');
-    var empaqueTipo = $('#empaqueSelect option:selected').data('tipo');
-    var cantidad = $('#empaqueCantidad').val();
+            // Agregar empaque (modificado para incluir el precio)
+    $('#agregarEmpaque').click(function() {
+        var empaqueId = $('#empaqueSelect').val();
+        var empaqueNombre = $('#empaqueSelect option:selected').data('nombre');
+        var empaquePrecio = $('#empaqueSelect option:selected').data('precio');
+        var empaqueTipo = $('#empaqueSelect option:selected').data('tipo');
+        var cantidad = $('#empaqueCantidad').val();
 
-    if(empaqueId && cantidad) {
-        if($('#tablaEmpaques tr[data-id="'+empaqueId+'"]').length == 0) {
-            var row = '<tr data-id="'+empaqueId+'" data-tipo="'+empaqueTipo+'" data-precio="'+empaquePrecio+'">' +
-                '<td>'+empaqueNombre+' ('+empaqueTipo+')</td>' +
-                '<td>' +
-                    '<input type="hidden" name="empaques['+empaqueId+'][id]" value="'+empaqueId+'">' +
-                    '<input type="hidden" name="empaques['+empaqueId+'][tipo]" value="'+empaqueTipo+'">' +
-                    '<input type="number" class="form-control" name="empaques['+empaqueId+'][cantidad]" value="'+cantidad+'" step="any" required>' +
-                '</td>' + 
-                '<td><button type="button" class="btn btn-danger btn-sm eliminar-empaque">Eliminar</button></td>' +
-            '</tr>';
-            $('#tablaEmpaques').append(row);
-            calcularPrecioTotal();
+        if(empaqueId && cantidad) {
+            if($('#tablaEmpaques tr[data-id="'+empaqueId+'"]').length == 0) {
+                var row = '<tr data-id="'+empaqueId+'" data-tipo="'+empaqueTipo+'" data-precio="'+empaquePrecio+'">' +
+                    '<td>'+empaqueNombre+' ('+empaqueTipo+')</td>' +
+                    '<td>' +
+                        '<input type="hidden" name="empaques['+empaqueId+'][id]" value="'+empaqueId+'">' +
+                        '<input type="hidden" name="empaques['+empaqueId+'][tipo]" value="'+empaqueTipo+'">' +
+                        '<input type="number" class="form-control" name="empaques['+empaqueId+'][cantidad]" value="'+cantidad+'" step="any" required>' +
+                    '</td>' + 
+                    '<td><button type="button" class="btn btn-danger btn-sm eliminar-empaque">Eliminar</button></td>' +
+                '</tr>';
+                $('#tablaEmpaques').append(row);
+                calcularPrecioTotal();
+            }
+            $('#empaqueSelect').val('').trigger('change');
+            $('#empaqueCantidad').val('');
         }
-        $('#empaqueSelect').val('').trigger('change');
-        $('#empaqueCantidad').val('');
-    }
-});
+    });
         // Eliminar insumo
         $(document).on('click', '.eliminar-insumo', function() {
             $(this).closest('tr').remove();
@@ -425,33 +425,33 @@ $('#agregarEmpaque').click(function() {
 
         // Calcular precio total para bases (insumos + prebases + empaques)
        function calcularPrecioTotal() {
-    var total = 0;
-    
-    // Sumar insumos
-    $('#tablaInsumos tr').each(function() {
-        var cantidad = parseFloat($(this).find('input[name*="[cantidad]"]').val()) || 0;
-        var precio = parseFloat($(this).find('td').eq(2).text().replace('S/ ', '')) || 0;
-        total += cantidad * precio;
-    });
-    
-    // Sumar prebases
-    $('#tablaPrebases tr').each(function() {
-        var cantidad = parseFloat($(this).find('input[name*="[cantidad]"]').val()) || 0;
-        var precio = parseFloat($(this).find('td').eq(2).text().replace('S/ ', '')) || 0;
-        total += cantidad * precio;
-    });
-    
-    // Sumar empaques (versión corregida)
-    $('#tablaEmpaques tr').each(function() {
-        var cantidad = parseFloat($(this).find('input[name*="[cantidad]"]').val()) || 0;
-        var precio = parseFloat($(this).data('precio')) || 0;
-        total += cantidad * precio;
-    });
-    
-    // Actualizar el display y el campo hidden
-    $('#precioTotal').text('S/ '+total.toFixed(2));
-    $('input[name="precio"]').val(total.toFixed(2));
-}
+        var total = 0;
+        
+        // Sumar insumos
+        $('#tablaInsumos tr').each(function() {
+            var cantidad = parseFloat($(this).find('input[name*="[cantidad]"]').val()) || 0;
+            var precio = parseFloat($(this).find('td').eq(2).text().replace('S/ ', '')) || 0;
+            total += cantidad * precio;
+        });
+        
+        // Sumar prebases
+        $('#tablaPrebases tr').each(function() {
+            var cantidad = parseFloat($(this).find('input[name*="[cantidad]"]').val()) || 0;
+            var precio = parseFloat($(this).find('td').eq(2).text().replace('S/ ', '')) || 0;
+            total += cantidad * precio;
+        });
+        
+        // Sumar empaques (versión corregida)
+        $('#tablaEmpaques tr').each(function() {
+            var cantidad = parseFloat($(this).find('input[name*="[cantidad]"]').val()) || 0;
+            var precio = parseFloat($(this).data('precio')) || 0;
+            total += cantidad * precio;
+        });
+        
+        // Actualizar el display y el campo hidden
+        $('#precioTotal').text('S/ '+total.toFixed(2));
+        $('input[name="precio"]').val(total.toFixed(2));
+    }
 
         // Actualizar cálculos cuando cambian cantidades
         $(document).on('change', 'input[name*="[cantidad]"]', function() {

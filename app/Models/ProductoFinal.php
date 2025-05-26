@@ -11,7 +11,7 @@ class ProductoFinal extends Model
     protected $table = 'producto_final';
 
     protected $fillable = [
-        'nombre', 'clasificacion_id', 'unidad_de_medida_id',
+        'nombre', 
         'costo_total_produccion', 'costo_total_real', 'costo_total_publicado',
         'estado', 'volumen_id', 'stock', 'created_by', 'updated_by'
     ];

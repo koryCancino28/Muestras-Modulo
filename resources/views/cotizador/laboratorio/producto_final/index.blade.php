@@ -11,17 +11,32 @@
             <i class="bi bi-arrow-left-circle"></i></a>
             Producto Final</h1>
         </div>
-        <div class="col-md-3 text-end">
+        </div>
+        <div class="row mb-3 align-items-center">
+        <div class="col-md-6">
             <a href="{{ route('producto_final.create') }}" class="btn btn_crear">
                 <i class="fas fa-plus"></i> Nuevo Producto
             </a>
         </div>
+
+        <div class="col-md-6 d-flex justify-content-end">
+            <form method="GET" action="{{ route('producto_final.index') }}">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="mostrar_inactivos" id="mostrar_inactivos" onchange="this.form.submit()"
+                        {{ request()->has('mostrar_inactivos') ? 'checked' : '' }}>
+                    <label class="form-check-label" for="mostrar_inactivos">
+                        Mostrar productos inactivos
+                    </label>
+                </div>
+            </form>
+        </div>
     </div>
+
     <div class="table-responsive">
         <table class="table table-striped table-hover" id="table_muestras">
             <thead class="table-dark">
                 <tr>
-                    <th>ID</th>
+                    <th>N°</th>
                     <th>Nombre</th>
                     <th>Clasificación</th>
                     <th>Volumen</th>
@@ -33,19 +48,21 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($productos as $producto)
+                @forelse($productos as $index => $producto)
                     <tr>
-                        <td>{{ $producto->id }}</td>
+                        <td>{{ $index + 1 }}</td>
                         <td>{{ $producto->nombre }}</td>
-                        <td>{{ $producto->clasificacion->nombre_clasificacion ?? 'N/A' }}</td>
-                        <td>{{ $producto->volumen->nombre ?? '- ' }}{{ $producto->unidadDeMedida->nombre_unidad_de_medida ?? 'N/A' }}</td>
+                        <td>{{ $producto->volumen->clasificacion->nombre_clasificacion ?? 'N/A' }}</td>
+                        <td>{{ $producto->volumen->nombre ?? ' -  ' }}{{ $producto->volumen->clasificacion->unidadMedida->nombre_unidad_de_medida ?? 'N/A' }}</td>
                         <td>S/ {{ number_format($producto->costo_total_produccion, 2) }}</td>
                         <td>S/ {{ number_format($producto->costo_total_real, 2) }}</td>
                         <td>{{ $producto->stock }}</td>
                         <td>
-                            <span class="badge bg-{{ $producto->estado == 'activo' ? 'success' : 'danger' }}">
-                                {{ ucfirst($producto->estado) }}
-                            </span>
+                            @if($producto->estado === 'activo')
+                                <span class="badge bg-success">Activo</span>
+                            @else
+                                <span class="badge bg-danger">Inactivo</span>
+                            @endif
                         </td>
                         <td>
                             <div class="w">

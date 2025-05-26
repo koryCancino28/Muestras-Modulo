@@ -29,7 +29,8 @@ class VolumenController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        try {
+            $request->validate([
             'nombre' => 'required|numeric|unique:volumenes,nombre',
             'clasificacion_id' => 'required|exists:clasificaciones,id'
         ], [
@@ -39,6 +40,15 @@ class VolumenController extends Controller
         Volumen::create($request->only('nombre', 'clasificacion_id'));
 
         return redirect()->route('volumen.index')->with('success', 'Volumen creado correctamente.');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $errors = $e->validator->errors();
+
+            if($errors->has('nombre')){
+                return redirect()->route('volumen.index')->with('error', $errors->first('nombre'));
+            }
+            return redirect()->route('volumen.index')->with('error', 'Error de validación');
+        }
     }
 
     /**
@@ -64,17 +74,26 @@ class VolumenController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $request->validate([
+        try{
+            $request->validate([
             'nombre'=> 'required|numeric|unique:volumenes,nombre',
             'clasificacion_id' => 'required|exists:clasificaciones,id'
             ], [
-                'nombre.unique'=> 'El registro anterior no se realizó ya que existe ese volumen asociado a una clasificación'
+                'nombre.unique'=> 'La actualización anterior no se realizó ya que existe ese volumen asociado a una clasificación'
             ]);
 
             $volumen = Volumen::findOrFail($id);
             $volumen->update($request->only('nombre','clasificacion_id'));
 
             return redirect()->route('volumen.index')->with('success','Volumen actualizado correctamente');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $errors = $e->validator->errors();
+
+            if($errors->has('nombre')){
+                return redirect()->route('volumen.index')->with('error', $errors->first('nombre')); 
+            }
+            return redirect()->route('volumen.index')->with('error', 'Error de validación');
+        }
     }
 
     /**

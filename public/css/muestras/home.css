@@ -67,7 +67,10 @@ h1{
 .list-group-item {
     padding: 10px 15px; 
 }
-
+.pagination {
+    justify-content: center;
+    flex-wrap: wrap;
+}
 .table-responsive {
     -webkit-overflow-scrolling: touch; 
 }

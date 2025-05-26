@@ -19,7 +19,7 @@
                     </tr>
                 </thead>
             <tbody>
-                @foreach($bases as $base)
+                @foreach($bases as $index => $base)
                 <tr>
                     <td>{{ $base->nombre }}</td>
                     <td>{{ $base->clasificacion->nombre_clasificacion ?? '—' }}</td>

@@ -13,16 +13,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 class ProductoFinalController extends Controller
 {
-    public function index()
+        public function index(Request $request)
     {
         $clasificaciones = Clasificacion::with('unidadMedida')->get();
-        $productos = ProductoFinal::with(['clasificacion', 'unidadDeMedida'])
-               ->orderBy('created_at', 'desc')
-               ->get();
+
+        $query = ProductoFinal::orderBy('created_at', 'desc');
+
+        if (!$request->has('mostrar_inactivos')) {
+            $query->where('estado', 'activo');
+        }
+
+        $productos = $query->get();
         $bases = Base::where('tipo', 'final')->get();
         $insumos = Insumo::all();
         
-        return view('cotizador.producto_final.index', compact('productos', 'clasificaciones', 'bases', 'insumos'));
+        return view('cotizador.laboratorio.producto_final.index', compact('productos', 'clasificaciones', 'bases', 'insumos'));
     }
 
     public function create()
@@ -31,7 +36,7 @@ class ProductoFinalController extends Controller
         $bases = Base::where('tipo', 'final')->get();
         $insumos = Insumo::all();
         $volumenesAgrupados = Volumen::all()->groupBy('clasificacion_id');
-        return view('cotizador.producto_final.create', compact('clasificaciones', 'bases', 'insumos','volumenesAgrupados'));
+        return view('cotizador.laboratorio.producto_final.create', compact('clasificaciones', 'bases', 'insumos','volumenesAgrupados'));
     }
 
         public function store(Request $request)
@@ -39,21 +44,17 @@ class ProductoFinalController extends Controller
         //dd($request->all());
         $validated = $request->validate([
             'nombre' => 'required|string|unique:producto_final,nombre',
-            'clasificacion_id' => 'required',
-            'unidad_de_medida_id' => 'required',
             'bases' => 'required|array|min:1',
             'insumos' => 'array',
             'costo_total_produccion' => 'required|numeric', 
             'costo_total_real' => 'required|numeric',
-            'volumen_id' => 'requerid|exists:volumenes,id',
+            'volumen_id' => 'required|exists:volumenes,id',
             'cantidad' => 'nullable|numeric|min:0',
         ], [ 
                 'nombre.unique'=> 'Ya existe un Producto Final con este nombre'
         ]);
         $producto = ProductoFinal::create([
             'nombre' => $validated['nombre'],
-            'clasificacion_id' => $validated['clasificacion_id'],
-            'unidad_de_medida_id' => $validated['unidad_de_medida_id'],
             'created_by' => auth()->id(),
             'stock' => 1,
             'costo_total_produccion' => $request->costo_total_produccion,
@@ -85,7 +86,7 @@ class ProductoFinalController extends Controller
     public function show($id)
     {
         $producto = ProductoFinal::with(['clasificacion', 'unidadDeMedida', 'bases', 'insumos'])->findOrFail($id);
-        return view('cotizador.producto_final.show', compact('producto'));
+        return view('cotizador.laboratorio.producto_final.show', compact('producto'));
     }
 
         public function edit($id)
@@ -97,7 +98,7 @@ class ProductoFinalController extends Controller
         $insumos = Insumo::all();
         $volumenesAgrupados = Volumen::all()->groupBy('clasificacion_id');
 
-        return view('cotizador.producto_final.edit', compact(
+        return view('cotizador.laboratorio.producto_final.edit', compact(
             'producto',
             'clasificaciones',
             'bases',
@@ -106,11 +107,12 @@ class ProductoFinalController extends Controller
         ));
     }
 
-         public function update(Request $request, ProductoFinal $producto_final)
+            public function update(Request $request, ProductoFinal $producto_final)
     {
         $producto = $producto_final;
+
         $validated = $request->validate([
-            'nombre' => 'required|string|unique:producto_final,nombre',
+            'nombre' => 'required|string|unique:producto_final,nombre,' . $producto->id,
             'clasificacion_id' => 'required',
             'unidad_de_medida_id' => 'required',
             'bases' => 'required|array|min:1',
@@ -119,7 +121,7 @@ class ProductoFinalController extends Controller
             'costo_total_real' => 'required|numeric',
             'volumen_id' => 'nullable|exists:volumenes,id',
         ], [
-            'nombre.unique'=> 'Ya existe un Producto Final con este nombre',
+            'nombre.unique' => 'Ya existe un Producto Final con este nombre',
         ]);
 
         $producto->update([
@@ -127,8 +129,9 @@ class ProductoFinalController extends Controller
             'clasificacion_id' => $validated['clasificacion_id'],
             'unidad_de_medida_id' => $validated['unidad_de_medida_id'],
             'volumen_id' => $validated['volumen_id'] ?? null,
-            'costo_total_produccion' => $request->costo_total_produccion,
-            'costo_total_real' => $request->costo_total_real,
+            'costo_total_produccion' => $validated['costo_total_produccion'],
+            'costo_total_real' => $validated['costo_total_real'],
+            'estado' => $request->has('estado') ? 'activo' : 'inactivo',
         ]);
 
         $producto = ProductoFinal::findOrFail($producto->id);
@@ -152,8 +155,11 @@ class ProductoFinalController extends Controller
 
     public function destroy($id)
     {
-        ProductoFinal::destroy($id);
-        return redirect()->route('producto_final.index')->with('success', 'Eliminado');
+        $producto = ProductoFinal::findOrFail($id);
+        $producto->estado = 'inactivo';
+        $producto->save();
+
+        return redirect()->route('producto_final.index')->with('error', 'Producto final marcado como inactivo');
     }
 }
 

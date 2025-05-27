@@ -14,7 +14,7 @@ class Empaque extends Model
     protected $fillable = [
         'nombre',
         'tipo',
-        'costo',
+        'precio',
         'estado',
         'cantidad',
         'created_by',
@@ -23,7 +23,6 @@ class Empaque extends Model
 
     protected $casts = [
         'estado' => 'boolean',
-        'costo' => 'decimal:2',
     ];
 
     /**

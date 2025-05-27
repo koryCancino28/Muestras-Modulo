@@ -31,7 +31,7 @@
 
           <div class="mb-3">
             <label for="valor_cambio" class="form-label">Valor de cambio</label>
-            <input type="number" step="0.0001" name="valor_cambio" id="valor_cambio" class="form-control" required>
+            <input type="number" min="1" step="0.0001" name="valor_cambio" id="valor_cambio" class="form-control" required>
           </div>
         </div>
 

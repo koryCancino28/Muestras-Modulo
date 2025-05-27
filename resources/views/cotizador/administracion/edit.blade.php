@@ -35,7 +35,7 @@
         <div class="form-group">
             <label>Precio / Costo</label>
             <input name="precio" type="number" step="0.01" class="form-control"
-                value="{{ old('precio', $item->precio ?? $item->costo) }}" required>
+                value="{{ old('precio', $item->precio ?? $item->precio) }}" required>
         </div>
 
         {{-- === CAMPOS PARA INSUMOS === --}}

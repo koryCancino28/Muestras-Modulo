@@ -37,8 +37,8 @@
                     <td>{{ $item->estado ? $item->stock: 'Sin stock' }}</td>
                      <td>
                             <div class="w">
-                                <a href="{{ route('insumo_empaque.show', $item->id) }}" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8; color: white;"><i class="fa-regular fa-eye"></i>Ver</a>
-                                <a href="{{ route('insumo_empaque.edit', $item->id) }}" class="btn btn-warning btn-sm" style="background-color: #ffc107; border-color: #ffc107; color: white;"><i class="fa-solid fa-pen"></i>Editar</a>
+                                <a href="{{ route('insumo_empaque.show', $item->id) }}?tipo=insumo" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8; color: white;"><i class="fa-regular fa-eye"></i>Ver</a>
+                                <a href="{{ route('insumo_empaque.edit', $item->id) }}?tipo=insumo" class="btn btn-warning btn-sm" style="background-color: #ffc107; border-color: #ffc107; color: white;"><i class="fa-solid fa-pen"></i>Editar</a>
                                 <form action="{{ route('insumo_empaque.destroy', $item->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro que deseas eliminar este ítem?')">
                                     @csrf
                                     @method('DELETE')
@@ -53,12 +53,12 @@
                 <tr>
                     <td>{{ ucfirst($item->tipo) }}</td>
                     <td>{{ $item->nombre }}</td>
-                    <td>S/ {{ $item->costo }}</td>
+                    <td>S/ {{ $item->precio }}</td>
                     <td>{{ $item->estado ? $item->cantidad : 'Sin stock' }}</td>
                     <td>
                         <div class="w">
-                            <a href="{{ route('insumo_empaque.show', $item->id) }}" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8; color: white;"><i class="fa-regular fa-eye"></i>Ver</a>
-                            <a href="{{ route('insumo_empaque.edit', $item->id) }}" class="btn btn-warning btn-sm" style="background-color: #ffc107; border-color: #ffc107; color: white;"><i class="fa-solid fa-pen"></i>Editar</a>
+                            <a href="{{ route('insumo_empaque.show', $item->id) }}?tipo={{ $item->tipo }}" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8; color: white;"><i class="fa-regular fa-eye"></i>Ver</a>
+                            <a href="{{ route('insumo_empaque.edit', $item->id) }}?tipo={{ $item->tipo }}" class="btn btn-warning btn-sm" style="background-color: #ffc107; border-color: #ffc107; color: white;"><i class="fa-solid fa-pen"></i>Editar</a>
                             <form action="{{ route('insumo_empaque.destroy', $item->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro que deseas eliminar este ítem?')">
                                 @csrf
                                 @method('DELETE')

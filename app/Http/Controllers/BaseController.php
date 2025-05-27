@@ -87,7 +87,7 @@ class BaseController extends Controller
             foreach ($empaques as $empaque) {
                 $modeloEmpaque = Empaque::find($empaque['id']);
                 if ($modeloEmpaque) {
-                    $precioTotal += $modeloEmpaque->costo * $empaque['cantidad'];
+                    $precioTotal += $modeloEmpaque->precio * $empaque['cantidad'];
                 }
             }
         }
@@ -253,7 +253,7 @@ class BaseController extends Controller
                 foreach ($request->empaques as $empaqueId => $data) {
                     $modeloEmpaque = Empaque::find($empaqueId);
                     if ($modeloEmpaque) {
-                        $precioTotal += $modeloEmpaque->costo * $data['cantidad'];
+                        $precioTotal += $modeloEmpaque->precio * $data['cantidad'];
                     }
                     $empaquesSync[$empaqueId] = ['cantidad' => $data['cantidad']];
                 }

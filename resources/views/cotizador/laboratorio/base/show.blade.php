@@ -105,8 +105,8 @@
                     <tr>
                         <td>{{ $empaque->nombre }}</td>
                         <td>{{ $empaque->pivot->cantidad }}</td>
-                        <td>S/ {{ number_format($empaque->costo, 2) }}</td>
-                        <td>S/ {{ number_format($empaque->costo * $empaque->pivot->cantidad, 2) }}</td>
+                        <td>S/ {{ number_format($empaque->precio, 2) }}</td>
+                        <td>S/ {{ number_format($empaque->precio * $empaque->pivot->cantidad, 2) }}</td>
                     </tr>
                     @endforeach
                 </tbody>

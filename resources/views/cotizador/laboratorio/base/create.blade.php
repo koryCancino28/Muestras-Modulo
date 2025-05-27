@@ -170,7 +170,7 @@
                                     @foreach($empaques as $empaque)
                                         <option value="{{ $empaque->id }}"
                                                 data-nombre="{{ $empaque->nombre }}"
-                                                data-precio="{{ $empaque->costo }}"
+                                                data-precio="{{ $empaque->precio }}"
                                                 data-tipo="{{ $empaque->tipo }}">
                                             {{ $empaque->nombre }} ({{ ucfirst($empaque->tipo) }})
                                         </option>

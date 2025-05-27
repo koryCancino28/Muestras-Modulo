@@ -23,115 +23,119 @@ class InsumoEmpaqueController extends Controller
         return view('cotizador.administracion.create', compact('tipos', 'unidades'));
     }
 
-    public function store(Request $request)
-{
-    $data = $request->all();
-    $tipo = $data['tipo'];
-
-    if ($tipo === 'insumo') {
-        $estado = isset($data['estado']) ? true : false;
-
-        $rules = [
-            'nombre' => 'required|string|max:255',
-            'precio' => 'required|numeric|min:0',
-            'unidad_de_medida_id' => 'required|exists:unidad_de_medida,id',
-            'es_caro' => 'nullable|boolean',
-        ];
-
-        // Si se marcó "¿tiene stock?", validar que el stock sea obligatorio
-        if ($estado) {
-            $rules['stock'] = 'required|integer|min:0';
-        } else {
-            $data['stock'] = 0; // o null, según cómo lo manejes en tu BD
-        }
-
-        $request->validate($rules);
-
-        Insumo::create([
-            'nombre' => $data['nombre'],
-            'precio' => $data['precio'],
-            'unidad_de_medida_id' => $data['unidad_de_medida_id'],
-            'stock' => $data['stock'] ?? 0,
-            'estado' => $estado,
-            'es_caro' => $request->has('es_caro'),
-            'created_by' => auth()->id(),
-        ]);
-
-    } elseif (in_array($tipo, ['material', 'envase'])) {
-        $estado = isset($data['estado']) ? true : false;
-
-        $rules = [
-            'nombre' => 'required|string|max:255',
-            'precio' => 'required|numeric|min:0',
-            'descripcion' => 'nullable|string',
-        ];
-
-        if ($estado) {
-            $rules['cantidad'] = 'required|integer|min:1';
-        }
-
-        $request->validate($rules);
-
-        Empaque::create([
-            'nombre' => $data['nombre'],
-            'tipo' => $tipo,
-            'costo' => $data['precio'],
-            'cantidad' => $estado ? $data['cantidad'] : 0,
-            'estado' => $estado,
-            'created_by' => auth()->id(),
-        ]);
-    }
-
-    return redirect()->route('insumo_empaque.index')->with('success', 'Registro creado exitosamente.');
-}
-    public function show($id)
+        public function store(Request $request)
     {
-        $item = Empaque::find($id);
-        $tipo = null;
+        $data = $request->all();
+        $tipo = $data['tipo'];
 
-        if ($item) {
-            $tipo = $item->tipo;
-        } else {
-            $item = Insumo::find($id);
-            if ($item) {
-                $tipo = 'insumo';
+        if ($tipo === 'insumo') {
+            $estado = isset($data['estado']) ? true : false;
+
+            $rules = [
+                'nombre' => 'required|string|max:255',
+                'precio' => 'required|numeric|min:0',
+                'unidad_de_medida_id' => 'required|exists:unidad_de_medida,id',
+                'es_caro' => 'nullable|boolean',
+            ];
+
+            // Si se marcó "¿tiene stock?", validar que el stock sea obligatorio
+            if ($estado) {
+                $rules['stock'] = 'required|integer|min:0';
             } else {
-                return redirect()->route('insumo_empaque.index')->with('error', 'Elemento no encontrado.');
+                $data['stock'] = 0; // o null, según cómo lo manejes en tu BD
             }
+
+            $request->validate($rules);
+
+            Insumo::create([
+                'nombre' => $data['nombre'],
+                'precio' => $data['precio'],
+                'unidad_de_medida_id' => $data['unidad_de_medida_id'],
+                'stock' => $data['stock'] ?? 0,
+                'estado' => $estado,
+                'es_caro' => $request->has('es_caro'),
+                'created_by' => auth()->id(),
+            ]);
+
+        } elseif (in_array($tipo, ['material', 'envase'])) {
+            $estado = isset($data['estado']) ? true : false;
+
+            $rules = [
+                'nombre' => 'required|string|max:255',
+                'precio' => 'required|numeric|min:0',
+                'descripcion' => 'nullable|string',
+            ];
+
+            if ($estado) {
+                $rules['cantidad'] = 'required|integer|min:1';
+            }
+
+            $request->validate($rules);
+
+            Empaque::create([
+                'nombre' => $data['nombre'],
+                'tipo' => $tipo,
+                'precio' => $data['precio'],
+                'cantidad' => $estado ? $data['cantidad'] : 0,
+                'estado' => $estado,
+                'created_by' => auth()->id(),
+            ]);
+        }
+
+        return redirect()->route('insumo_empaque.index')->with('success', 'Registro creado exitosamente.');
+    }
+        public function show($id)
+    {
+        $tipo = request()->query('tipo'); // ← Obtenemos el tipo desde la URL
+
+        if ($tipo === 'insumo') {
+            $item = Insumo::find($id);
+            if (!$item) {
+                return redirect()->route('insumo_empaque.index')->with('error', 'Insumo no encontrado.');
+            }
+        } elseif (in_array($tipo, ['material', 'envase'])) {
+            $item = Empaque::find($id);
+            if (!$item) {
+                return redirect()->route('insumo_empaque.index')->with('error', 'Empaque no encontrado.');
+            }
+        } else {
+            return redirect()->route('insumo_empaque.index')->with('error', 'Tipo inválido.');
         }
 
         return view('cotizador.administracion.show', compact('item', 'tipo'));
     }
 
-    public function edit($id)
+
+        public function edit($id)
     {
         $tipos = ['insumo' => 'Insumo', 'material' => 'Material', 'envase' => 'Envase'];
         $unidades = UnidadMedida::pluck('nombre_unidad_de_medida', 'id');
+        $tipo = request()->query('tipo'); // ← Leemos el tipo desde la URL
 
-        // Buscar primero en Empaques
-        $empaque = Empaque::find($id);
-        if ($empaque) {
-            return view('cotizador.administracion.edit', [
-                'item' => $empaque,
-                'tipo' => $empaque->tipo, // esto puede ser 'material' o 'envase'
-                'tipos' => $tipos,
-                'unidades' => null,
-            ]);
+        if ($tipo === 'insumo') {
+            $insumo = Insumo::find($id);
+            if ($insumo) {
+                return view('cotizador.administracion.edit', [
+                    'item' => $insumo,
+                    'tipo' => 'insumo',
+                    'tipos' => $tipos,
+                    'unidades' => $unidades,
+                ]);
+            }
+        } elseif (in_array($tipo, ['material', 'envase'])) {
+            $empaque = Empaque::find($id);
+            if ($empaque) {
+                return view('cotizador.administracion.edit', [
+                    'item' => $empaque,
+                    'tipo' => $empaque->tipo,
+                    'tipos' => $tipos,
+                    'unidades' => null,
+                ]);
+            }
         }
 
-        // Luego buscar en Insumos
-        $insumo = Insumo::find($id);
-        if ($insumo) {
-            return view('cotizador.administracion.edit', [
-                'item' => $insumo,
-                'tipo' => 'insumo',
-                'tipos' => $tipos,
-                'unidades' => $unidades,
-            ]);
-        }
         return redirect()->route('insumo_empaque.index')->with('error', 'Elemento no encontrado.');
     }
-
 
     public function update(Request $request, $id)
     {
@@ -185,7 +189,7 @@ class InsumoEmpaqueController extends Controller
             $empaque->update([
                 'nombre' => $request->input('nombre'),
                 'tipo' => $tipo,
-                'costo' => $request->input('precio'),
+                'precio' => $request->input('precio'),
                 'cantidad' => $estado ? $request->input('cantidad') : 0,
                 'estado' => $estado,
             ]);

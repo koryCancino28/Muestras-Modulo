@@ -89,6 +89,6 @@ Route::resource('insumo_empaque', InsumoEmpaqueController::class);
 //Crud proveedores
 Route::resource('proveedores', ProveedorController::class)->parameters([
         'proveedores' => 'proveedor']); 
-//Crud tipo de cambio
+//Crud tipo de cambio- EL PRINCIPAL ES RESUMEN-TIPO-CAMBIO!!!
 Route::resource('tipo_cambio', TipoCambioController::class);
 Route::get('/resumen-tipo-cambio', [TipoCambioController::class, 'resumenTipoCambio'])->name('tipo_cambio.resumen');

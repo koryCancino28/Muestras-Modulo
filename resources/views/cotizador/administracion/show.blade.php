@@ -40,7 +40,7 @@
                     <dd class="col-sm-8 text-capitalize">{{ $item->tipo }}</dd>
 
                     <dt class="col-sm-4">Costo</dt>
-                    <dd class="col-sm-8">S/ {{ number_format($item->costo, 2) }}</dd>
+                    <dd class="col-sm-8">S/ {{ number_format($item->precio, 2) }}</dd>
 
                     <dt class="col-sm-4">Descripción</dt>
                     <dd class="col-sm-8">{{ $item->descripcion ?? 'No hay descripción' }}</dd>

@@ -38,9 +38,9 @@
         </tr>
     </thead>
     <tbody>
-        @forelse ($tiposCambio as $tipoCambio)
+        @forelse ($tiposCambio as $index => $tipoCambio)
             <tr>
-                <td>{{ $tipoCambio->id }}</td>
+                <td>{{ $index + 1 }}</td>
                 <td>{{ $tipoCambio->tipoMoneda->nombre }}</td>
                 <td>{{ $tipoCambio->tipoMoneda->codigo_iso }}</td>
                 <td>{{ number_format($tipoCambio->valor_cambio, 4) }}</td>

@@ -12,6 +12,7 @@ use App\Http\Controllers\ProductoFinalController;
 use App\Http\Controllers\BaseController;
 use App\Http\Controllers\InsumoEmpaqueController;
 use App\Http\Controllers\VolumenController;
+use App\Http\Controllers\ProveedorController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -83,3 +84,7 @@ Route::resource('bases', BaseController::class);
 
 //administración
 Route::resource('insumo_empaque', InsumoEmpaqueController::class);
+//crud proveedores
+Route::resource('proveedores', ProveedorController::class)->parameters([
+        'proveedores' => 'proveedor' // Esto corrige el binding
+    ]); 

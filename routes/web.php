@@ -13,6 +13,8 @@ use App\Http\Controllers\BaseController;
 use App\Http\Controllers\InsumoEmpaqueController;
 use App\Http\Controllers\VolumenController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\TipoCambioController;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -79,12 +81,14 @@ Route::resource('volumen', VolumenController::class);
 Route::get('/productos-finales/bases/{clasificacionId}', [ProductoFinalController::class, 'getBasesByClasificacion'])
     ->name('productos-finales.getBasesByClasificacion');
 
-//laboratorio 
+//Laboratorio 
 Route::resource('bases', BaseController::class);
 
-//administración
+//Administración
 Route::resource('insumo_empaque', InsumoEmpaqueController::class);
-//crud proveedores
+//Crud proveedores
 Route::resource('proveedores', ProveedorController::class)->parameters([
-        'proveedores' => 'proveedor' // Esto corrige el binding
-    ]); 
+        'proveedores' => 'proveedor']); 
+//Crud tipo de cambio
+Route::resource('tipo_cambio', TipoCambioController::class);
+Route::get('/resumen-tipo-cambio', [TipoCambioController::class, 'resumenTipoCambio'])->name('tipo_cambio.resumen');

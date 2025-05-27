@@ -11,11 +11,9 @@ class Base extends Model
     protected $table = 'base';
     protected $fillable = [
         'nombre',
-        'clasificacion_id',
         'tipo',
         'precio',
         'volumen_id',
-        'unidad_de_medida_id',
         'cantidad',
         'created_by',
         'updated_by',

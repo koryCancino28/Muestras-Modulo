@@ -22,8 +22,8 @@
                 @foreach($bases as $index => $base)
                 <tr>
                     <td>{{ $base->nombre }}</td>
-                    <td>{{ $base->clasificacion->nombre_clasificacion ?? '—' }}</td>
-                    <td>{{ $base->volumen->nombre ?? '- ' }} {{ $base->unidadDeMedida->nombre_unidad_de_medida ?? '—' }}</td>
+                    <td>{{ $base->volumen->clasificacion->nombre_clasificacion ?? 'N/A'  }}</td>
+                    <td>{{ $base->volumen->nombre ?? '- ' }} {{ $base->volumen->clasificacion->unidadMedida->nombre_unidad_de_medida ?? 'N/A'}}</td>
                     <td>{{ ucfirst($base->tipo) }}</td> 
                     <td>S/ {{ number_format($base->precio, 2) }}</td>
                     <td>{{ $base->cantidad }}</td>

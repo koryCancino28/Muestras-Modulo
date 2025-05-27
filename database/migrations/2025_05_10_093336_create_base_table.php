@@ -12,9 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->enum('tipo', ['prebase', 'final'])->default('final'); // Nueva columna discriminadora
-            $table->foreignId('clasificacion_id')->nullable()->constrained('clasificaciones')->onDelete('set null');
             $table->decimal('precio', 8, 2); // Precio total de la base sumando insumos + costo humano
-            $table->foreignId('unidad_de_medida_id')->nullable()->constrained('unidad_de_medida');
             $table->foreignId('volumen_id')->constrained('volumenes')->onDelete('cascade');
             $table->decimal('cantidad', 8, 2); // Cantidad de base en stock!!!
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');

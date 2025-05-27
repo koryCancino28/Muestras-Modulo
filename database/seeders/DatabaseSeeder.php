@@ -22,5 +22,6 @@ class DatabaseSeeder extends Seeder
         $this->call(UnidadesYClasificacionesSeeder::class);
         $this->call(VolumenesPorClasificacionSeeder::class);
         $this->call(ConfiguracionesSeeder::class);
+        $this->call(TipoMonedaSeeder::class);
     }
 }

@@ -38,7 +38,6 @@ class BaseController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255|unique:base,nombre',
-            'clasificacion_id' => 'required|exists:clasificaciones,id',
             'volumen_id' => 'required|exists:volumenes,id',
             'cantidad' => 'required|numeric|min:0',
             'tipo' => 'required|in:prebase,final',

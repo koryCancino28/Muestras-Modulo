@@ -13,8 +13,8 @@
                 <!-- Primera columna -->
                 <div class="col-md-6">
                     <p><label>Tipo:</label> {{ ucfirst($base->tipo) }}</p>
-                    <p><label>Clasificación:</label> {{ $base->clasificacion->nombre_clasificacion ?? '—' }}</p>
-                    <p><label>Volumen:</label> {{ $base->volumen->nombre ?? '-' }} {{ $base->unidadDeMedida->nombre_unidad_de_medida ?? '—' }}</p>
+                    <p><label>Clasificación:</label> {{ $base->volumen->clasificacion->nombre_clasificacion ?? '—' }}</p>
+                    <p><label>Volumen:</label> {{ $base->volumen->nombre ?? '-' }} {{ $base->volumen->clasificacion->unidadMedida->nombre_unidad_de_medida ?? 'N/A' }}</p>
                 </div>
                 <!-- Segunda columna -->
                 <div class="col-md-6">

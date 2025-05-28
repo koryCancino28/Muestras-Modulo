@@ -58,76 +58,14 @@
         </label>
     </div>
 
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="estado" id="estado" value="1"
-            {{ old('estado', $item->estado) ? 'checked' : '' }}>
-        <label class="form-check-label" for="estado">¿Tiene stock?</label>
-    </div>
 
-    <div class="form-group">
-        <label>Stock</label>
-        <input name="stock" id="stock" type="number" class="form-control"
-            value="{{ old('stock', $item->stock) }}">
-    </div>
 @endif
 
-        {{-- === CAMPOS PARA MATERIALES / ENVASES === --}}
-        @if (in_array($tipo, ['material', 'envase']))
-            <div class="form-group">
-                <label>Descripción</label>
-                <textarea name="descripcion" class="form-control">{{ old('descripcion', $item->descripcion) }}</textarea>
-            </div>
-
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="estado" id="estado" value="1"
-                    {{ old('estado', $item->estado) ? 'checked' : '' }}>
-                <label class="form-check-label" for="estado">¿Tiene stock?</label>
-            </div>
-
-            <div class="form-group">
-                <label>Cantidad</label>
-                <input name="cantidad" id="cantidad" type="number" class="form-control"
-                    value="{{ old('cantidad', $item->cantidad ?? '') }}">
-            </div>
-        @endif
 
         <button class="btn btn-primary">Actualizar</button>
         <a href="{{ route('insumo_empaque.index') }}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
 
-<script>
-    function toggleCantidadEditable() {
-        const estado = document.getElementById('estado');
-        const cantidad = document.getElementById('cantidad');
 
-        if (estado && cantidad) {
-            if (estado.checked) {
-                cantidad.removeAttribute('disabled');
-            } else {
-                cantidad.setAttribute('disabled', 'disabled');
-                cantidad.value = '';
-            }
-        }
-    }
-      function toggleStockEditable() {
-        const estado = document.getElementById('estado');
-        const stock = document.getElementById('stock');
-
-        if (estado && stock) {
-            if (estado.checked) {
-                stock.removeAttribute('disabled');
-            } else {
-                stock.setAttribute('disabled', 'disabled');
-                stock.value = '';
-            }
-        }
-    }
-
-    document.getElementById('estado')?.addEventListener('change', toggleCantidadEditable);
-    document.getElementById('estado')?.addEventListener('change', toggleStockEditable);
-
-    toggleCantidadEditable();
-    toggleStockEditable();
-</script>
 @endsection

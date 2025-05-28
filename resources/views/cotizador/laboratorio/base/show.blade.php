@@ -19,7 +19,6 @@
                 <!-- Segunda columna -->
                 <div class="col-md-6">
                     <p><label>Precio:</label> S/ {{ number_format($base->precio, 2) }}</p>
-                    <p><label>Cantidad en stock:</label> {{ $base->cantidad }}</p>
                 </div>
             </div>
         </div>

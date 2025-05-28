@@ -20,70 +20,51 @@ class InsumoEmpaqueController extends Controller
     {
         $tipos = ['insumo' => 'Insumo', 'material' => 'Material', 'envase' => 'Envase'];
         $unidades = UnidadMedida::pluck('nombre_unidad_de_medida', 'id');
+        //dd($unidades);
         return view('cotizador.administracion.create', compact('tipos', 'unidades'));
     }
 
-        public function store(Request $request)
-    {
-        $data = $request->all();
-        $tipo = $data['tipo'];
+   public function store(Request $request)
+{
+    $data = $request->all();
+    $tipo = $data['tipo'];
 
-        if ($tipo === 'insumo') {
-            $estado = isset($data['estado']) ? true : false;
+    if ($tipo === 'insumo') {
+        $rules = [
+            'nombre' => 'required|string|max:255',
+            'precio' => 'required|numeric|min:0',
+            'unidad_de_medida_id' => 'required|exists:unidad_de_medida,id',
+            'es_caro' => 'nullable|boolean',
+        ];
 
-            $rules = [
-                'nombre' => 'required|string|max:255',
-                'precio' => 'required|numeric|min:0',
-                'unidad_de_medida_id' => 'required|exists:unidad_de_medida,id',
-                'es_caro' => 'nullable|boolean',
-            ];
+        $request->validate($rules);
 
-            // Si se marcó "¿tiene stock?", validar que el stock sea obligatorio
-            if ($estado) {
-                $rules['stock'] = 'required|integer|min:0';
-            } else {
-                $data['stock'] = 0; // o null, según cómo lo manejes en tu BD
-            }
+        Insumo::create([
+            'nombre' => $data['nombre'],
+            'precio' => $data['precio'],
+            'unidad_de_medida_id' => $data['unidad_de_medida_id'],
+            'es_caro' => $request->has('es_caro'),
+        ]);
 
-            $request->validate($rules);
+    } elseif (in_array($tipo, ['material', 'envase'])) {
+        $rules = [
+            'nombre' => 'required|string|max:255',
+            'precio' => 'required|numeric|min:0',
+        ];
 
-            Insumo::create([
-                'nombre' => $data['nombre'],
-                'precio' => $data['precio'],
-                'unidad_de_medida_id' => $data['unidad_de_medida_id'],
-                'stock' => $data['stock'] ?? 0,
-                'estado' => $estado,
-                'es_caro' => $request->has('es_caro'),
-                'created_by' => auth()->id(),
-            ]);
+        $request->validate($rules);
 
-        } elseif (in_array($tipo, ['material', 'envase'])) {
-            $estado = isset($data['estado']) ? true : false;
-
-            $rules = [
-                'nombre' => 'required|string|max:255',
-                'precio' => 'required|numeric|min:0',
-                'descripcion' => 'nullable|string',
-            ];
-
-            if ($estado) {
-                $rules['cantidad'] = 'required|integer|min:1';
-            }
-
-            $request->validate($rules);
-
-            Empaque::create([
-                'nombre' => $data['nombre'],
-                'tipo' => $tipo,
-                'precio' => $data['precio'],
-                'cantidad' => $estado ? $data['cantidad'] : 0,
-                'estado' => $estado,
-                'created_by' => auth()->id(),
-            ]);
-        }
-
-        return redirect()->route('insumo_empaque.index')->with('success', 'Registro creado exitosamente.');
+        Empaque::create([
+            'nombre' => $data['nombre'],
+            'tipo' => $tipo,
+            'precio' => $data['precio'],
+        ]);
     }
+
+    return redirect()->route('insumo_empaque.index')->with('success', 'Registro creado exitosamente.');
+}
+
+
         public function show($id)
     {
         $tipo = request()->query('tipo'); // ← Obtenemos el tipo desde la URL
@@ -137,14 +118,12 @@ class InsumoEmpaqueController extends Controller
         return redirect()->route('insumo_empaque.index')->with('error', 'Elemento no encontrado.');
     }
 
-    public function update(Request $request, $id)
-    {
-        $tipo = $request->input('tipo');
+ public function update(Request $request, $id)
+{
+    $tipo = $request->input('tipo');
 
-        if ($tipo === 'insumo') {
-            $insumo = Insumo::findOrFail($id);
-
-           $estado = $request->has('estado'); // ← derivamos del checkbox
+    if ($tipo === 'insumo') {
+        $insumo = Insumo::findOrFail($id);
 
         $rules = [
             'nombre' => 'required|string|max:255',
@@ -153,50 +132,35 @@ class InsumoEmpaqueController extends Controller
             'es_caro' => 'nullable|boolean',
         ];
 
-        if ($estado) {
-            $rules['stock'] = 'required|integer|min:0';
-        }
-
         $request->validate($rules);
-
-        $stock = $estado ? $request->input('stock') : 0;
 
         $insumo->update([
             'nombre' => $request->input('nombre'),
             'precio' => $request->input('precio'),
             'unidad_de_medida_id' => $request->input('unidad_de_medida_id'),
-            'stock' => $stock,
-            'estado' => $estado,
             'es_caro' => $request->boolean('es_caro'),
-            'updated_by' => auth()->id(),
         ]);
+
     } elseif (in_array($tipo, ['material', 'envase'])) {
-            $empaque = Empaque::findOrFail($id);
-            $estado = $request->has('estado');
+        $empaque = Empaque::findOrFail($id);
 
-            $rules = [
-                'nombre' => 'required|string|max:255',
-                'precio' => 'required|numeric|min:0',
-                'descripcion' => 'nullable|string',
-            ];
+        $rules = [
+            'nombre' => 'required|string|max:255',
+            'precio' => 'required|numeric|min:0',
+        ];
 
-            if ($estado) {
-                $rules['cantidad'] = 'required|integer|min:1';
-            }
+        $request->validate($rules);
 
-            $request->validate($rules);
-
-            $empaque->update([
-                'nombre' => $request->input('nombre'),
-                'tipo' => $tipo,
-                'precio' => $request->input('precio'),
-                'cantidad' => $estado ? $request->input('cantidad') : 0,
-                'estado' => $estado,
-            ]);
-        }
-
-        return redirect()->route('insumo_empaque.index')->with('success', 'Registro actualizado correctamente.');
+        $empaque->update([
+            'nombre' => $request->input('nombre'),
+            'tipo' => $tipo,
+            'precio' => $request->input('precio'),
+        ]);
     }
+
+    return redirect()->route('insumo_empaque.index')->with('success', 'Registro actualizado correctamente.');
+}
+
         public function destroy($id)
     {
         $insumo = Insumo::find($id);

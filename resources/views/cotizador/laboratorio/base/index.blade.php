@@ -14,7 +14,6 @@
                         <th>Volumen</th>
                         <th>Tipo</th>
                         <th>Precio</th>
-                        <th>Stock</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -26,7 +25,6 @@
                     <td>{{ $base->volumen->nombre ?? '- ' }} {{ $base->volumen->clasificacion->unidadMedida->nombre_unidad_de_medida ?? 'N/A'}}</td>
                     <td>{{ ucfirst($base->tipo) }}</td> 
                     <td>S/ {{ number_format($base->precio, 2) }}</td>
-                    <td>{{ $base->cantidad }}</td>
                     <td>
                         <div class="w">
                             <a href="{{ route('bases.show', $base->id) }}" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8; color: white;"><i class="fa-regular fa-eye"></i>Ver</a>

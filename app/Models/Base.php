@@ -9,13 +9,13 @@ class Base extends Model
 {
     use HasFactory;
     protected $table = 'base';
+    public $timestamps = false;
+
     protected $fillable = [
         'nombre',
         'tipo',
         'precio',
         'volumen_id',
-        'cantidad',
-        'created_by',
         'updated_by',
     ];
     

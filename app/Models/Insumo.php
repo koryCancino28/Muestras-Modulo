@@ -9,15 +9,11 @@ class Insumo extends Model
 {
     use HasFactory;
     protected $table = 'insumos';
-
+    public $timestamps = false;
     protected $fillable = [
         'nombre',
         'precio',
         'unidad_de_medida_id',
-        'estado',
-        'stock',
-        'created_by',
-        'updated_by',
         'es_caro',
     ];
       public function bases()

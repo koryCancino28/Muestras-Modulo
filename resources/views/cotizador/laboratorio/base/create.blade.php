@@ -59,11 +59,6 @@
                                 asociado a la clasificación registrar mediante el módulo "Volúmenes"
                             </div>
                     </div>
-
-                    <div class="mb-3">
-                        <label for="cantidad">Stock de la base</label>
-                        <input type="number" step="any" min="1" class="form-control" name="cantidad" required>
-                    </div>
                         @if($errors->has('llenar'))
                         <div class="alert alert-danger">
                             {{ $errors->first('llenar') }}

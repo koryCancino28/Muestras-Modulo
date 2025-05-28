@@ -20,8 +20,6 @@
                 <th>Tipo</th>
                 <th>Nombre</th>
                 <th>Precio</th>
-                <th>Stock</th>
-                <th>Estado</th>
             </tr>
         </thead>
         <tbody>
@@ -34,7 +32,6 @@
                              <span class="badge bg-danger">Insumo caro</span>
                          @endif
                     </td>
-                    <td>{{ $item->estado ? $item->stock: 'Sin stock' }}</td>
                      <td>
                             <div class="w">
                                 <a href="{{ route('insumo_empaque.show', $item->id) }}?tipo=insumo" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8; color: white;"><i class="fa-regular fa-eye"></i>Ver</a>
@@ -54,7 +51,6 @@
                     <td>{{ ucfirst($item->tipo) }}</td>
                     <td>{{ $item->nombre }}</td>
                     <td>S/ {{ $item->precio }}</td>
-                    <td>{{ $item->estado ? $item->cantidad : 'Sin stock' }}</td>
                     <td>
                         <div class="w">
                             <a href="{{ route('insumo_empaque.show', $item->id) }}?tipo={{ $item->tipo }}" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8; color: white;"><i class="fa-regular fa-eye"></i>Ver</a>

@@ -56,11 +56,6 @@
                     @endforeach
                 </select>
             </div>
-
-            <div class="mb-3">
-                <label for="cantidad">Stock de la base</label>
-                <input type="number" step="any" class="form-control" name="cantidad" value="{{ $base->cantidad }}" required>
-            </div>
             @if($errors->has('tipo'))
                 <div class="alert alert-danger">
                     {{ $errors->first('tipo') }}

@@ -46,36 +46,62 @@ class ProductoFinal extends Model
         return $this->belongsToMany(Insumo::class, 'producto_final_insumo')->withPivot('cantidad');
     }
 
-        public function calcularCostos()
-    {
-        $config = Configuracion::pluck('valor', 'nombre');
+   public function calcularCostos()
+{
+    $config = Configuracion::pluck('valor', 'nombre');
 
-        $costoInsumos = $this->insumos->sum(fn($i) => $i->precio * $i->pivot->cantidad);
-        $costoBases = $this->bases->sum(fn($b) => $b->precio * $b->pivot->cantidad);
-        $costoFijo = ($config['costo_fijo'] ?? 0) + ($config['costo_maquina'] ?? 0) + ($config['costo_humano'] ?? 0);
+    // 1. Cálculo de costos (se mantiene igual)
+    $costoInsumos = $this->insumos->sum(fn($i) => $i->precio * $i->pivot->cantidad);
+    $costoBases = $this->bases->sum(fn($b) => $b->precio * $b->pivot->cantidad);
+    $costoFijo = ($config['costo_fijo'] ?? 0) + ($config['costo_maquina'] ?? 0) + ($config['costo_humano'] ?? 0);
 
-        $costoTotalProduccion = $costoInsumos + $costoBases + $costoFijo;
-        $costoTotalReal = $costoTotalProduccion * 1.18;
+    $costoTotalProduccion = $costoInsumos + $costoBases + $costoFijo;
+    $costoTotalReal = $costoTotalProduccion * 1.18;
 
-        $tieneInsumosCaros = $this->insumos->contains('es_caro', true) ||
-            DB::table('producto_final_base')
-            ->join('base_insumo', 'producto_final_base.base_id', '=', 'base_insumo.base_id')
-            ->join('insumos', 'base_insumo.insumo_id', '=', 'insumos.id')
-            ->where('producto_final_base.producto_final_id', $this->id)
-            ->where('insumos.es_caro', true)
-            ->exists();
+    // 2. Verificación COMPLETA de insumos caros
+    $tieneInsumosCaros = $this->tieneInsumosCarosDirectos() || 
+                        $this->tieneInsumosCarosEnBases() ||
+                        $this->tieneInsumosCarosEnPrebases();
 
-        $margen = match ($this->clasificacion->nombre ?? '') {
-            'publico' => $config['margen_publico'] ?? 1.702,
-            'medico' => $tieneInsumosCaros ? ($config['margen_medico_con_insumos_caros'] ?? 1.5)
-                                        : ($config['margen_medico_estandar'] ?? 1.05),
-            default =>  $config['margen_publico'] ?? 1.702, // Valor por defecto
-        };
+    // 3. Cálculo de margen (se mantiene igual)
+    $margen = match ($this->clasificacion->nombre ?? '') {
+        'publico' => $config['margen_publico'] ?? 1.702,
+        'medico' => $tieneInsumosCaros ? ($config['margen_medico_con_insumos_caros'] ?? 1.5)
+                                    : ($config['margen_medico_estandar'] ?? 1.05),
+        default => $config['margen_publico'] ?? 1.702,
+    };
 
-        $this->update([
-            'costo_total_produccion' => $costoTotalProduccion,
-            'costo_total_real' => $costoTotalReal,
-            'costo_total_publicado' => $costoTotalReal * $margen,
-        ]);
-    }
+    $this->update([
+        'costo_total_produccion' => $costoTotalProduccion,
+        'costo_total_real' => $costoTotalReal,
+        'costo_total_publicado' => $costoTotalReal * $margen,
+    ]);
+}
+
+// Métodos auxiliares en el modelo ProductoFinal
+public function tieneInsumosCarosDirectos()
+{
+    return $this->insumos()->where('es_caro', true)->exists();
+}
+
+public function tieneInsumosCarosEnBases()
+{
+    return DB::table('producto_final_base')
+        ->join('base_insumo', 'producto_final_base.base_id', '=', 'base_insumo.base_id')
+        ->join('insumos', 'base_insumo.insumo_id', '=', 'insumos.id')
+        ->where('producto_final_base.producto_final_id', $this->id)
+        ->where('insumos.es_caro', true)
+        ->exists();
+}
+
+public function tieneInsumosCarosEnPrebases()
+{
+    return DB::table('producto_final_base')
+        ->join('base_prebase', 'producto_final_base.base_id', '=', 'base_prebase.base_id')
+        ->join('base_insumo', 'base_prebase.prebase_id', '=', 'base_insumo.base_id')
+        ->join('insumos', 'base_insumo.insumo_id', '=', 'insumos.id')
+        ->where('producto_final_base.producto_final_id', $this->id)
+        ->where('insumos.es_caro', true)
+        ->exists();
+}
 }

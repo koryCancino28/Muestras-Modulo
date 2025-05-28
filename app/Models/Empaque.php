@@ -10,36 +10,12 @@ class Empaque extends Model
     use HasFactory;
 
     protected $table = 'empaques';
-
+    public $timestamps = false;
     protected $fillable = [
         'nombre',
         'tipo',
         'precio',
-        'estado',
-        'cantidad',
-        'created_by',
-        'updated_by',
     ];
-
-    protected $casts = [
-        'estado' => 'boolean',
-    ];
-
-    /**
-     * Creador del registro.
-     */
-    public function creador()
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    /**
-     * Última persona que actualizó.
-     */
-    public function actualizador()
-    {
-        return $this->belongsTo(User::class, 'updated_by');
-    }
 
     /**
      * Productos finales donde se usa este empaque.

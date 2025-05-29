@@ -54,10 +54,6 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="cantidad">Stock deL Producto Final</label>
-                        <input type="number" step="any" min="1" class="form-control" name="cantidad" required>
-                    </div>
                      @if($errors->has('llenar'))
                     <div class="alert alert-danger">
                         {{ $errors->first('llenar') }}

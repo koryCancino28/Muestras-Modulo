@@ -54,12 +54,6 @@
                 </select>
             </div>
 
-            <div class="mb-3">
-                <label for="cantidad">Stock del Producto Final</label>
-                <input type="number" step="any" min="1" class="form-control" name="cantidad"
-                       value="{{ $producto->stock }}" required>
-            </div>
-            
             <div class="form-group mb-3">
                 <label for="estado" class="form-label">Estado del producto</label><br>
                 <div class="form-check form-switch">

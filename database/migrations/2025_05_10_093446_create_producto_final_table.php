@@ -14,12 +14,8 @@ return new class extends Migration
             $table->decimal('costo_total_produccion', 10, 2); // Costo total de producción (sumatoria de insumos más basses)
             $table->decimal('costo_total_real', 10, 2); // Costo total con IGV (costo total de producción + igv)
             $table->decimal('costo_total_publicado', 10, 2); // Costo total real con el margen de ganancia (por defecto es margen publico 70.2%)
-            $table->string('estado')->default('activo'); 
             $table->foreignId('volumen_id')->nullable()->constrained('volumenes')->onDelete('set null');
-            $table->integer('stock'); 
-            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->timestamps();
         });
     }
 

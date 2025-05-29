@@ -15,7 +15,6 @@
             <div class="col-md-6">
                 <p><label>Clasificación:</label> {{ $producto->volumen->clasificacion->nombre_clasificacion ?? 'N/A' }}</p>
                 <p><label>Volumen:</label> {{ $producto->volumen->nombre ?? ' - ' }}{{ $producto->volumen->clasificacion->unidadMedida->nombre_unidad_de_medida ?? 'N/A' }}</p>
-                <p><label>Stock:</label> {{ $producto->stock }}</p>
             </div>
 
             <!-- Segunda columna -->

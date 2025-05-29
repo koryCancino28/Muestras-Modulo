@@ -18,18 +18,6 @@
                 <i class="fas fa-plus"></i> Nuevo Producto
             </a>
         </div>
-
-        <div class="col-md-6 d-flex justify-content-end">
-            <form method="GET" action="{{ route('producto_final.index') }}">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="mostrar_inactivos" id="mostrar_inactivos" onchange="this.form.submit()"
-                        {{ request()->has('mostrar_inactivos') ? 'checked' : '' }}>
-                    <label class="form-check-label" for="mostrar_inactivos">
-                        Mostrar productos inactivos
-                    </label>
-                </div>
-            </form>
-        </div>
     </div>
 
     <div class="table-responsive">
@@ -42,8 +30,6 @@
                     <th>Volumen</th>
                     <th>Costo Producción</th>
                     <th>Costo Real</th>
-                    <th>Stock</th>
-                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -56,14 +42,6 @@
                         <td>{{ $producto->volumen->nombre ?? ' -  ' }}{{ $producto->volumen->clasificacion->unidadMedida->nombre_unidad_de_medida ?? 'N/A' }}</td>
                         <td>S/ {{ number_format($producto->costo_total_produccion, 2) }}</td>
                         <td>S/ {{ number_format($producto->costo_total_real, 2) }}</td>
-                        <td>{{ $producto->stock }}</td>
-                        <td>
-                            @if($producto->estado === 'activo')
-                                <span class="badge bg-success">Activo</span>
-                            @else
-                                <span class="badge bg-danger">Inactivo</span>
-                            @endif
-                        </td>
                         <td>
                             <div class="w">
                                 <a href="{{ route('producto_final.show', $producto->id) }}" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8; color: white;"><i class="fa-regular fa-eye"></i>Ver</a>

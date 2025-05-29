@@ -34,100 +34,99 @@ class BaseController extends Controller
        $bases = Base::with(['clasificacion', 'unidadDeMedida', 'volumen'])->get();
         return view('cotizador.laboratorio.base.index', compact('bases'));
     }
-   public function store(Request $request)
-{
-    $request->validate([
-        'nombre' => 'required|string|max:255|unique:base,nombre',
-        'volumen_id' => 'required|exists:volumenes,id',
-        'tipo' => 'required|in:prebase,final',
-    ], [ 
-        'nombre.unique' => 'Ya existe una base con este nombre.'
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:255|unique:base,nombre',
+            'volumen_id' => 'required|exists:volumenes,id',
+            'tipo' => 'required|in:prebase,final',
+        ], [ 
+            'nombre.unique' => 'Ya existe una base con este nombre.'
+        ]);
 
-    $tipo = $request->input('tipo');
-    $precioTotal = 0;
+        $tipo = $request->input('tipo');
+        $precioTotal = 0;
 
-    // Validación condicional según el tipo
-    if ($tipo === 'final') { 
-        if (empty($request->insumos) || empty($request->prebases) || empty($request->empaques)) {
-            return back()->withInput()->withErrors([
-                'llenar' => 'Debe ingresar al menos un insumo, una prebase y un empaque para una Base Final.',
-            ]);
-        }
-    } elseif ($tipo === 'prebase') {
-        if (empty($request->insumos)) {
-            return back()->withInput()->withErrors([
-                'llenar' => 'Debe ingresar al menos un insumo para una Prebase.',
-            ]);
-        }
-    }
-
-    // unidad_de_medida_id desde la clasificación
-    $clasificacion = Clasificacion::find($request->clasificacion_id);
-    $unidadDeMedidaId = $clasificacion?->unidad_de_medida_id;
-
-    // Calcular precio total de insumos
-    $insumos = $request->input('insumos', []);
-    foreach ($insumos as $insumo) {
-        $modeloInsumo = Insumo::find($insumo['id']);
-        if ($modeloInsumo) {
-            $precioTotal += $modeloInsumo->precio * $insumo['cantidad'];
-        }
-    }
-
-    // Si es base final, sumar también prebases y empaques
-    if ($tipo === 'final') {
-        $prebases = $request->input('prebases', []);
-        foreach ($prebases as $prebase) {
-            $modeloPrebase = Base::find($prebase['id']);
-            if ($modeloPrebase) {
-                $precioTotal += $modeloPrebase->precio * $prebase['cantidad'];
+        // Validación condicional según el tipo
+        if ($tipo === 'final') { 
+            if (empty($request->insumos) || empty($request->prebases) || empty($request->empaques)) {
+                return back()->withInput()->withErrors([
+                    'llenar' => 'Debe ingresar al menos un insumo, una prebase y un empaque para una Base Final.',
+                ]);
+            }
+        } elseif ($tipo === 'prebase') {
+            if (empty($request->insumos)) {
+                return back()->withInput()->withErrors([
+                    'llenar' => 'Debe ingresar al menos un insumo para una Prebase.',
+                ]);
             }
         }
 
-        $empaques = $request->input('empaques', []);
-        foreach ($empaques as $empaque) {
-            $modeloEmpaque = Empaque::find($empaque['id']);
-            if ($modeloEmpaque) {
-                $precioTotal += $modeloEmpaque->precio * $empaque['cantidad'];
-            }
-        }
-    }
+        // unidad_de_medida_id desde la clasificación
+        $clasificacion = Clasificacion::find($request->clasificacion_id);
+        $unidadDeMedidaId = $clasificacion?->unidad_de_medida_id;
 
-    // Crear la base sin los campos eliminados
-    $base = Base::create([
-        'nombre' => $request->nombre,
-        'clasificacion_id' => $request->clasificacion_id,
-        'volumen_id' => $request->volumen_id,
-        'unidad_de_medida_id' => $unidadDeMedidaId,
-        'tipo' => $tipo,
-        'precio' => $precioTotal,
-    ]);
-
-    // Relacionar insumos
-    if (!empty($insumos)) {
+        // Calcular precio total de insumos
+        $insumos = $request->input('insumos', []);
         foreach ($insumos as $insumo) {
-            $base->insumos()->attach($insumo['id'], ['cantidad' => $insumo['cantidad']]);
+            $modeloInsumo = Insumo::find($insumo['id']);
+            if ($modeloInsumo) {
+                $precioTotal += $modeloInsumo->precio * $insumo['cantidad'];
+            }
         }
-    }
 
-    // Relacionar prebases y empaques si es final
-    if ($tipo === 'final') {
-        if (!empty($prebases)) {
+        // Si es base final, sumar también prebases y empaques
+        if ($tipo === 'final') {
+            $prebases = $request->input('prebases', []);
             foreach ($prebases as $prebase) {
-                $base->prebases()->attach($prebase['id'], ['cantidad' => $prebase['cantidad']]);
+                $modeloPrebase = Base::find($prebase['id']);
+                if ($modeloPrebase) {
+                    $precioTotal += $modeloPrebase->precio * $prebase['cantidad'];
+                }
             }
-        }
-        if (!empty($empaques)) {
+
+            $empaques = $request->input('empaques', []);
             foreach ($empaques as $empaque) {
-                $base->empaques()->attach($empaque['id'], ['cantidad' => $empaque['cantidad']]);
+                $modeloEmpaque = Empaque::find($empaque['id']);
+                if ($modeloEmpaque) {
+                    $precioTotal += $modeloEmpaque->precio * $empaque['cantidad'];
+                }
             }
         }
+
+        // Crear la base sin los campos eliminados
+        $base = Base::create([
+            'nombre' => $request->nombre,
+            'clasificacion_id' => $request->clasificacion_id,
+            'volumen_id' => $request->volumen_id,
+            'unidad_de_medida_id' => $unidadDeMedidaId,
+            'tipo' => $tipo,
+            'precio' => $precioTotal,
+        ]);
+
+        // Relacionar insumos
+        if (!empty($insumos)) {
+            foreach ($insumos as $insumo) {
+                $base->insumos()->attach($insumo['id'], ['cantidad' => $insumo['cantidad']]);
+            }
+        }
+
+        // Relacionar prebases y empaques si es final
+        if ($tipo === 'final') {
+            if (!empty($prebases)) {
+                foreach ($prebases as $prebase) {
+                    $base->prebases()->attach($prebase['id'], ['cantidad' => $prebase['cantidad']]);
+                }
+            }
+            if (!empty($empaques)) {
+                foreach ($empaques as $empaque) {
+                    $base->empaques()->attach($empaque['id'], ['cantidad' => $empaque['cantidad']]);
+                }
+            }
+        }
+
+        return redirect()->route('bases.index')->with('success', 'Base creada exitosamente.');
     }
-
-    return redirect()->route('bases.index')->with('success', 'Base creada exitosamente.');
-}
-
 
         public function edit($id)
     {

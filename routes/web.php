@@ -14,6 +14,7 @@ use App\Http\Controllers\InsumoEmpaqueController;
 use App\Http\Controllers\VolumenController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\TipoCambioController;
+use App\Http\Controllers\MerchandiseController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -76,11 +77,6 @@ Route::resource('producto_final', ProductoFinalController::class);
 //crud volumen
 Route::resource('volumen', VolumenController::class);
 
-
-// Ruta adicional para obtener bases según la clasificación
-Route::get('/productos-finales/bases/{clasificacionId}', [ProductoFinalController::class, 'getBasesByClasificacion'])
-    ->name('productos-finales.getBasesByClasificacion');
-
 //Laboratorio 
 Route::resource('bases', BaseController::class);
 
@@ -92,3 +88,6 @@ Route::resource('proveedores', ProveedorController::class)->parameters([
 //Crud tipo de cambio- EL PRINCIPAL ES RESUMEN-TIPO-CAMBIO!!!
 Route::resource('tipo_cambio', TipoCambioController::class);
 Route::get('/resumen-tipo-cambio', [TipoCambioController::class, 'resumenTipoCambio'])->name('tipo_cambio.resumen');
+
+//crud para merchandise
+Route::resource('merchandise', MerchandiseController::class);

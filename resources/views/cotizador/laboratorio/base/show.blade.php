@@ -5,7 +5,7 @@
     <div class="form-check mb-3">
             <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('bases.index') }}">
             <i class="bi bi-arrow-left-circle"></i></a>
-           Detalles: {{ $base->nombre }}</h1>
+           Detalles: {{ $base->articulo->nombre }}</h1>
         </div>
      <div class="card mb-4">
         <div class="card-body">
@@ -42,7 +42,7 @@
                 <tbody>
                     @foreach($base->insumos as $insumo)
                     <tr>
-                        <td>{{ $insumo->nombre }}</td>
+                        <td>{{ $insumo->articulo->nombre }}</td>
                         <td>{{ $insumo->pivot->cantidad }}</td>
                         <td>S/ {{ number_format($insumo->precio, 2) }}</td>
                         <td>S/ {{ number_format($insumo->precio * $insumo->pivot->cantidad, 2) }}</td>
@@ -72,7 +72,7 @@
                 <tbody>
                     @foreach($base->prebases as $prebase)
                     <tr>
-                        <td>{{ $prebase->nombre }}</td>
+                        <td>{{ $prebase->articulo->nombre }}</td>
                         <td>{{ $prebase->pivot->cantidad }}</td>
                         <td>S/ {{ number_format($prebase->precio, 2) }}</td>
                         <td>S/ {{ number_format($prebase->precio * $prebase->pivot->cantidad, 2) }}</td>
@@ -102,7 +102,7 @@
                 <tbody>
                     @foreach($base->empaques as $empaque)
                     <tr>
-                        <td>{{ $empaque->nombre }}</td>
+                        <td>{{ $empaque->articulo->nombre }}</td>
                         <td>{{ $empaque->pivot->cantidad }}</td>
                         <td>S/ {{ number_format($empaque->precio, 2) }}</td>
                         <td>S/ {{ number_format($empaque->precio * $empaque->pivot->cantidad, 2) }}</td>

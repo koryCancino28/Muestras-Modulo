@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('base', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
+            $table->foreignId('articulo_id')->constrained('articulos')->onDelete('cascade');
             $table->enum('tipo', ['prebase', 'final'])->default('final'); // Nueva columna discriminadora
             $table->decimal('precio', 8, 2); // Precio total de la base sumando insumos + costo humano
             $table->foreignId('volumen_id')->constrained('volumenes')->onDelete('cascade');

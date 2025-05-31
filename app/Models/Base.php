@@ -12,13 +12,18 @@ class Base extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'nombre',
+        'articulo_id',
         'tipo',
         'precio',
         'volumen_id',
         'updated_by',
     ];
     
+    public function articulo()
+    {
+        return $this->belongsTo(Articulo::class); 
+    }
+
     // Base.php
     public function insumos() {
         return $this->belongsToMany(Insumo::class)->withPivot('cantidad');

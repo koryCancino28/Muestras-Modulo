@@ -29,7 +29,12 @@
 
         <div class="form-group">
             <label>Nombre</label>
-            <input name="nombre" class="form-control" value="{{ old('nombre', $item->nombre) }}" required>
+            <input name="nombre" class="form-control" value="{{ old('nombre', $item->articulo->nombre) }}" required>
+            @error('nombre')
+                <div class="text-success">
+                    <i class="fa-solid fa-triangle-exclamation"></i>{{ $message }}
+                </div>
+            @enderror
         </div>
 
         <div class="form-group">
@@ -57,10 +62,18 @@
             ¿Es caro?
         </label>
     </div>
-
-
 @endif
 
+        @if($item->articulo->estado === 'inactivo')
+        <div class="form-group">
+            <label for="estado" class="form-label">Estado del Insumo</label>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" name="estado" id="estado"
+                    value="activo" {{ $item->articulo->estado === 'activo' ? 'checked' : '' }} required>
+                <label class="form-check-label" for="estado">Activo</label>
+            </div>
+        </div><br>
+    @endif
 
         <button class="btn btn-primary">Actualizar</button>
         <a href="{{ route('insumo_empaque.index') }}" class="btn btn-secondary">Cancelar</a>

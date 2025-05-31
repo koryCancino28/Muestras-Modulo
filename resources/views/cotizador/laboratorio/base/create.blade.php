@@ -84,9 +84,9 @@
                                 <option value="">-- Seleccionar insumo --</option>
                                 @foreach($insumos as $insumo)
                                     <option value="{{ $insumo->id }}"
-                                            data-nombre="{{ $insumo->nombre }}"
+                                            data-nombre="{{ $insumo->articulo->nombre }}"
                                             data-precio="{{ $insumo->precio }}">
-                                        {{ $insumo->nombre }}
+                                        {{ $insumo->articulo->nombre }}
                                     </option>
                                 @endforeach
                             </select>
@@ -123,9 +123,9 @@
                                 <option value="">-- Seleccionar Prebase --</option>
                                 @foreach($prebases as $prebase)
                                     <option value="{{ $prebase->id }}"
-                                            data-nombre="{{ $prebase->nombre }}"
+                                            data-nombre="{{ $prebase->articulo->nombre }}"
                                             data-precio="{{ $prebase->precio }}">
-                                        {{ $prebase->nombre }}
+                                        {{ $prebase->articulo->nombre }}
                                     </option>
                                 @endforeach
                             </select>
@@ -164,10 +164,10 @@
                                     <option value="">-- Seleccionar Empaque --</option>
                                     @foreach($empaques as $empaque)
                                         <option value="{{ $empaque->id }}"
-                                                data-nombre="{{ $empaque->nombre }}"
+                                                data-nombre="{{ $empaque->articulo->nombre }}"
                                                 data-precio="{{ $empaque->precio }}"
                                                 data-tipo="{{ $empaque->tipo }}">
-                                            {{ $empaque->nombre }} ({{ ucfirst($empaque->tipo) }})
+                                            {{ $empaque->articulo->nombre }} ({{ ucfirst($empaque->tipo) }})
                                         </option>
                                     @endforeach
                                 </select>
@@ -495,31 +495,44 @@
 
      const volumenesPorClasificacion = @json($volumenesAgrupados);
 
-    $('#clasificacion_id').on('change', function () {
-    const clasificacionId = this.value;
-    const volumenSelect = document.getElementById('volumen_id');
-    const unidadInput = document.getElementById('unidad_medida');
+      $('#clasificacion_id').on('change', function() {
+                const clasificacionId = $(this).val();
+                const $volumenSelect = $('#volumen_id');
+                const $unidadInput = $('#unidad_medida');
 
-    // 🔹 Obtener la unidad de medida usando jQuery
-    const selectedOption = $(this).find('option:selected');
-    unidadInput.value = selectedOption.data('unidad') || '';
+                // 1. Actualizar unidad de medida
+                const selectedOption = $(this).find('option:selected');
+                $unidadInput.val(selectedOption.data('unidad') || '');
 
-    volumenSelect.innerHTML = '';
+                // 2. Limpiar y cargar volúmenes
+                $volumenSelect.empty();
 
-    if (!clasificacionId || !volumenesPorClasificacion[clasificacionId]) {
-        volumenSelect.innerHTML = '<option value="">-- No hay volúmenes disponibles --</option>';
-        return;
-    }
+                if (!clasificacionId) {
+                    $volumenSelect.append('<option value="">-- Seleccione una clasificación primero --</option>');
+                    return;
+                }
 
-    volumenSelect.innerHTML = '<option value="">-- Seleccionar Volumen --</option>';
-    volumenesPorClasificacion[clasificacionId].forEach(function (vol) {
-        const option = document.createElement('option');
-        option.value = vol.id;
-        option.textContent = vol.nombre;
-        volumenSelect.appendChild(option);
-    });
-});
+                const volúmenes = volumenesPorClasificacion[clasificacionId];
+                
+                if (!volúmenes || volúmenes.length === 0) {
+                    $volumenSelect.append('<option value="">-- No hay volúmenes disponibles --</option>');
+                    return;
+                }
 
+                $volumenSelect.append('<option value="">-- Seleccionar Volumen --</option>');
+                
+                $.each(volúmenes, function(index, vol) {
+                    $volumenSelect.append($('<option>', {
+                        value: vol.id,
+                        text: vol.nombre 
+                    }));
+                });
+
+                // 3. Si hay solo un volumen, seleccionarlo automáticamente
+                if (volúmenes.length === 1) {
+                    $volumenSelect.val(volúmenes[0].id).trigger('change');
+                }
+            });
 </script>
 <script>
     const checkbox = document.getElementById('toggle-producto_final');

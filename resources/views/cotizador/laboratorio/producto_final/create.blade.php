@@ -3,11 +3,11 @@
 @section('content')
  <!-- Incluir CSS de Select2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-     <div class="form-check mb-3">
+    <div class="form-check mb-3">
             <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('producto_final.index') }}">
             <i class="bi bi-arrow-left-circle"></i></a>
             Crear Producto Final</h1>
-        </div>
+    </div>
         <form method="POST" action="{{ route('producto_final.store') }}">
             @csrf
 
@@ -71,9 +71,9 @@
                                 <option value="">-- Seleccionar insumo --</option>
                                 @foreach($insumos as $insumo)
                                     <option value="{{ $insumo->id }}"
-                                            data-nombre="{{ $insumo->nombre }}"
+                                            data-nombre="{{ $insumo->articulo->nombre }}"
                                             data-precio="{{ $insumo->precio }}">
-                                        {{ $insumo->nombre }}
+                                        {{ $insumo->articulo->nombre }}
                                     </option>
                                 @endforeach
                             </select>
@@ -110,9 +110,9 @@
                                 <option value="">-- Seleccionar base --</option>
                                 @foreach($bases as $base)
                                     <option value="{{ $base->id }}"
-                                            data-nombre="{{ $base->nombre }}"
+                                            data-nombre="{{ $base->articulo->nombre }}"
                                             data-precio="{{ $base->precio }}">
-                                        {{ $base->nombre }}
+                                        {{ $base->articulo->nombre }}
                                     </option>
                                 @endforeach
                             </select>
@@ -143,183 +143,184 @@
                     </div>
                 </div>
             </div>
-            <!-- Dentro del formulario, antes del botón de submit -->
             <input type="hidden" name="costo_total_produccion" id="costo_total_produccion" value="0">
             <input type="hidden" name="costo_total_real" id="costo_total_real" value="0">
             <button type="submit" class="btn btn_crear mt-3">Guardar Producto Final</button>
         </form>
     </div>
-    <script>
-         const volumenesPorClasificacion = @json($volumenesAgrupados);
-
-    $('#clasificacion_id').on('change', function () {
-    const clasificacionId = this.value;
-    const volumenSelect = document.getElementById('volumen_id');
-    const unidadInput = document.getElementById('unidad_medida');
-
-    // 🔹 Obtener la unidad de medida usando jQuery
-    const selectedOption = $(this).find('option:selected');
-    unidadInput.value = selectedOption.data('unidad') || '';
-        $('#unidad_de_medida_id').val(selectedOption.data('unidad-id')); 
-    volumenSelect.innerHTML = '';
-
-    if (!clasificacionId || !volumenesPorClasificacion[clasificacionId]) {
-        volumenSelect.innerHTML = '<option value="">-- No hay volúmenes disponibles --</option>';
-        return;
-    }
-
-    volumenSelect.innerHTML = '<option value="">-- Seleccionar Volumen --</option>';
-    volumenesPorClasificacion[clasificacionId].forEach(function (vol) {
-        const option = document.createElement('option');
-        option.value = vol.id;
-        option.textContent = vol.nombre;
-        volumenSelect.appendChild(option);
-    });
-});
-    </script>
-    <!-- JS Select2 -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
-$(document).ready(function () {
-    $('.select2-clasificacion, .select2-insumo, .select2-base').select2({allowClear: true,
-            width: '100%'});
+       const volumenesPorClasificacion = @json($volumenesAgrupados);
 
-    const insumosSeleccionados = [];
-    const basesSeleccionadas = [];
+    $('#clasificacion_id').on('change', function () {
+        const clasificacionId = this.value;
+        const $volumenSelect = $('#volumen_id');
+        const $unidadInput = $('#unidad_medida');
+        const selectedOption = $(this).find('option:selected');
 
-    function actualizarTablaInsumos() {
-        const tbody = $('#tablaInsumos');
-        tbody.empty();
+        // Actualizar unidad de medida
+        $unidadInput.val(selectedOption.data('unidad') || '');
+        $('#unidad_de_medida_id').val(selectedOption.data('unidad-id'));
 
-        let subtotal = 0;
+        // Limpiar y cargar volúmenes
+        $volumenSelect.empty().append('<option value="">-- Seleccionar Volumen --</option>');
 
-        insumosSeleccionados.forEach((insumo, index) => {
-            const total = insumo.precio * insumo.cantidad;
-            const precio = insumo.precio;
-            subtotal += total;
-
-            tbody.append(`
-                <tr>
-                    <td>
-                        ${insumo.nombre}
-                        <input type="hidden" name="insumos[${insumo.id}][id]" value="${insumo.id}">
-                    </td>
-                    <td>
-                        ${insumo.cantidad}
-                        <input type="hidden" name="insumos[${insumo.id}][cantidad]" value="${insumo.cantidad}">
-                    </td>
-                    <td>S/ ${precio.toFixed(2)}</td>
-                    <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarInsumo(${index})">X</button></td>
-                </tr>
-            `);
-        });
-
-        $('#subtotalInsumosTexto').text(`S/ ${subtotal.toFixed(2)}`);
-        $('#subtotalInsumosPrebase').toggle(subtotal > 0);
-
-        calcularTotalFinal();
-    }
-
-    function actualizarTablaBases() {
-        const tbody = $('#tablabase');
-        tbody.empty();
-
-        let subtotal = 0;
-
-        basesSeleccionadas.forEach((base, index) => {
-            const total = base.precio * base.cantidad;
-            const precio = base.precio;
-            subtotal += total;
-
-            tbody.append(`
-                <tr>
-                    <td>
-                        ${base.nombre}
-                        <input type="hidden" name="bases[${base.id}][id]" value="${base.id}">
-                    </td>
-                    <td>
-                        ${base.cantidad}
-                        <input type="hidden" name="bases[${base.id}][cantidad]" value="${base.cantidad}">
-                    </td>
-                    <td>S/ ${precio.toFixed(2)}</td>
-                    <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarBase(${index})">X</button></td>
-                </tr>
-            `);
-        });
-
-        calcularTotalFinal();
-    }
-
-    function calcularTotalFinal() {
-        const insumoSubtotal = insumosSeleccionados.reduce((sum, i) => sum + (i.precio * i.cantidad), 0);
-        const baseSubtotal = basesSeleccionadas.reduce((sum, b) => sum + (b.precio * b.cantidad), 0);
-        const total = insumoSubtotal + baseSubtotal;
-
-        $('#precioTotal').text(`S/ ${total.toFixed(2)}`);
-        // Actualiza los campos ocultos
-        $('#costo_total_produccion').val(total.toFixed(2)); 
-        $('#costo_total_real').val((total * 1.18).toFixed(2));
-    }
-
-    $('#agregarInsumo').on('click', function () {
-        const selected = $('#insumoSelect option:selected');
-        const id = parseInt(selected.val());
-        const nombre = selected.data('nombre');
-        const precio = parseFloat(selected.data('precio'));
-        const cantidad = parseFloat($('#insumoCantidad').val());
-
-        if (!id || isNaN(cantidad) || cantidad <= 0) {
-            alert('Selecciona un insumo válido y una cantidad mayor a 0');
+        if (!clasificacionId || !volumenesPorClasificacion[clasificacionId]) {
+            $volumenSelect.append('<option value="">-- No hay volúmenes disponibles --</option>');
             return;
         }
 
-        const existente = insumosSeleccionados.find(insumo => insumo.id === id);
-        if (existente) {
-            existente.cantidad += cantidad;
-        } else {
-            insumosSeleccionados.push({ id, nombre, precio, cantidad });
-        }
+        // Agregar volúmenes al select
+        volumenesPorClasificacion[clasificacionId].forEach(vol => {
+            $volumenSelect.append(new Option(vol.nombre, vol.id));
+        });
 
-        $('#insumoSelect').val(null).trigger('change');
-        $('#insumoCantidad').val('');
-        actualizarTablaInsumos();
+        // Si solo hay un volumen, seleccionarlo automáticamente
+        if (volumenesPorClasificacion[clasificacionId].length === 1) {
+            $volumenSelect.val(volumenesPorClasificacion[clasificacionId][0].id);
+        }
     });
 
-    $('#agregarBase').on('click', function () {
-        const selected = $('#baseSelect option:selected');
-        const id = parseInt(selected.val());
-        const nombre = selected.data('nombre');
-        const precio = parseFloat(selected.data('precio'));
-        const cantidad = parseFloat($('#baseCantidad').val());
+    $(document).ready(function () {
+        $('.select2-clasificacion, .select2-insumo, .select2-base').select2({allowClear: true,
+                width: '100%'});
 
-        if (!id || isNaN(cantidad) || cantidad <= 0) {
-            alert('Selecciona una base válida y una cantidad mayor a 0');
-            return;
+        const insumosSeleccionados = [];
+        const basesSeleccionadas = [];
+
+        function actualizarTablaInsumos() {
+            const tbody = $('#tablaInsumos');
+            tbody.empty();
+
+            let subtotal = 0;
+
+            insumosSeleccionados.forEach((insumo, index) => {
+                const total = insumo.precio * insumo.cantidad;
+                const precio = insumo.precio;
+                subtotal += total;
+
+                tbody.append(`
+                    <tr>
+                        <td>
+                            ${insumo.nombre}
+                            <input type="hidden" name="insumos[${insumo.id}][id]" value="${insumo.id}">
+                        </td>
+                        <td>
+                            ${insumo.cantidad}
+                            <input type="hidden" name="insumos[${insumo.id}][cantidad]" value="${insumo.cantidad}">
+                        </td>
+                        <td>S/ ${precio.toFixed(2)}</td>
+                        <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarInsumo(${index})">X</button></td>
+                    </tr>
+                `);
+            });
+
+            $('#subtotalInsumosTexto').text(`S/ ${subtotal.toFixed(2)}`);
+            $('#subtotalInsumosPrebase').toggle(subtotal > 0);
+
+            calcularTotalFinal();
         }
 
-        const existente = basesSeleccionadas.find(base => base.id === id);
-        if (existente) {
-            existente.cantidad += cantidad;
-        } else {
-            basesSeleccionadas.push({ id, nombre, precio, cantidad });
+        function actualizarTablaBases() {
+            const tbody = $('#tablabase');
+            tbody.empty();
+
+            let subtotal = 0;
+
+            basesSeleccionadas.forEach((base, index) => {
+                const total = base.precio * base.cantidad;
+                const precio = base.precio;
+                subtotal += total;
+
+                tbody.append(`
+                    <tr>
+                        <td>
+                            ${base.nombre}
+                            <input type="hidden" name="bases[${base.id}][id]" value="${base.id}">
+                        </td>
+                        <td>
+                            ${base.cantidad}
+                            <input type="hidden" name="bases[${base.id}][cantidad]" value="${base.cantidad}">
+                        </td>
+                        <td>S/ ${precio.toFixed(2)}</td>
+                        <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarBase(${index})">X</button></td>
+                    </tr>
+                `);
+            });
+
+            calcularTotalFinal();
         }
 
-        $('#baseSelect').val(null).trigger('change');
-        $('#baseCantidad').val('');
-        actualizarTablaBases();
+        function calcularTotalFinal() {
+            const insumoSubtotal = insumosSeleccionados.reduce((sum, i) => sum + (i.precio * i.cantidad), 0);
+            const baseSubtotal = basesSeleccionadas.reduce((sum, b) => sum + (b.precio * b.cantidad), 0);
+            const total = insumoSubtotal + baseSubtotal;
+
+            $('#precioTotal').text(`S/ ${total.toFixed(2)}`);
+            // Actualiza los campos ocultos
+            $('#costo_total_produccion').val(total.toFixed(2)); 
+            $('#costo_total_real').val((total * 1.18).toFixed(2));
+        }
+
+        $('#agregarInsumo').on('click', function () {
+            const selected = $('#insumoSelect option:selected');
+            const id = parseInt(selected.val());
+            const nombre = selected.data('nombre');
+            const precio = parseFloat(selected.data('precio'));
+            const cantidad = parseFloat($('#insumoCantidad').val());
+
+            if (!id || isNaN(cantidad) || cantidad <= 0) {
+                alert('Selecciona un insumo válido y una cantidad mayor a 0');
+                return;
+            }
+
+            const existente = insumosSeleccionados.find(insumo => insumo.id === id);
+            if (existente) {
+                existente.cantidad += cantidad;
+            } else {
+                insumosSeleccionados.push({ id, nombre, precio, cantidad });
+            }
+
+            $('#insumoSelect').val(null).trigger('change');
+            $('#insumoCantidad').val('');
+            actualizarTablaInsumos();
+        });
+
+        $('#agregarBase').on('click', function () {
+            const selected = $('#baseSelect option:selected');
+            const id = parseInt(selected.val());
+            const nombre = selected.data('nombre');
+            const precio = parseFloat(selected.data('precio'));
+            const cantidad = parseFloat($('#baseCantidad').val());
+
+            if (!id || isNaN(cantidad) || cantidad <= 0) {
+                alert('Selecciona una base válida y una cantidad mayor a 0');
+                return;
+            }
+
+            const existente = basesSeleccionadas.find(base => base.id === id);
+            if (existente) {
+                existente.cantidad += cantidad;
+            } else {
+                basesSeleccionadas.push({ id, nombre, precio, cantidad });
+            }
+
+            $('#baseSelect').val(null).trigger('change');
+            $('#baseCantidad').val('');
+            actualizarTablaBases();
+        });
+
+        window.eliminarInsumo = function (index) {
+            insumosSeleccionados.splice(index, 1);
+            actualizarTablaInsumos();
+        }
+
+        window.eliminarBase = function (index) {
+            basesSeleccionadas.splice(index, 1);
+            actualizarTablaBases();
+        }
     });
-
-    window.eliminarInsumo = function (index) {
-        insumosSeleccionados.splice(index, 1);
-        actualizarTablaInsumos();
-    }
-
-    window.eliminarBase = function (index) {
-        basesSeleccionadas.splice(index, 1);
-        actualizarTablaBases();
-    }
-});
 </script>
 
-    @endsection
+ @endsection

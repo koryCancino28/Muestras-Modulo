@@ -5,7 +5,7 @@
     <div class="form-check mb-3">
         <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('producto_final.index') }}">
         <i class="bi bi-arrow-left-circle"></i></a>
-        Detalle: {{ $producto->nombre }}</h1>
+        Detalle: {{ $producto->articulo->nombre }}</h1>
     </div>
 
     <div class="card mb-4">
@@ -15,6 +15,7 @@
             <div class="col-md-6">
                 <p><label>Clasificación:</label> {{ $producto->volumen->clasificacion->nombre_clasificacion ?? 'N/A' }}</p>
                 <p><label>Volumen:</label> {{ $producto->volumen->nombre ?? ' - ' }}{{ $producto->volumen->clasificacion->unidadMedida->nombre_unidad_de_medida ?? 'N/A' }}</p>
+               <label>Estado de Artículo:</label><p class="badge bg-{{ $producto->articulo->estado === 'activo' ? 'success' : 'secondary' }}">{{ $producto->articulo->estado === 'activo' ? 'Activo' : 'Inactivo' }}</p>
             </div>
 
             <!-- Segunda columna -->
@@ -50,7 +51,7 @@
                     <tbody>
                         @foreach($producto->insumos as $insumo)
                             <tr>
-                                <td>{{ $insumo->nombre }}</td>
+                                <td>{{ $insumo->articulo->nombre }}</td>
                                 <td>{{ $insumo->pivot->cantidad }}</td>
                                 <td>S/ {{ number_format($insumo->precio, 2) }}</td>
                                 <td>S/ {{ number_format($insumo->precio * $insumo->pivot->cantidad, 2) }}</td>
@@ -81,7 +82,7 @@
                     <tbody>
                         @foreach($producto->bases as $base)
                             <tr>
-                                <td>{{ $base->nombre }}</td>
+                                <td>{{ $base->articulo->nombre }}</td>
                                 <td>{{ $base->pivot->cantidad }}</td>
                                 <td>S/ {{ number_format($base->precio, 2) }}</td>
                                 <td>S/ {{ number_format($base->precio * $base->pivot->cantidad, 2) }}</td>

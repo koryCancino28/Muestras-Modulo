@@ -17,7 +17,7 @@
         <div class="col-md-6">
             <div class="mb-3">
                 <label for="nombre">Nombre</label>
-                <input type="text" class="form-control" name="nombre" value="{{ $base->nombre }}" required>
+                <input type="text" class="form-control" name="nombre" value="{{ $base->articulo->nombre }}" required>
                 @error('nombre')
                     <div class="text-success">
                         <i class="fa-solid fa-triangle-exclamation"></i> {{ $message }}
@@ -56,6 +56,14 @@
                     @endforeach
                 </select>
             </div>
+            @if($base->articulo->estado === 'inactivo')
+            <label for="estado" class="form-label">Estado del base</label><br>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" name="estado" id="estado"
+                        value="activo" {{ $base->articulo->estado === 'activo' ? 'checked' : '' }} required>
+                    <label class="form-check-label" for="estado">Activo</label>
+                </div>
+            @endif
             @if($errors->has('tipo'))
                 <div class="alert alert-danger">
                     {{ $errors->first('tipo') }}
@@ -81,15 +89,15 @@
                         <option value="">-- Seleccionar insumo --</option>
                         @foreach($insumos as $insumo)
                             <option value="{{ $insumo->id }}"
-                                    data-nombre="{{ $insumo->nombre }}"
+                                    data-nombre="{{ $insumo->articulo->nombre }}"
                                     data-precio="{{ $insumo->precio }}">
-                                {{ $insumo->nombre }}
+                                {{ $insumo->articulo->nombre }}
                             </option>
                         @endforeach
                     </select>
                 </div>
                 <div class="col-3">
-                    <input type="number" id="insumoCantidad" class="form-control" placeholder="Cantidad" step="any">
+                    <input type="number" id="insumoCantidad" class="form-control" min="1" placeholder="Cantidad" step="any">
                 </div>
                 <div class="col-2">
                     <button type="button" class="btn btn_crear w-100" id="agregarInsumo"><i class="fa-solid fa-circle-plus"></i></button>
@@ -108,7 +116,7 @@
                 <tbody id="tablaInsumos">
                     @foreach($base->insumos as $insumo)
                         <tr data-id="{{ $insumo->id }}">
-                            <td>{{ $insumo->nombre }}</td>
+                            <td>{{ $insumo->articulo->nombre }}</td>
                             <td>
                                 <input type="hidden" name="insumos[{{ $insumo->id }}][id]" value="{{ $insumo->id }}">
                                 <input type="number" class="form-control" name="insumos[{{ $insumo->id }}][cantidad]" 
@@ -143,7 +151,7 @@
                     </select>
                 </div>
                 <div class="col-3">
-                    <input type="number" id="prebaseCantidad" class="form-control" placeholder="Cantidad" step="any">
+                    <input type="number" id="prebaseCantidad" min="1" class="form-control" placeholder="Cantidad" step="any">
                 </div>
                 <div class="col-2">
                     <button type="button" class="btn btn_crear w-100" id="agregarPrebase"><i class="fa-solid fa-circle-plus"></i></button>
@@ -203,7 +211,7 @@
                         </select>
                     </div>
                     <div class="col-3">
-                        <input type="number" id="empaqueCantidad" class="form-control" placeholder="Cantidad" step="any">
+                        <input type="number" id="empaqueCantidad" min="1" class="form-control" placeholder="Cantidad" step="any">
                     </div>
                     <div class="col-2">
                         <button type="button" class="btn btn_crear w-100" id="agregarEmpaque"><i class="fa-solid fa-circle-plus"></i></button>
@@ -222,7 +230,7 @@
                         @if($base->tipo == 'final')
                             @foreach($base->empaques as $empaque)
                                 <tr data-id="{{ $empaque->id }}" data-tipo="{{ $empaque->tipo }}">
-                                    <td>{{ $empaque->nombre }} ({{ ucfirst($empaque->tipo) }})</td>
+                                    <td>{{ $empaque->articulo->nombre }} ({{ ucfirst($empaque->tipo) }})</td>
                                     <td>
                                         <input type="hidden" name="empaques[{{ $empaque->id }}][id]" value="{{ $empaque->id }}">
                                         <input type="hidden" name="empaques[{{ $empaque->id }}][tipo]" value="{{ $empaque->tipo }}">
@@ -469,46 +477,46 @@ $(document).ready(function() {
         }
         const volumenesPorClasificacion = @json($volumenesAgrupados);
 
-        $('#clasificacion_id').on('change', function() {
-            const clasificacionId = $(this).val();
-            const $volumenSelect = $('#volumen_id');
-            const $unidadInput = $('#unidad_medida');
+            $('#clasificacion_id').on('change', function() {
+                const clasificacionId = $(this).val();
+                const $volumenSelect = $('#volumen_id');
+                const $unidadInput = $('#unidad_medida');
 
-            // 1. Actualizar unidad de medida
-            const selectedOption = $(this).find('option:selected');
-            $unidadInput.val(selectedOption.data('unidad') || '');
+                // 1. Actualizar unidad de medida
+                const selectedOption = $(this).find('option:selected');
+                $unidadInput.val(selectedOption.data('unidad') || '');
 
-            // 2. Limpiar y cargar volúmenes
-            $volumenSelect.empty();
+                // 2. Limpiar y cargar volúmenes
+                $volumenSelect.empty();
 
-            if (!clasificacionId) {
-                $volumenSelect.append('<option value="">-- Seleccione una clasificación primero --</option>');
-                return;
-            }
+                if (!clasificacionId) {
+                    $volumenSelect.append('<option value="">-- Seleccione una clasificación primero --</option>');
+                    return;
+                }
 
-            const volúmenes = volumenesPorClasificacion[clasificacionId];
-            
-            if (!volúmenes || volúmenes.length === 0) {
-                $volumenSelect.append('<option value="">-- No hay volúmenes disponibles --</option>');
-                return;
-            }
+                const volúmenes = volumenesPorClasificacion[clasificacionId];
+                
+                if (!volúmenes || volúmenes.length === 0) {
+                    $volumenSelect.append('<option value="">-- No hay volúmenes disponibles --</option>');
+                    return;
+                }
 
-            $volumenSelect.append('<option value="">-- Seleccionar Volumen --</option>');
-            
-            $.each(volúmenes, function(index, vol) {
-                $volumenSelect.append($('<option>', {
-                    value: vol.id,
-                    text: vol.nombre // Asegúrate que esta propiedad coincide con tu estructura de datos
-                }));
+                $volumenSelect.append('<option value="">-- Seleccionar Volumen --</option>');
+                
+                $.each(volúmenes, function(index, vol) {
+                    $volumenSelect.append($('<option>', {
+                        value: vol.id,
+                        text: vol.nombre 
+                    }));
+                });
+
+                // 3. Si hay solo un volumen, seleccionarlo automáticamente
+                if (volúmenes.length === 1) {
+                    $volumenSelect.val(volúmenes[0].id).trigger('change');
+                }
             });
-
-            // 3. Si hay solo un volumen, seleccionarlo automáticamente
-            if (volúmenes.length === 1) {
-                $volumenSelect.val(volúmenes[0].id).trigger('change');
-            }
-        });
-        
-});
+            
+    });
 document.addEventListener('DOMContentLoaded', function() {
         const $empaqueSelect = $('#empaqueSelect');
         const $tipoSelect = $('#empaqueTipo');

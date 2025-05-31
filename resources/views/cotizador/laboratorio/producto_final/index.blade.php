@@ -7,18 +7,36 @@
 <div class="container">
     <div class="row mb-4">
         <div class="form-check mb-6">
-            <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('bases.create') }}">
-            <i class="bi bi-arrow-left-circle"></i></a>
-            Producto Final</h1>
-        </div>
-        </div>
-        <div class="row mb-3 align-items-center">
-        <div class="col-md-6">
-            <a href="{{ route('producto_final.create') }}" class="btn btn_crear">
-                <i class="fas fa-plus"></i> Nuevo Producto
-            </a>
+            <h1 class="text-center">
+                <a class="float-start" title="Volver" href="{{ route('bases.create') }}">
+                    <i class="bi bi-arrow-left-circle"></i>
+                </a>
+                Producto Final
+            </h1>
         </div>
     </div>
+
+<div class="row mb-3 align-items-center">
+    <div class="col-md-6">
+        <a href="{{ route('producto_final.create') }}" class="btn btn_crear">
+            <i class="fas fa-plus"></i> Nuevo Producto
+        </a>
+    </div>
+    <div class="col-md-6 text-end">
+        <form method="GET" action="{{ route('producto_final.index') }}" class="mb-0 d-inline-block" id="filterForm">
+            <div class="btn-group" role="group">
+                <a href="{{ route('producto_final.index') }}" 
+                class="btn btn-sm {{ request()->estado != 'inactivo' ? 'btn_crear' : 'btn-outline-danger' }}">
+                Activos
+                </a>
+                <a href="{{ route('producto_final.index', ['estado' => 'inactivo']) }}" 
+                class="btn btn-sm {{ request()->estado == 'inactivo' ? 'btn-secondary' : 'btn-outline-secondary' }}">
+                Inactivos
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
 
     <div class="table-responsive">
         <table class="table table-striped table-hover" id="table_muestras">
@@ -37,7 +55,7 @@
                 @forelse($productos as $index => $producto)
                     <tr>
                         <td>{{ $index + 1 }}</td>
-                        <td>{{ $producto->nombre }}</td>
+                        <td class="observaciones">{{ $producto->articulo->nombre }}</td>
                         <td>{{ $producto->volumen->clasificacion->nombre_clasificacion ?? 'N/A' }}</td>
                         <td>{{ $producto->volumen->nombre ?? ' -  ' }}{{ $producto->volumen->clasificacion->unidadMedida->nombre_unidad_de_medida ?? 'N/A' }}</td>
                         <td>S/ {{ number_format($producto->costo_total_produccion, 2) }}</td>

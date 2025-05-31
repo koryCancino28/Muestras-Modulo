@@ -11,7 +11,7 @@
         <div class="card-body">
             <dl class="row">
                 <dt class="col-sm-4">Nombre</dt>
-                <dd class="col-sm-8">{{ $item->nombre }}</dd>
+                <dd class="col-sm-8">{{ $item->articulo->nombre }}</dd>
 
                 @if ($tipo === 'insumo')
                     <dt class="col-sm-4">Precio</dt>
@@ -21,7 +21,7 @@
                     <dd class="col-sm-8">{{ $item->unidadMedida->nombre_unidad_de_medida ?? 'N/A' }}</dd>
 
                     <dt class="col-sm-4">Stock</dt>
-                    <dd class="col-sm-8">{{ $item->stock }}</dd>
+                    <dd class="col-sm-8">{{ $item->articulo->stock }}</dd>
 
                     <dt class="col-sm-4">¿Es caro?</dt>
                     <dd class="col-sm-8">
@@ -31,8 +31,8 @@
                     </dd>
                     <dt class="col-sm-4">Estado</dt>
                     <dd class="col-sm-8">
-                        <span class="badge bg-{{ $item->estado ? 'success' : 'secondary' }}">
-                            {{ $item->estado ? 'Activo' : 'Inactivo' }}
+                        <span class="badge bg-{{ $item->articulo->estado ? 'success' : 'secondary' }}">
+                            {{ $item->articulo->estado ? 'Activo' : 'Inactivo' }}
                         </span>
                     </dd>
                 @else
@@ -46,13 +46,12 @@
                     <dd class="col-sm-8">{{ $item->descripcion ?? 'No hay descripción' }}</dd>
 
                     <dt class="col-sm-4">Stock</dt>
-                    <dd class="col-sm-8">{{ $item->cantidad }}</dd>
+                    <dd class="col-sm-8">{{ $item->articulo->stock }}</dd>
 
                     <dt class="col-sm-4">Estado</dt>
                     <dd class="col-sm-8">
-                        <span class="badge bg-{{ $item->estado ? 'success' : 'secondary' }}">
-                            {{ $item->estado ? 'Activo' : 'Inactivo' }}
-                        </span>
+                        <p class="badge bg-{{ $item->articulo->estado === 'activo' ? 'success' : 'secondary' }}">
+                        {{ $item->articulo->estado === 'activo' ? 'Activo' : 'Inactivo' }}</p>
                     </dd>
                 @endif
             </dl>

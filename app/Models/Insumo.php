@@ -11,11 +11,16 @@ class Insumo extends Model
     protected $table = 'insumos';
     public $timestamps = false;
     protected $fillable = [
-        'nombre',
+        'articulo_id',
         'precio',
         'unidad_de_medida_id',
         'es_caro',
     ];
+
+    public function articulo()
+    {
+        return $this->belongsTo(Articulo::class); 
+    }
       public function bases()
     {
         return $this->belongsToMany(Base::class)

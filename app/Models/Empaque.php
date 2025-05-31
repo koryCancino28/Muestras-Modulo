@@ -12,14 +12,16 @@ class Empaque extends Model
     protected $table = 'empaques';
     public $timestamps = false;
     protected $fillable = [
-        'nombre',
+        'articulo_id',
         'tipo',
         'precio',
     ];
 
-    /**
-     * Productos finales donde se usa este empaque.
-     */
+    public function articulo()
+    {
+        return $this->belongsTo(Articulo::class); 
+    }
+
     public function bases()
     {
         return $this->belongsToMany(Base::class)

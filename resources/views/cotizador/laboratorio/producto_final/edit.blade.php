@@ -15,7 +15,7 @@
         <div class="col-md-6">
             <div class="mb-3">
                 <label for="nombre">Nombre</label>
-                <input type="text" class="form-control" name="nombre" value="{{ old('nombre', $producto->nombre) }}" required>
+                <input type="text" class="form-control" name="nombre" value="{{ old('nombre', $producto->articulo->nombre) }}" required>
                 @error('nombre')
                     <div class="text-success">
                         <i class="fa-solid fa-triangle-exclamation"></i> {{ $message }}
@@ -55,12 +55,14 @@
             </div>
 
             <div class="form-group mb-3">
+                @if($producto->articulo->estado === 'inactivo')
                 <label for="estado" class="form-label">Estado del producto</label><br>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" name="estado" id="estado"
-                        value="activo" {{ $producto->estado === 'activo' ? 'checked' : '' }}>
-                    <label class="form-check-label" for="estado">Activo</label>
-                </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="estado" id="estado"
+                            value="activo" {{ $producto->articulo->estado === 'activo' ? 'checked' : '' }} required>
+                        <label class="form-check-label" for="estado">Activo</label>
+                    </div>
+                @endif
             </div>
 
 
@@ -81,9 +83,9 @@
                         <option value="">-- Seleccionar insumo --</option>
                         @foreach($insumos as $insumo)
                             <option value="{{ $insumo->id }}"
-                                    data-nombre="{{ $insumo->nombre }}"
+                                    data-nombre="{{ $insumo->articulo->nombre }}"
                                     data-precio="{{ $insumo->precio }}">
-                                {{ $insumo->nombre }}
+                                {{ $insumo->articulo->nombre }}
                             </option>
                         @endforeach
                     </select>
@@ -108,7 +110,7 @@
                 <tbody id="tablaInsumos">
                     @foreach($producto->insumos as $insumo)
                         <tr data-id="{{ $insumo->id }}">
-                            <td>{{ $insumo->nombre }}</td>
+                            <td>{{ $insumo->articulo->nombre }}</td>
                             <td>{{ $insumo->pivot->cantidad }}</td>
                             <td>S/ {{ $insumo->precio }}</td>
                             <td><button type="button" class="btn btn-danger btn-sm eliminarInsumo">×</button></td>
@@ -127,9 +129,9 @@
                             <option value="">-- Seleccionar base --</option>
                             @foreach($bases as $base)
                                 <option value="{{ $base->id }}"
-                                        data-nombre="{{ $base->nombre }}"
+                                        data-nombre="{{ $base->articulo->nombre }}"
                                         data-precio="{{ $base->precio }}">
-                                    {{ $base->nombre }}
+                                    {{ $base->articulo->nombre }}
                                 </option>
                             @endforeach
                         </select>
@@ -154,7 +156,7 @@
                     <tbody id="tablabase">
                         @foreach($producto->bases as $base)
                             <tr data-id="{{ $base->id }}">
-                                <td>{{ $base->nombre }}</td>
+                                <td>{{ $base->articulo->nombre }}</td>
                                 <td>{{ $base->pivot->cantidad }}</td>
                                 <td>S/ {{ $base->precio }}</td>
                                 <td><button type="button" class="btn btn-danger btn-sm eliminarBase">×</button></td>
@@ -180,32 +182,37 @@
     <button type="submit" class="btn btn_crear mt-3">Actualizar Producto Final</button>
 </form>
  <script>
-         const volumenesPorClasificacion = @json($volumenesAgrupados);
+       const volumenesPorClasificacion = @json($volumenesAgrupados);
 
-    $('#clasificacion_id').on('change', function () {
+$('#clasificacion_id').on('change', function () {
     const clasificacionId = this.value;
-    const volumenSelect = document.getElementById('volumen_id');
-    const unidadInput = document.getElementById('unidad_medida');
-
-    // 🔹 Obtener la unidad de medida usando jQuery
+    const $volumenSelect = $('#volumen_id');
+    const $unidadInput = $('#unidad_medida');
     const selectedOption = $(this).find('option:selected');
-    unidadInput.value = selectedOption.data('unidad') || '';
-        $('#unidad_de_medida_id').val(selectedOption.data('unidad-id')); 
-    volumenSelect.innerHTML = '';
+
+    // Actualizar unidad de medida
+    $unidadInput.val(selectedOption.data('unidad') || '');
+    $('#unidad_de_medida_id').val(selectedOption.data('unidad-id'));
+
+    // Limpiar y cargar volúmenes
+    $volumenSelect.empty().append('<option value="">-- Seleccionar Volumen --</option>');
 
     if (!clasificacionId || !volumenesPorClasificacion[clasificacionId]) {
-        volumenSelect.innerHTML = '<option value="">-- No hay volúmenes disponibles --</option>';
+        $volumenSelect.append('<option value="">-- No hay volúmenes disponibles --</option>');
         return;
     }
 
-    volumenSelect.innerHTML = '<option value="">-- Seleccionar Volumen --</option>';
-    volumenesPorClasificacion[clasificacionId].forEach(function (vol) {
-        const option = document.createElement('option');
-        option.value = vol.id;
-        option.textContent = vol.nombre;
-        volumenSelect.appendChild(option);
+    // Agregar volúmenes al select
+    volumenesPorClasificacion[clasificacionId].forEach(vol => {
+        $volumenSelect.append(new Option(vol.nombre, vol.id));
     });
+
+    // Si solo hay un volumen, seleccionarlo automáticamente
+    if (volumenesPorClasificacion[clasificacionId].length === 1) {
+        $volumenSelect.val(volumenesPorClasificacion[clasificacionId][0].id);
+    }
 });
+
     </script>
 <script>
 $(document).ready(function () {

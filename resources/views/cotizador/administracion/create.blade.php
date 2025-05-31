@@ -25,6 +25,11 @@
         <div class="form-group">
             <label>Nombre</label>
             <input name="nombre" class="form-control" required>
+            @error('nombre')
+                <div class="text-success">
+                    <i class="fa-solid fa-triangle-exclamation"></i>{{ $message }}
+                </div>
+            @enderror
         </div>
 
         <div class="form-group">

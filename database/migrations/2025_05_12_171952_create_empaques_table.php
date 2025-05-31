@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('empaques', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
+            $table->foreignId('articulo_id')->constrained('articulos')->onDelete('cascade');
             $table->enum('tipo', ['material', 'envase']); // Columna discriminadora
             $table->decimal('precio', 10, 2);
             $table->index('tipo'); // índice para búsquedas SELECT * FROM empaques WHERE tipo = 'material';

@@ -12,7 +12,7 @@ class ProductoFinal extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'nombre', 
+        'articulo_id', 
         'costo_total_produccion',
         'costo_total_real',
         'costo_total_publicado',
@@ -20,6 +20,11 @@ class ProductoFinal extends Model
         'updated_by'
     ];
 
+    public function articulo()
+    {
+        return $this->belongsTo(Articulo::class); 
+    }
+    
     public function clasificacion()
     {
         return $this->belongsTo(Clasificacion::class);
@@ -82,7 +87,6 @@ class ProductoFinal extends Model
         ]);
     }
 
-    // Métodos auxiliares en el modelo ProductoFinal
     public function tieneInsumosCarosDirectos()
     {
         return $this->insumos()->where('es_caro', true)->exists();

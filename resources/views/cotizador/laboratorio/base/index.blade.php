@@ -3,9 +3,26 @@
 @section('content')
     <div class="container">
             <h1 class="text-center fw-bold">Formulaciones Registradas</h1>
-                <div class="mb-3">
-                    <a href="{{ route('bases.create') }}" class="btn btn_crear">+ Crear Nueva</a>
+
+    <div class="row mb-3 align-items-center">
+        <div class="col-md-6">
+            <a href="{{ route('bases.create') }}" class="btn btn_crear">+ Crear Nueva</a>
+        </div>
+        <div class="col-md-6 text-end">
+            <form method="GET" action="{{ route('bases.index') }}" class="mb-0 d-inline-block" id="filterForm">
+                <div class="btn-group" role="group">
+                    <a href="{{ route('bases.index') }}" 
+                    class="btn btn-sm {{ request()->estado != 'inactivo' ? 'btn_crear' : 'btn-outline-danger' }}">
+                    Activos
+                    </a>
+                    <a href="{{ route('bases.index', ['estado' => 'inactivo']) }}" 
+                    class="btn btn-sm {{ request()->estado == 'inactivo' ? 'btn-secondary' : 'btn-outline-secondary' }}">
+                    Inactivos
+                    </a>
                 </div>
+            </form>
+        </div>
+    </div>
             <table class="table table-bordered table-responsive" id="table_muestras">
                 <thead>
                     <tr>
@@ -20,7 +37,7 @@
             <tbody>
                 @foreach($bases as $index => $base)
                 <tr>
-                    <td>{{ $base->nombre }}</td>
+                    <td class="observaciones">{{ $base->articulo->nombre }}</td>
                     <td>{{ $base->volumen->clasificacion->nombre_clasificacion ?? 'N/A'  }}</td>
                     <td>{{ $base->volumen->nombre ?? '- ' }} {{ $base->volumen->clasificacion->unidadMedida->nombre_unidad_de_medida ?? 'N/A'}}</td>
                     <td>{{ ucfirst($base->tipo) }}</td> 

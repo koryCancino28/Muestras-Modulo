@@ -26,4 +26,15 @@ class Proveedor extends Model
     protected $casts = [
         'estado' => 'string'
     ];
+    // Relaciones
+    public function compras()
+    {
+        return $this->hasMany(Compra::class);
+    }
+
+    // Scopes
+    public function scopeActivos($query)
+    {
+        return $query->where('estado', 'activo');
+    }
 }

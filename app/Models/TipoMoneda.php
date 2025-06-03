@@ -16,6 +16,10 @@ class TipoMoneda extends Model
         'codigo_iso',
     ];
 
+    public function compras()
+    {
+        return $this->hasMany(Compra::class, 'moneda_id');
+    }
     public function tiposCambios()
     {
         return $this->hasMany(TipoCambio::class, 'tipo_moneda_id');

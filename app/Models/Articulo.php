@@ -62,7 +62,25 @@ class Articulo extends Model
     {
         return $this->hasMany(Insumo::class);
     }
+    public function detallesCompra()
+    {
+        return $this->hasMany(DetalleCompra::class);
+    }
 
+    public function lotes()
+    {
+        return $this->hasMany(Lote::class);
+    }
 
+    // Scopes
+    public function scopeActivos($query)
+    {
+        return $query->where('estado', 'activo');
+    }
+
+    public function scopePorTipo($query, $tipo)
+    {
+        return $query->where('tipo', $tipo);
+    }
 }
 

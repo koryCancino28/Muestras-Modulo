@@ -16,11 +16,27 @@ use Illuminate\Support\Facades\Auth;
 
 class CompraController extends Controller
 {
-    public function index()
+        public function index(Request $request)
     {
-        $compras = Compra::with(['proveedor', 'moneda'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        // Inicializamos la consulta base
+        $comprasQuery = Compra::with(['proveedor', 'moneda'])->orderBy('created_at', 'desc');
+
+        // Filtrar por proveedor
+        if ($request->has('proveedor_id') && $request->proveedor_id != '') {
+            $comprasQuery->where('proveedor_id', $request->proveedor_id);
+        }
+
+        // Filtrar por fecha de emisión 'desde'
+        if ($request->has('fecha_inicio') && $request->fecha_inicio != '') {
+            $comprasQuery->whereDate('fecha_emision', '>=', $request->fecha_inicio);
+        }
+
+        // Filtrar por fecha de emisión 'hasta'
+        if ($request->has('fecha_fin') && $request->fecha_fin != '') {
+            $comprasQuery->whereDate('fecha_emision', '<=', $request->fecha_fin);
+        }
+        $compras = $comprasQuery->get();
+
         $proveedores = Proveedor::activos()->orderBy('razon_social')->get();
 
         return view('compras.index', compact('compras', 'proveedores'));
@@ -42,13 +58,13 @@ class CompraController extends Controller
             'serie' => 'required|string|max:255',
             'numero' => 'required|string|max:255',
             'proveedor_id' => 'required|exists:proveedores,id',
-            'condicion_pago' => 'required|in:con_tarjeta,en_efectivo',
+            'condicion_pago' => 'required|in:Contado,Crédito',
             'moneda_id' => 'required|exists:tipo_moneda,id',
             'fecha_emision' => 'required|date',
             'fecha_vencimiento' => 'nullable|date|after_or_equal:fecha_emision',
             'igv' => 'required|boolean',
             'articulos' => 'required|array|min:1',
-            'articulos.*' => 'exists:articulos,id',
+            'articulos.*' => 'exists:articulos,id', 
             'cantidades' => 'required|array',
             'cantidades.*' => 'required|integer|min:1',
             'precios' => 'required|array',
@@ -91,38 +107,33 @@ class CompraController extends Controller
                 $lote = $request->lotes[$i] ?? null;
                 $vencimiento = $request->vencimientos[$i] ?? null;
 
+                // Verificar si el lote ya existe o crear uno nuevo
+                $loteModel = Lote::firstOrCreate(
+                    ['articulo_id' => $articuloId, 'num_lote' => $lote],
+                    ['fecha_vencimiento' => $vencimiento, 'precio' => $precio]
+                );
+
                 // Crear detalle de compra
                 DetalleCompra::create([
                     'compra_id' => $compra->id,
-                    'articulo_id' => $articuloId,
+                    'lote_id' => $loteModel->id, // Ahora usamos lote_id
                     'cantidad' => $cantidad,
-                    'precio' => $precio,
-                    'lote' => $lote,
-                    'fecha_vencimiento' => $vencimiento
+                    'precio' => $precio
                 ]);
 
                 // Actualizar stock del artículo
                 $articulo = Articulo::find($articuloId);
                 $articulo->increment('stock', $cantidad);
 
-                // Si se especifica lote, crear o actualizar lote
+                // Si se especifica lote, agregar stock en el almacén correspondiente
                 if ($lote) {
-                    $loteModel = Lote::firstOrCreate([
-                        'articulo_id' => $articuloId,
-                        'num_lote' => $lote
-                    ], [
-                        'fecha_vencimiento' => $vencimiento,
-                        'precio' => $precio
-                    ]);
-
-                    // Agregar stock al primer almacén disponible (puedes modificar esta lógica)
                     $almacen = Almacen::first();
                     if ($almacen) {
                         $detalleLote = DetalleLote::firstOrNew([
                             'lote_id' => $loteModel->id,
                             'almacen_id' => $almacen->id
                         ]);
-                        
+
                         if ($detalleLote->exists) {
                             $detalleLote->increment('stock', $cantidad);
                         } else {
@@ -147,7 +158,7 @@ class CompraController extends Controller
 
     public function show(Compra $compra)
     {
-        $compra->load(['proveedor', 'moneda', 'detalles.articulo']);
+        $compra->load(['proveedor', 'moneda', 'detalles.articulo', 'detalles.lote.articulo']);
         return view('compras.show', compact('compra'));
     }
 

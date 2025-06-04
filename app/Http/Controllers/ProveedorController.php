@@ -39,10 +39,12 @@ class ProveedorController extends Controller
             'telefono_2' => 'nullable|string|max:20',
             'persona_contacto' => 'nullable|string|max:100',
             'observacion' => 'nullable|string',
-            'estado' => 'required|in:activo,inactivo'
         ]);
 
-        Proveedor::create($request->all());
+        $data = $request->all();
+        $data['estado'] = 'activo'; // Estado predeterminado
+
+        Proveedor::create($data);
 
         return redirect()->route('proveedores.index')
                          ->with('success', 'Proveedor creado exitosamente.');

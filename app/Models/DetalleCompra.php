@@ -13,7 +13,7 @@ class DetalleCompra extends Model
 
     protected $fillable = [
         'compra_id',
-        'articulo_id',
+        'lote_id',
         'cantidad',
         'precio'
     ];
@@ -33,6 +33,11 @@ class DetalleCompra extends Model
     public function articulo()
     {
         return $this->belongsTo(Articulo::class);
+    }
+
+     public function lote()
+    {
+        return $this->belongsTo(Lote::class);
     }
 
     // Métodos auxiliares

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('precio_total', 10, 2);
             $table->foreignId('proveedor_id')->constrained('proveedores')->onDelete('cascade'); 
             $table->date('fecha_emision');
-            $table->enum('condicion_pago', ['con_tarjeta', 'en_efectivo']);
+            $table->enum('condicion_pago', ['Contado', 'Crédito']);
             $table->foreignId('moneda_id')->constrained('tipo_moneda')->onDelete('cascade'); 
             $table->decimal('igv', 5, 2); 
             $table->string('referencia')->nullable(); 

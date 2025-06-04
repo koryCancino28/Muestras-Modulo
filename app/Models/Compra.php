@@ -42,21 +42,4 @@ class Compra extends Model
     {
         return $this->hasMany(DetalleCompra::class);
     }
-
-    // Métodos auxiliares
-    public function calcularTotal()
-    {
-        $subtotal = $this->detalles->sum(function ($detalle) {
-            return $detalle->cantidad * $detalle->precio;
-        });
-
-        return $subtotal + $this->igv;
-    }
-
-    public function calcularSubtotal()
-    {
-        return $this->detalles->sum(function ($detalle) {
-            return $detalle->cantidad * $detalle->precio;
-        });
-    }
 }

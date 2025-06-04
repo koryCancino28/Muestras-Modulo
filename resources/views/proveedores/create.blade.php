@@ -22,13 +22,6 @@
                 <label for="ruc" class="form-label">RUC *</label>
                 <input type="text" class="form-control" id="ruc" name="ruc" maxlength="11" required>
             </div>
-            <div class="col-md-6 mb-3">
-                <label for="estado" class="form-label">Estado *</label>
-                <select class="form-select" id="estado" name="estado" required>
-                    <option value="activo" selected>Activo</option>
-                    <option value="inactivo">Inactivo</option>
-                </select>
-            </div>
         </div>
 
         <div class="mb-3">

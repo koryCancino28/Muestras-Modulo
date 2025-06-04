@@ -5,7 +5,7 @@
     <div class="card">
         <div class="card-header">
             <h4 class="card-title">
-                <i class="fas fa-shopping-cart mr-2"></i>
+                <i class="fa-solid fa-basket-shopping"></i>
                 Registro de Compra
             </h4>
         </div>
@@ -71,8 +71,8 @@
                             <select class="form-control @error('condicion_pago') is-invalid @enderror" 
                                 id="condicion_pago" name="condicion_pago" required>
                                 <option value="">Seleccionar condición</option>
-                                <option value="en_efectivo" {{ old('condicion_pago') == 'en_efectivo' ? 'selected' : '' }}>En Efectivo</option>
-                                <option value="con_tarjeta" {{ old('condicion_pago') == 'con_tarjeta' ? 'selected' : '' }}>Con Tarjeta</option>
+                                <option value="Contado" {{ old('condicion_pago') == 'Contado' ? 'selected' : '' }}>Contado</option>
+                                <option value="Crédito" {{ old('condicion_pago') == 'Crédito' ? 'selected' : '' }}>Crédito</option>
                             </select>
                             @error('condicion_pago')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -143,7 +143,8 @@
                         <h5 class="font-weight-bold">Artículos de la Compra</h5>
                         <!-- Botón con Bootstrap 5 -->
                         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalArticulos">
-                            <i class="fas fa-plus mr-1"></i>Agregar Artículo
+                            <i class="fas fa-plus mr-1"></i>
+                            Agregar Artículo
                         </button>
                     </div>
 
@@ -216,19 +217,24 @@
             <div class="modal-body">
                 <!-- Filtro por tipo de artículo -->
                 <div class="form-group">
-                    <label for="tipoArticulo">Filtrar por Tipo de Artículo</label>
-                    <select class="form-control" id="tipoArticulo">
-                        <option value="">Todos los tipos</option>
-                        <option value="insumo">Insumo</option>
-                        <option value="material">Material</option>
-                        <option value="envase">Envase</option>
-                        <option value="merchandise">Merchandise</option>
-                        <option value="base">Base</option>
-                        <option value="prebase">Prebase</option>
-                        <option value="producto_final">Producto Final</option>
-                    </select>
-                </div>
-                
+                <label for="tipoArticulo">Filtrar por Tipo de Artículo</label>
+                <select class="form-control" id="tipoArticulo">
+                    <option value="">Todos los tipos</option>
+                    <option value="insumo">Insumo</option>
+                    <option value="material">Material</option>
+                    <option value="envase">Envase</option>
+                    <option value="merchandise">Merchandise</option>
+                    <option value="base">Base</option>
+                    <option value="prebase">Prebase</option>
+                    <option value="producto_final">Producto Final</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="searchArticulo">Buscar por nombre de artículo</label>
+                <input type="text" class="form-control" id="searchArticulo" placeholder="Buscar artículo">
+            </div>
+
                 <!-- Tabla de artículos -->
                 <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                     <table class="table table-bordered table-hover" id="tablaModalArticulos">
@@ -287,7 +293,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Lote</label>
-                                <input type="text" class="form-control" id="articulo-lote" placeholder="Número de lote (opcional)">
+                                <input type="text" class="form-control" id="articulo-lote" placeholder="Número de lote" required>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -321,22 +327,33 @@ $(document).ready(function() {
     let carrito = [];
     let simboloMoneda = 'S/';
 
-    // Filtrar artículos por tipo
-    $('#tipoArticulo').on('change', function() {
-        const tipoSeleccionado = $(this).val().toLowerCase();
-        console.log('Filtro seleccionado:', tipoSeleccionado);
+        // Filtrar artículos por tipo y nombre
+    $('#tipoArticulo, #searchArticulo').on('input', function() {
+        const tipoSeleccionado = $('#tipoArticulo').val().toLowerCase();
+        const nombreBusqueda = $('#searchArticulo').val().toLowerCase();
+
+        console.log('Filtro de tipo seleccionado:', tipoSeleccionado);
+        console.log('Búsqueda por nombre:', nombreBusqueda);
 
         $('.fila-articulo').each(function() {
             const tipoArticulo = $(this).data('tipo').toLowerCase();
+            const nombreArticulo = $(this).data('nombre').toLowerCase();  
+
             console.log('Tipo artículo:', tipoArticulo, 'Comparando con:', tipoSeleccionado);
-            
-            if (!tipoSeleccionado || tipoArticulo === tipoSeleccionado) {
+            console.log('Nombre artículo:', nombreArticulo, 'Comparando con:', nombreBusqueda);
+
+            // Comprobamos ambos filtros
+            if (
+                (!tipoSeleccionado || tipoArticulo === tipoSeleccionado) && 
+                (!nombreBusqueda || nombreArticulo.includes(nombreBusqueda))
+            ) {
                 $(this).show();
             } else {
                 $(this).hide();
             }
         });
     });
+
 
     // Seleccionar artículo
     $(document).on('click', '.btn-seleccionar', function() {
@@ -550,7 +567,7 @@ $(document).ready(function() {
                         </td>
                         <td>
                             <input type="text" class="form-control form-control-sm articulo-lote" 
-                                data-index="${index}" name="lotes[]" value="${item.lote}" style="width: 100px">
+                                data-index="${index}" name="lotes[]" value="${item.lote}" style="width: 100px" required>
                         </td>
                         <td>
                             <input type="date" class="form-control form-control-sm articulo-vencimiento" 

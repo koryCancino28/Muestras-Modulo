@@ -15,6 +15,8 @@ use App\Http\Controllers\VolumenController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\TipoCambioController;
 use App\Http\Controllers\MerchandiseController;
+use App\Http\Controllers\CompraController;
+use App\Http\Controllers\UtilController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -92,7 +94,6 @@ Route::get('/resumen-tipo-cambio', [TipoCambioController::class, 'resumenTipoCam
 //crud para merchandise
 Route::resource('merchandise', MerchandiseController::class);
 
-use App\Http\Controllers\CompraController;
 
 Route::resource('compras', CompraController::class);
 // Rutas adicionales para AJAX
@@ -103,3 +104,6 @@ Route::get('articulos/por-tipo', [CompraController::class, 'getArticulosByTipo']
 Route::get('/', function () {
     return redirect()->route('compras.index');
 });
+
+//Ruta para utiles
+Route::resource('util', UtilController::class);

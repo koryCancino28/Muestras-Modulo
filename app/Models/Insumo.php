@@ -16,6 +16,17 @@ class Insumo extends Model
         'unidad_de_medida_id',
         'es_caro',
     ];
+    public function ultimoLote()
+    {
+        return $this->hasOneThrough(
+            Lote::class,
+            Articulo::class,
+            'id',           // foreign key on Articulo table
+            'articulo_id',  // foreign key on Lote table
+            'articulo_id',  // local key on Insumo table
+            'id'            // local key on Articulo table
+        )->latestOfMany(); // o ->latest('fecha_vencimiento');
+    }
 
     public function articulo()
     {

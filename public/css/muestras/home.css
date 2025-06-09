@@ -82,10 +82,10 @@ table th, table td {
 }
 
 table td.observaciones {
-    max-width: 100px; /*  ancho máximo para la columna de observaciones */
+    max-width: 100px; 
     overflow: hidden; 
-    text-overflow: ellipsis; /* Muestra '...' */
-    white-space: nowrap; /* Evita que el texto se divida en múltiples líneas */
+    text-overflow: ellipsis; 
+    white-space: nowrap; 
 }
 
 .precio-input {

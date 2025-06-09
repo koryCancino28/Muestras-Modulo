@@ -46,7 +46,7 @@
 
                 <!-- Botones Filtrar y Limpiar -->
                 <div class="col-md-3 mb-2 d-flex justify-content-start">
-                    <button type="submit" class="btn btn-primary mr-3">  
+                    <button type="submit" class="btn btn-primary mr-3" style="border: 1px solid#fe495f; background-color:rgb(255, 113, 130);">  
                         <i class="fas fa-filter"></i> Filtrar
                     </button>
                     <a href="{{ route('compras.index') }}" class="btn btn-secondary">
@@ -64,29 +64,21 @@
                         <th width="5%">N°</th>
                         <th width="10%">Fecha</th>
                         <th>Proveedor</th>
-                        <th width="10%">Moneda</th>
-                        <th width="10%">Condición</th>
-                        <th width="10%">IGV</th>
+                        <th wifth="10%">Referencia</th>
                         <th width="12%">Total</th>
+                        <th width="10%">Usuario</th>
                         <th width="10%">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($compras as $index => $compra)
+                    @forelse($compras as $compra)
                         <tr>
-                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $compra->id}}</td>
                             <td>{{ $compra->fecha_emision->format('d/m/Y') }}</td>
                             <td>{{ $compra->proveedor->razon_social }}</td>
-                            <td>{{ $compra->moneda->nombre }} - {{ $compra->moneda->codigo_iso}}</td>
-                            <td>{{ $compra->condicion_pago }}</td>
-                            <td class="text-center">
-                                @if(!empty($compra->igv) && $compra->igv > 0)
-                                    <span class="badge text-bg-success">Sí</span>
-                                @else
-                                    <span class="badge text-bg-secondary">No</span>
-                                @endif
-                            </td>
+                            <td>{{ $compra->serie }} - {{ $compra->numero }}</td>
                             <td class="text-right">{{ number_format($compra->precio_total, 2) }}</td>
+                            <td>{{ $compra->creador->name ?? 'en sysgrob' }}</td>
                             <td class="text-center">
                                 <a href="{{ route('compras.show', $compra->id) }}" class="btn btn-sm btn-info" title="Ver detalle">
                                     <i class="fas fa-eye"></i>

@@ -2,37 +2,37 @@
 
 @section('content')
     <div class="container-fluid">
-        <div class="d-flex mb-3 justify-content-between align-items-center">
-            <h1 class="text-center flex-grow-1">Detalles de la Compra</h1>
-            <a href="{{ route('compras.index') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Volver al listado
-            </a>
+        <div class="form-check mb-4">
+            <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('compras.index') }}">
+            <i class="bi bi-arrow-left-circle"></i></a>
+            Detalles de la compra</h1>
         </div>
 
-        <!-- Detalles de la compra -->
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4>Información de la Compra</h4>
-            </div>
-            <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>ID de Compra:</strong> {{ $compra->id }}</p>
-                        <p><strong>Fecha de Emisión:</strong> {{ $compra->fecha_emision->format('d/m/Y') }}</p>
-                        <p><strong>Proveedor:</strong> {{ $compra->proveedor->razon_social }}</p>
-                        <p><strong>Moneda:</strong> {{ $compra->moneda->nombre }} ({{ $compra->moneda->codigo_iso }})</p>
-                        <p><strong>Condición de Pago:</strong> {{ $compra->condicion_pago }}</p>
-                        <p><strong>IGV:</strong> 
+                    <div class="col-md-6 ps-5">
+                        <div class="card" style="border-radius: 10px;">
+                <div class="card-header" style="background-color: #fe495f; color: white;">
+                    <h5><i class="bi bi-info-circle me-2"></i> Información General</h5>
+                </div>
+                <div class="card-body">
+                        <p><strong style="color:rgb(224, 61, 80);">N° de Compra:</strong> {{ $compra->id }}</p>
+                        <p><strong style="color:rgb(224, 61, 80);">Fecha de Emisión:</strong> {{ $compra->fecha_emision->format('d/m/Y') }}</p>
+                        <p><strong style="color:rgb(224, 61, 80);">Proveedor:</strong> {{ $compra->proveedor->razon_social }}</p>
+                        <p><strong style="color:rgb(224, 61, 80);">Moneda:</strong> {{ $compra->moneda->nombre }} ({{ $compra->moneda->codigo_iso }})</p>
+                        <p><strong style="color:rgb(224, 61, 80);">Condición de Pago:</strong> {{ $compra->condicion_pago }}</p>
+                        <p><strong style="color:rgb(224, 61, 80);">Referencia:</strong> {{ $compra->serie }} - {{ $compra->numero }}</p>
+                        <p><strong style="color:rgb(224, 61, 80);">IGV:</strong> 
                             @if(!empty($compra->igv) && $compra->igv > 0)
                                 <span class="badge text-bg-success">Sí</span>
                             @else
                                 <span class="badge text-bg-secondary">No</span>
                             @endif
                         </p>
-                        <p><strong>Total:</strong> {{ number_format($compra->precio_total, 2) }}</p>
+                        <p><strong style="color:rgb(224, 61, 80);">Total:</strong> {{ number_format($compra->precio_total, 2) }}</p>
+                    </div>
+                    </div>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>Detalles de la Compra:</strong></p>
                         <!-- Tu tabla con un ID para DataTables -->
                         <table id="tablaCompras" class="table table-bordered table-striped table-hover">
                             <thead class="bg-secondary text-white">
@@ -57,8 +57,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
     <script>
         $(document).ready(function() {
             $('#tablaCompras').DataTable({

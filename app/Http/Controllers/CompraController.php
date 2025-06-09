@@ -18,20 +18,16 @@ class CompraController extends Controller
 {
         public function index(Request $request)
     {
-        // Inicializamos la consulta base
         $comprasQuery = Compra::with(['proveedor', 'moneda'])->orderBy('created_at', 'desc');
 
-        // Filtrar por proveedor
         if ($request->has('proveedor_id') && $request->proveedor_id != '') {
             $comprasQuery->where('proveedor_id', $request->proveedor_id);
         }
 
-        // Filtrar por fecha de emisión 'desde'
         if ($request->has('fecha_inicio') && $request->fecha_inicio != '') {
             $comprasQuery->whereDate('fecha_emision', '>=', $request->fecha_inicio);
         }
 
-        // Filtrar por fecha de emisión 'hasta'
         if ($request->has('fecha_fin') && $request->fecha_fin != '') {
             $comprasQuery->whereDate('fecha_emision', '<=', $request->fecha_fin);
         }
@@ -52,16 +48,25 @@ class CompraController extends Controller
         return view('compras.create', compact('proveedores', 'monedas', 'articulos', 'almacenes'));
     }
 
-    public function store(Request $request)
+        public function store(Request $request)
     {
+        $existe = Compra::where('serie', $request->serie)
+            ->where('numero', $request->numero)
+            ->where('proveedor_id', $request->proveedor_id)
+            ->exists();
+
+        if ($existe) {
+            return back()->withInput()->with('error', 'Ya se registró una compra con esta serie y número.');
+        }
+
+        // Validaciones principales
         $request->validate([
             'serie' => 'required|string|max:255',
             'numero' => 'required|string|max:255',
             'proveedor_id' => 'required|exists:proveedores,id',
             'condicion_pago' => 'required|in:Contado,Crédito',
             'moneda_id' => 'required|exists:tipo_moneda,id',
-            'fecha_emision' => 'required|date',
-            'fecha_vencimiento' => 'nullable|date|after_or_equal:fecha_emision',
+            'fecha_emision' => 'required|date|before_or_equal:today',
             'igv' => 'required|boolean',
             'articulos' => 'required|array|min:1',
             'articulos.*' => 'exists:articulos,id', 
@@ -70,8 +75,18 @@ class CompraController extends Controller
             'precios' => 'required|array',
             'precios.*' => 'required|numeric|min:0',
             'lotes' => 'array',
-            'vencimientos' => 'array'
+            'vencimientos' => 'array',
+            'vencimientos.*' => 'nullable|date',
         ]);
+
+        // Validar cada fecha de vencimiento individualmente
+        foreach ($request->vencimientos as $index => $vencimiento) {
+            if ($vencimiento && $vencimiento < $request->fecha_emision) {
+                return back()->withInput()->withErrors([
+                    "vencimientos.$index" => "La fecha de vencimiento debe ser igual o posterior a la fecha de emisión.",
+                ]);
+            }
+        }
 
         try {
             DB::beginTransaction();
@@ -96,10 +111,10 @@ class CompraController extends Controller
                 'condicion_pago' => $request->condicion_pago,
                 'moneda_id' => $request->moneda_id,
                 'igv' => $igv,
-                'referencia' => $request->referencia
+                'created_by' => Auth::id() 
             ]);
 
-            // Crear los detalles de compra y actualizar stock
+            // Crear detalles de compra y actualizar stock
             for ($i = 0; $i < count($request->articulos); $i++) {
                 $articuloId = $request->articulos[$i];
                 $cantidad = $request->cantidades[$i];
@@ -116,7 +131,7 @@ class CompraController extends Controller
                 // Crear detalle de compra
                 DetalleCompra::create([
                     'compra_id' => $compra->id,
-                    'lote_id' => $loteModel->id, // Ahora usamos lote_id
+                    'lote_id' => $loteModel->id,
                     'cantidad' => $cantidad,
                     'precio' => $precio
                 ]);
@@ -125,7 +140,7 @@ class CompraController extends Controller
                 $articulo = Articulo::find($articuloId);
                 $articulo->increment('stock', $cantidad);
 
-                // Si se especifica lote, agregar stock en el almacén correspondiente
+                // Registrar stock en almacén si hay lote
                 if ($lote) {
                     $almacen = Almacen::first();
                     if ($almacen) {
@@ -148,7 +163,6 @@ class CompraController extends Controller
 
             return redirect()->route('compras.index', $compra)
                 ->with('success', 'Compra registrada exitosamente.');
-
         } catch (\Exception $e) {
             DB::rollback();
             return back()->withInput()
@@ -162,58 +176,18 @@ class CompraController extends Controller
         return view('compras.show', compact('compra'));
     }
 
-    public function edit(Compra $compra)
-    {
-        $proveedores = Proveedor::activos()->orderBy('razon_social')->get();
-        $monedas = TipoMoneda::orderBy('nombre')->get();
-        $articulos = Articulo::activos()->orderBy('nombre')->get();
-        $compra->load('detalles.articulo');
-
-        return view('compras.edit', compact('compra', 'proveedores', 'monedas', 'articulos'));
-    }
-
-    public function update(Request $request, Compra $compra)
-    {
-        $request->validate([
-            'serie' => 'required|string|max:255',
-            'numero' => 'required|string|max:255',
-            'proveedor_id' => 'required|exists:proveedores,id',
-            'condicion_pago' => 'required|in:con_tarjeta,en_efectivo',
-            'moneda_id' => 'required|exists:tipo_moneda,id',
-            'fecha_emision' => 'required|date',
-            'fecha_vencimiento' => 'nullable|date|after_or_equal:fecha_emision',
-            'igv' => 'required|boolean'
-        ]);
-
-        try {
-            DB::beginTransaction();
-
-            $compra->update($request->only([
-                'serie', 'numero', 'proveedor_id', 'condicion_pago',
-                'moneda_id', 'fecha_emision', 'referencia'
-            ]));
-
-            DB::commit();
-
-            return redirect()->route('compras.show', $compra)
-                ->with('success', 'Compra actualizada exitosamente.');
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            return back()->withInput()
-                ->with('error', 'Error al actualizar la compra: ' . $e->getMessage());
-        }
-    }
-
-    public function destroy(Compra $compra)
+        public function destroy(Compra $compra)
     {
         try {
             DB::beginTransaction();
 
             // Revertir stock de los artículos
             foreach ($compra->detalles as $detalle) {
-                $articulo = $detalle->articulo;
-                $articulo->decrement('stock', $detalle->cantidad);
+                $articulo = $detalle->lote->articulo ?? null;
+
+                if ($articulo) {
+                    $articulo->decrement('stock', $detalle->cantidad);
+                }
             }
 
             // Eliminar detalles y compra
@@ -223,13 +197,14 @@ class CompraController extends Controller
             DB::commit();
 
             return redirect()->route('compras.index')
-                ->with('success', 'Compra eliminada exitosamente.');
+                ->with('error', 'Compra eliminada exitosamente.');
 
         } catch (\Exception $e) {
             DB::rollback();
             return back()->with('error', 'Error al eliminar la compra: ' . $e->getMessage());
         }
     }
+
 
     // Métodos auxiliares para AJAX
     public function getArticulosByTipo(Request $request)

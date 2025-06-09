@@ -34,12 +34,14 @@
                 </form>
             </div>
     </div>
-    <table class="table table-bordered table-responsive" id="table_muestras">
+    <table class="table table-bordered table-responsive table-hover" id="table_muestras">
         <thead>
             <tr>
                 <th>Tipo</th>
                 <th>Nombre</th>
-                <th>Precio</th>
+                <th>Precio <br> Unitario</th>
+                <th>Precio de <br>última compra</th>
+                <th>Stock</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -53,6 +55,8 @@
                              <span class="badge bg-danger">Insumo caro</span>
                          @endif
                     </td>
+                    <td> S/ {{ $item->ultimoLote?->precio ?? '--' }}</td>
+                    <td>{{ $item->articulo->stock }}</td>
                      <td>
                             <div class="w">
                                 <a href="{{ route('insumo_empaque.show', $item->id) }}?tipo=insumo" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8; color: white;"><i class="fa-regular fa-eye"></i>Ver</a>
@@ -72,6 +76,8 @@
                     <td>{{ ucfirst($item->tipo) }}</td>
                     <td class="observaciones">{{ $item->articulo->nombre }}</td>
                     <td>S/ {{ $item->precio }}</td>
+                    <td>S/ {{ $item->ultimoLote?->precio ?? '--' }}</td>
+                    <td>{{ $item->articulo->stock }}</td>
                     <td>
                         <div class="w">
                             <a href="{{ route('insumo_empaque.show', $item->id) }}?tipo={{ $item->tipo }}" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8; color: white;"><i class="fa-regular fa-eye"></i>Ver</a>
@@ -98,7 +104,7 @@
         }
 
         .btn-sm i {
-            margin-right: 4px; /* Espaciado entre el icono y el texto */
+            margin-right: 4px; 
         }
         .w {
             display: flex;

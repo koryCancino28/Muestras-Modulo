@@ -1,209 +1,186 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-4">
-    <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">
+<div class="container-fluid" style="user-select: none;">
+        <div class="d-flex mb-4 justify-content-between align-items-center">
+            <h1 class="text-center flex-grow-1"><a class="float-start text-secondary" title="Volver" href="{{ route('compras.index') }}">
+            <i class="bi bi-arrow-left-circle"></i></a>
                 <i class="fa-solid fa-basket-shopping"></i>
                 Registro de Compra
-            </h4>
+            </h1>
         </div>
-        <div class="card-body">
-            <form method="POST" action="{{ route('compras.store') }}" id="compraForm">
-                @csrf
+        <form method="POST" action="{{ route('compras.store') }}" id="compraForm">
+            @csrf
+            
+            <!-- Datos principales de la compra -->
+            <div class="row">
+                <div class="col-md-4 mb-2">
+                    <div class="form-group">
+                        <label for="serie">Serie (Referencia)</label>
+                        <input type="text" class="form-control @error('serie') is-invalid @enderror" 
+                            id="serie" name="serie" value="{{ old('serie') }}" placeholder="F001" required>
+                        @error('serie')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="numero">Número (Referencia)</label>
+                        <input type="number" class="form-control @error('numero') is-invalid @enderror" 
+                            id="numero" name="numero" value="{{ old('numero') }}" placeholder="000001" required>
+                        @error('numero')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="condicion_pago">Condición de Pago</label>
+                        <select class="form-control @error('condicion_pago') is-invalid @enderror" 
+                            id="condicion_pago" name="condicion_pago" required>
+                            <option value="">Seleccionar condición</option>
+                            <option value="Contado" {{ old('condicion_pago') == 'Contado' ? 'selected' : '' }}>Contado</option>
+                            <option value="Crédito" {{ old('condicion_pago') == 'Crédito' ? 'selected' : '' }}>Crédito</option>
+                        </select>
+                        @error('condicion_pago')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="proveedor_id">Proveedor</label>
+                        <select class="form-control select2 @error('proveedor_id') is-invalid @enderror" 
+                            id="proveedor_id" name="proveedor_id" required>
+                            <option value="">Seleccionar proveedor</option>
+                            @foreach ($proveedores as $proveedor)
+                                <option value="{{ $proveedor->id }}" {{ old('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
+                                    {{ $proveedor->razon_social }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('proveedor_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="moneda_id">Tipo de Moneda</label>
+                        <select class="form-control @error('moneda_id') is-invalid @enderror" 
+                            id="moneda_id" name="moneda_id" required>
+                            <option value="">Seleccionar moneda</option>
+                            @foreach ($monedas as $moneda)
+                                <option value="{{ $moneda->id }}" data-simbolo="{{ $moneda->simbolo ?? 'S/' }}" {{ old('moneda_id') == $moneda->id ? 'selected' : '' }}>
+                                    {{ $moneda->codigo }} - {{ $moneda->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('moneda_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <div class="form-group">
+                        <label for="fecha_emision">Fecha de Emisión</label>
+                        <input type="date" class="form-control @error('fecha_emision') is-invalid @enderror" 
+                            id="fecha_emision" name="fecha_emision" value="{{ old('fecha_emision') ?? date('Y-m-d') }}" max="{{ date('Y-m-d') }}" required>
+                        @error('fecha_emision')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="igv">¿Incluye IGV?</label>
+                        <select class="form-control @error('igv') is-invalid @enderror" 
+                            id="igv" name="igv" required>
+                            <option value="1" {{ old('igv', '1') == '1' ? 'selected' : '' }}>Agregar IGV</option>
+                            <option value="0" {{ old('igv') == '0' ? 'selected' : '' }}>El precio incluye IGV</option>
+                        </select>
+                        @error('igv')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
                 
-                <!-- Datos principales de la compra -->
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="serie">Serie</label>
-                            <input type="text" class="form-control @error('serie') is-invalid @enderror" 
-                                id="serie" name="serie" value="{{ old('serie') }}" placeholder="F001" required>
-                            @error('serie')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="numero">Número</label>
-                            <input type="text" class="form-control @error('numero') is-invalid @enderror" 
-                                id="numero" name="numero" value="{{ old('numero') }}" placeholder="000001" required>
-                            @error('numero')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="referencia">Referencia</label>
-                            <input type="text" class="form-control @error('referencia') is-invalid @enderror" 
-                                id="referencia" name="referencia" value="{{ old('referencia') }}" placeholder="Orden de compra #123">
-                            @error('referencia')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
+            </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="proveedor_id">Proveedor</label>
-                            <select class="form-control @error('proveedor_id') is-invalid @enderror" 
-                                id="proveedor_id" name="proveedor_id" required>
-                                <option value="">Seleccionar proveedor</option>
-                                @foreach ($proveedores as $proveedor)
-                                    <option value="{{ $proveedor->id }}" {{ old('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
-                                        {{ $proveedor->razon_social }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('proveedor_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="condicion_pago">Condición de Pago</label>
-                            <select class="form-control @error('condicion_pago') is-invalid @enderror" 
-                                id="condicion_pago" name="condicion_pago" required>
-                                <option value="">Seleccionar condición</option>
-                                <option value="Contado" {{ old('condicion_pago') == 'Contado' ? 'selected' : '' }}>Contado</option>
-                                <option value="Crédito" {{ old('condicion_pago') == 'Crédito' ? 'selected' : '' }}>Crédito</option>
-                            </select>
-                            @error('condicion_pago')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="moneda_id">Tipo de Moneda</label>
-                            <select class="form-control @error('moneda_id') is-invalid @enderror" 
-                                id="moneda_id" name="moneda_id" required>
-                                <option value="">Seleccionar moneda</option>
-                                @foreach ($monedas as $moneda)
-                                    <option value="{{ $moneda->id }}" data-simbolo="{{ $moneda->simbolo ?? 'S/' }}" {{ old('moneda_id') == $moneda->id ? 'selected' : '' }}>
-                                        {{ $moneda->codigo }} - {{ $moneda->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('moneda_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="fecha_emision">Fecha de Emisión</label>
-                            <input type="date" class="form-control @error('fecha_emision') is-invalid @enderror" 
-                                id="fecha_emision" name="fecha_emision" value="{{ old('fecha_emision') ?? date('Y-m-d') }}" required>
-                            @error('fecha_emision')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="fecha_vencimiento">Fecha de Vencimiento</label>
-                            <input type="date" class="form-control @error('fecha_vencimiento') is-invalid @enderror" 
-                                id="fecha_vencimiento" name="fecha_vencimiento" value="{{ old('fecha_vencimiento') }}">
-                            @error('fecha_vencimiento')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="igv">¿Incluye IGV?</label>
-                            <select class="form-control @error('igv') is-invalid @enderror" 
-                                id="igv" name="igv" required>
-                                <option value="1" {{ old('igv', '1') == '1' ? 'selected' : '' }}>Sí, incluye IGV</option>
-                                <option value="0" {{ old('igv') == '0' ? 'selected' : '' }}>No incluye IGV</option>
-                            </select>
-                            @error('igv')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sección de artículos -->
-                <div class="mt-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="font-weight-bold">Artículos de la Compra</h5>
-                        <!-- Botón con Bootstrap 5 -->
-                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalArticulos">
-                            <i class="fas fa-plus mr-1"></i>
-                            Agregar Artículo
-                        </button>
-                    </div>
-
-                    <!-- Tabla del carrito -->
-                    <div class="table-responsive border rounded">
-                        <table class="table mb-0" id="tablaArticulos">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>SKU</th>
-                                    <th>Producto</th>
-                                    <th>Unidad</th>
-                                    <th>Cantidad</th>
-                                    <th>Precio Unit.</th>
-                                    <th>Lote</th>
-                                    <th>Vencimiento</th>
-                                    <th>Subtotal</th>
-                                    <th>Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr id="fila-vacia">
-                                    <td colspan="9" class="text-center text-muted py-4">
-                                        No hay artículos agregados. Haga clic en "Agregar Artículo" para comenzar.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Totales -->
-                    <div class="d-flex justify-content-end mt-3" id="totales-container" style="display: none !important;">
-                        <div class="subtotal-container">
-                            <div class="subtotal-row">
-                                <span>Subtotal:</span>
-                                <span id="subtotal-valor">S/ 0.00</span>
-                            </div>
-                            <div class="subtotal-row" id="igv-container">
-                                <span>IGV (18%):</span>
-                                <span id="igv-valor">S/ 0.00</span>
-                            </div>
-                            <div class="total-row">
-                                <span>Total:</span>
-                                <span id="total-valor">S/ 0.00</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Botones de acción -->
-                <div class="d-flex gap-2 mt-4">
-                    <button type="submit" class="btn btn-primary flex-grow-1" id="btnRegistrar" disabled>
-                        Registrar Compra
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary" id="btnLimpiar">
-                        Limpiar Formulario
+            <!-- Sección de artículos -->
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+    
+                    <h5 class="font-weight-bold" style="color:rgb(243, 113, 128); font-weight: bold; margin: 0;">Artículos de la Compra</h5>
+                    <!-- Botón con Bootstrap 5 -->
+                    <button type="button" class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#modalArticulos">
+                        <i class="fas fa-plus mr-1"></i>
+                        Agregar Artículo
                     </button>
                 </div>
-            </form>
-        </div>
+
+                <!-- Tabla del carrito -->
+                <div class="table-responsive border rounded">
+                    <table class="table mb-0" id="tablaArticulos">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>SKU</th>
+                                <th>Producto</th>
+                                <th>Unidad</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unit.</th>
+                                <th>Lote</th>
+                                <th>Vencimiento</th>
+                                <th>Subtotal</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="fila-vacia">
+                                <td colspan="9" class="text-center text-muted py-4">
+                                    No hay artículos agregados. Haga clic en "Agregar Artículo" para comenzar.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Totales -->
+                <div class="d-flex justify-content-end mt-3" id="totales-container" style="display: none !important;">
+                    <div class="subtotal-container">
+                        <div class="subtotal-row">
+                            <span>Subtotal:</span>
+                            <span id="subtotal-valor">S/ 0.00</span>
+                        </div>
+                        <div class="subtotal-row" id="igv-container">
+                            <span>IGV (18%):</span>
+                            <span id="igv-valor">S/ 0.00</span>
+                        </div>
+                        <div class="total-row">
+                            <span>Total:</span>
+                            <span id="total-valor">S/ 0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn_crear flex-grow-1" id="btnRegistrar" disabled>
+                    Registrar Compra
+                </button>
+                <button type="button" class="btn btn-outline-secondary" id="btnLimpiar">
+                    Limpiar Formulario
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -216,22 +193,20 @@
             </div>
             <div class="modal-body">
                 <!-- Filtro por tipo de artículo -->
-                <div class="form-group">
-                <label for="tipoArticulo">Filtrar por Tipo de Artículo</label>
+                <div class="form-group mb-2">
+                <label for="tipoArticulo" class="mb-1">Filtrar por Tipo de Artículo</label>
                 <select class="form-control" id="tipoArticulo">
                     <option value="">Todos los tipos</option>
                     <option value="insumo">Insumo</option>
                     <option value="material">Material</option>
                     <option value="envase">Envase</option>
                     <option value="merchandise">Merchandise</option>
-                    <option value="base">Base</option>
-                    <option value="prebase">Prebase</option>
-                    <option value="producto_final">Producto Final</option>
+                    <option value="util">Útil</option>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="searchArticulo">Buscar por nombre de artículo</label>
+            <div class="form-group mb-3">
+                <label for="searchArticulo" class="mb-1">Buscar por nombre de artículo</label>
                 <input type="text" class="form-control" id="searchArticulo" placeholder="Buscar artículo">
             </div>
 
@@ -264,7 +239,7 @@
                                 </td>
                                 <td>{{ $articulo->stock }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-sm btn-primary btn-seleccionar" data-articulo-id="{{ $articulo->id }}">
+                                    <button type="button" class="btn btn-sm btn_crear btn-seleccionar" data-articulo-id="{{ $articulo->id }}">
                                         Seleccionar
                                     </button>
                                 </td>
@@ -277,8 +252,8 @@
                 <!-- Formulario para completar datos del artículo -->
                 <div id="articulo-form" style="display: none;" class="border-top pt-3 mt-3">
                     <h5 class="mb-3">Completar datos del artículo: <span id="articulo-nombre-seleccionado" class="text-primary"></span></h5>
-                    <div class="row">
-                        <div class="col-md-6">
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-2">
                             <div class="form-group">
                                 <label>Cantidad <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="articulo-cantidad" min="1" value="1" required>
@@ -303,8 +278,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-success" id="btn-agregar-carrito">
+                    <div class="gap-2">
+                        <button type="button" class="btn btn_crear" id="btn-agregar-carrito">
                             <i class="fas fa-cart-plus mr-1"></i> Agregar al Carrito
                         </button>
                         <button type="button" class="btn btn-outline-secondary" id="btn-cancelar-articulo">
@@ -316,16 +291,67 @@
         </div>
     </div>
 </div>
-
+<style>
+    .btn-sm{
+        border: 1px solid#fe495f !important;
+        background-color:rgb(255, 113, 130); 
+        color: white;
+        padding: 5px 16px; 
+        font-size: 15px;  
+        border-radius: 4px;
+    }
+</style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 $(document).ready(function() {
+    // Guardar datos del formulario en localStorage al cambiarlos
+    $('#compraForm :input').on('change keyup', function() {
+        const datosFormulario = {};
+        $('#compraForm :input').each(function() {
+            if (this.name && this.type !== 'submit' && this.type !== 'button') {
+                datosFormulario[this.name] = $(this).val();
+            }
+        });
+        localStorage.setItem('formularioCompra', JSON.stringify(datosFormulario));
+    });
+
+    $('#proveedor_id').select2({
+                placeholder: "Seleccionar proveedor",
+                allowClear: true
+            });
+     document.getElementById('compraForm').addEventListener('submit', function (e) {
+            const btn = document.getElementById('btnRegistrar');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...'; // opcional
+        });
     // Variables globales
     let articuloSeleccionado = null;
     let carrito = [];
     let simboloMoneda = 'S/';
+    // Intentar recuperar carrito del localStorage
+    const carritoGuardado = localStorage.getItem('carritoCompra');
+    if (carritoGuardado) {
+        carrito = JSON.parse(carritoGuardado);
+    }
+    // Recuperar datos del formulario
+    const formularioGuardado = localStorage.getItem('formularioCompra');
+    if (formularioGuardado) {
+        const datos = JSON.parse(formularioGuardado);
+        for (const campo in datos) {
+            const $campo = $('[name="' + campo + '"]');
+            if ($campo.length) {
+                $campo.val(datos[campo]).trigger('change');
+            }
+        }
+    }
+
+    actualizarTablaCarrito();
+
+    if (carrito.length > 0) {
+        $('#btnRegistrar').prop('disabled', false);
+    }
 
         // Filtrar artículos por tipo y nombre
     $('#tipoArticulo, #searchArticulo').on('input', function() {
@@ -353,7 +379,6 @@ $(document).ready(function() {
             }
         });
     });
-
 
     // Seleccionar artículo
     $(document).on('click', '.btn-seleccionar', function() {
@@ -530,7 +555,10 @@ $(document).ready(function() {
         if (confirm('¿Está seguro de limpiar el formulario? Se perderán todos los datos ingresados.')) {
             $('#compraForm')[0].reset();
             carrito = [];
+            localStorage.removeItem('carritoCompra');
+            localStorage.removeItem('formularioCompra');
             actualizarTablaCarrito();
+            $('#proveedor_id').val(null).trigger('change');
             $('#btnRegistrar').prop('disabled', true);
             simboloMoneda = 'S/';
         }
@@ -588,6 +616,7 @@ $(document).ready(function() {
         }
         
         calcularTotales();
+        localStorage.setItem('carritoCompra', JSON.stringify(carrito));
     }
 
     // Función para calcular totales
@@ -614,6 +643,8 @@ $(document).ready(function() {
         if (carrito.length === 0) {
             e.preventDefault();
             alert('Debe agregar al menos un artículo a la compra');
+            localStorage.removeItem('carritoCompra');
+            localStorage.removeItem('formularioCompra');
             return false;
         }
         

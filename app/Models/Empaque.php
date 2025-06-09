@@ -17,6 +17,17 @@ class Empaque extends Model
         'precio',
     ];
 
+        public function ultimoLote()
+    {
+        return $this->hasOneThrough(
+            Lote::class,
+            Articulo::class,
+            'id',           
+            'articulo_id',  
+            'articulo_id',  
+            'id'            
+        )->latestOfMany(); 
+    }
     public function articulo()
     {
         return $this->belongsTo(Articulo::class); 

@@ -11,7 +11,7 @@ class MerchandiseController extends Controller
     {
         $estado = request()->estado;
 
-        $merchandise = Merchandise::whereHas('articulo', function ($query) use ($estado) {
+        $merchandise = Merchandise::with(['articulo', 'ultimoLote'])->whereHas('articulo', function ($query) use ($estado) {
             if ($estado === 'inactivo') {
                 $query->where('estado', 'inactivo');
             } else {

@@ -20,8 +20,8 @@ return new class extends Migration
             $table->date('fecha_emision');
             $table->enum('condicion_pago', ['Contado', 'Crédito']);
             $table->foreignId('moneda_id')->constrained('tipo_moneda')->onDelete('cascade'); 
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null'); 
             $table->decimal('igv', 5, 2); 
-            $table->string('referencia')->nullable(); 
             $table->timestamps();
         });
 

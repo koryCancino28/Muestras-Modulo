@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('estado')->default('activo');
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->enum('tipo', ['insumo', 'material', 'envase', 'merchandise','base', 'prebase', 'producto_final']); // Discriminador
+            $table->enum('tipo', ['insumo', 'material', 'envase', 'merchandise', 'util','base', 'prebase', 'producto_final']); // Discriminador
             $table->timestamps();
         });
 

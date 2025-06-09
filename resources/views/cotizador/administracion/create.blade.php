@@ -33,7 +33,7 @@
         </div>
 
         <div class="form-group">
-            <label>Precio / Costo</label>
+            <label>Precio Unitario</label>
             <input name="precio" type="number" step="0.01" class="form-control" required>
         </div>
 

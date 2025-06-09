@@ -4,17 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Merchandise extends Model
+class Util extends Model
 {
-
-    protected $table = 'merchandises';
+    protected $table = 'utiles';
     public $timestamps = false;
-
     protected $fillable = [
         'articulo_id',
         'precio',
     ];
-
     public function articulo()
     {
         return $this->belongsTo(Articulo::class);

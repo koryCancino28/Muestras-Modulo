@@ -15,20 +15,20 @@ class InsumoEmpaqueController extends Controller
         $estado = request()->estado;
 
         if ($estado == 'inactivo') {
-            $insumos = Insumo::whereHas('articulo', function ($query) {
+            $insumos = Insumo::with(['articulo', 'ultimoLote'])->whereHas('articulo', function ($query) {
                 $query->where('estado', 'inactivo');
             })->orderBy('id', 'desc')->get();
 
-            $empaques = Empaque::whereHas('articulo', function ($query) {
+            $empaques = Empaque::with(['articulo', 'ultimoLote'])->whereHas('articulo', function ($query) {
                 $query->where('estado', 'inactivo');
             })->orderBy('id','desc')->get();
         } else {
             // Si no se filtra por inactivo, mostramos solo los activos por defecto
-            $insumos = Insumo::whereHas('articulo', function ($query) {
+            $insumos = Insumo::with(['articulo', 'ultimoLote'])->whereHas('articulo', function ($query) {
                 $query->where('estado', 'activo');
             })->orderBy('id', 'desc')->get();
 
-            $empaques = Empaque::whereHas('articulo', function ($query) {
+            $empaques = Empaque::with(['articulo', 'ultimoLote'])->whereHas('articulo', function ($query) {
                 $query->where('estado', 'activo');
             })->orderBy('id', 'desc')->get();
         }

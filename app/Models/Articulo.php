@@ -57,6 +57,10 @@ class Articulo extends Model
     {
         return $this->hasMany(Empaque::class);
     }
+    public function util()
+    {
+        return $this->hasMany(Util::class);
+    }
 
     public function insumos()
     {

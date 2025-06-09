@@ -3,10 +3,10 @@
 @section('content')
 <div class="container">
     <div class="form-check mb-3">
-            <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('bases.index') }}">
-            <i class="bi bi-arrow-left-circle"></i></a>
-           Detalles: {{ $base->articulo->nombre }}</h1>
-        </div>
+        <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('bases.index') }}">
+        <i class="bi bi-arrow-left-circle"></i></a>
+        Detalles: {{ $base->articulo->nombre }}</h1>
+    </div>
      <div class="card mb-4">
         <div class="card-body">
             <div class="row">

@@ -18,7 +18,7 @@ class Compra extends Model
         'condicion_pago',
         'moneda_id',
         'igv',
-        'referencia'
+        'created_by',
     ];
 
     protected $casts = [
@@ -42,4 +42,9 @@ class Compra extends Model
     {
         return $this->hasMany(DetalleCompra::class);
     }
+    public function creador()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
 }

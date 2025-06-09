@@ -4,25 +4,25 @@
 <div class="container">
     <div class="form-check mb-3">
         <h1 class="text-center">
-            Listado de Merchandise
+            Listado de Útiles
         </h1>
     </div>
     <div class="row mb-3 align-items-center">
         <div class="col-md-6">
-            <button type="button" class="btn btn_crear" data-bs-toggle="modal" data-bs-target="#crearMerchandiseModal">
-                <i class="fa-solid fa-square-plus"></i>Crear Merchandise
+            <button type="button" class="btn btn_crear" data-bs-toggle="modal" data-bs-target="#crearUtilModal">
+                <i class="fa-solid fa-square-plus"></i>Crear Útil
             </button>
         </div>
-            @include('cotizador.merchandise.create')
+            @include('cotizador.util.create')
 
         <div class="col-md-6 text-end">
-            <form method="GET" action="{{ route('merchandise.index') }}" class="mb-0 d-inline-block" id="filterForm">
+            <form method="GET" action="{{ route('util.index') }}" class="mb-0 d-inline-block" id="filterForm">
                 <div class="btn-group" role="group">
-                    <a href="{{ route('merchandise.index') }}" 
+                    <a href="{{ route('util.index') }}" 
                     class="btn btn-sm {{ request()->estado != 'inactivo' ? 'btn_crear' : 'btn-outline-danger' }}">
                     Activos
                     </a>
-                    <a href="{{ route('merchandise.index', ['estado' => 'inactivo']) }}" 
+                    <a href="{{ route('util.index', ['estado' => 'inactivo']) }}" 
                     class="btn btn-sm {{ request()->estado == 'inactivo' ? 'btn-secondary' : 'btn-outline-secondary' }}">
                     Inactivos
                     </a>
@@ -42,21 +42,21 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($merchandise as $index => $merchandises)
+            @foreach($utiles as $index => $util)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td class="observaciones">{{ $merchandises->articulo->nombre ?? 'Sin nombre' }}</td>
-                    <td>{{ $merchandises->precio ?? 'Sin precio' }}</td>
-                    <td> S/ {{ $merchandises->ultimoLote?->precio ?? '--' }}</td>
-                    <td>{{ $merchandises->articulo->stock }}</td>
+                    <td class="observaciones">{{ $util->articulo->nombre ?? 'Sin nombre' }}</td>
+                    <td>{{ $util->precio ?? 'Sin precio' }}</td>
+                    <td> S/ {{ $util->ultimoLote?->precio ?? '--' }}</td>
+                    <td>{{ $util->articulo->stock }}</td>
                     <td>
                         <div class="w">
-                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditar{{ $merchandises->articulo_id }}">
+                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditar{{ $util->articulo_id }}">
                                 <i class="fa-solid fa-pen"></i> Editar
                             </button>
-                            @include('cotizador.merchandise.edit', ['item' => $merchandises])
+                            @include('cotizador.util.edit', ['item' => $util])
 
-                            <form action="{{ route('merchandise.destroy', $merchandises->articulo_id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas marcarlo como inactivo?')" >
+                            <form action="{{ route('util.destroy', $util->articulo_id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas marcarlo como inactivo?')" >
                                 @csrf
                                 @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm" style="background-color: #dc3545; border-color: #dc3545;" title="Eliminar"><i class="fa-solid fa-trash"></i>Eliminar</button>

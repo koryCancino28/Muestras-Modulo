@@ -229,7 +229,7 @@
                                 data-sku="{{ $articulo->sku }}" 
                                 data-nombre="{{ $articulo->nombre }}" 
                                 data-tipo="{{ $articulo->tipo }}"
-                                data-unidad="{{ $articulo->unidad_medida ?? 'unidad' }}">
+                                data-unidad="{{ $articulo->insumos->first()?->unidadMedida?->nombre_unidad_de_medida ?? 'und' }}">
                                 <td>{{ $articulo->sku }}</td>
                                 <td>{{ $articulo->nombre }}</td>
                                 <td>
@@ -584,14 +584,14 @@ $(document).ready(function() {
                     <tr>
                         <td>${item.sku}</td>
                         <td>${item.nombre}</td>
-                        <td><span class="badge badge-info badge-tipo">${item.unidad}</span></td>
+                        <td><span class="badge badge-info badge-tipo"  style="color: #fe495f !important; border: 1px solid #fe495f !important;">${item.unidad}</span></td>
                         <td>
                             <input type="number" class="form-control form-control-sm articulo-cantidad" 
                                 data-index="${index}" name="cantidades[]" value="${item.cantidad}" min="1" style="width: 80px">
                         </td>
                         <td>
                             <input type="number" class="form-control form-control-sm articulo-precio" 
-                                data-index="${index}" name="precios[]" value="${item.precio}" min="0" step="0.01" style="width: 100px">
+                                data-index="${index}" name="precios[]" value="${item.precio}" min="0" step="0.0001" style="width: 100px">
                         </td>
                         <td>
                             <input type="text" class="form-control form-control-sm articulo-lote" 

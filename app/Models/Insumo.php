@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models;
+use App\Models\Lote;
+use App\Models\Articulo;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,17 +18,11 @@ class Insumo extends Model
         'unidad_de_medida_id',
         'es_caro',
     ];
-    public function ultimoLote()
+        public function ultimoLote()
     {
-        return $this->hasOneThrough(
-            Lote::class,
-            Articulo::class,
-            'id',           // foreign key on Articulo table
-            'articulo_id',  // foreign key on Lote table
-            'articulo_id',  // local key on Insumo table
-            'id'            // local key on Articulo table
-        )->latestOfMany(); // o ->latest('fecha_vencimiento');
+        return $this->hasOne(Lote::class, 'articulo_id', 'articulo_id')->latestOfMany();
     }
+
 
     public function articulo()
     {

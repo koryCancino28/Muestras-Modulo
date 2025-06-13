@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('serie');
             $table->string('numero');
-            $table->decimal('precio_total', 10, 2);
+            $table->decimal('precio_total', 10, 4);
             $table->foreignId('proveedor_id')->constrained('proveedores')->onDelete('cascade'); 
             $table->date('fecha_emision');
             $table->enum('condicion_pago', ['Contado', 'Crédito']);

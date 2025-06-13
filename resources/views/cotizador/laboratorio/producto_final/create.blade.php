@@ -4,7 +4,7 @@
  <!-- Incluir CSS de Select2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <div class="form-check mb-3">
-            <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('producto_final.index') }}">
+            <h1 class="text-center"><a class="float-start text-secondary" title="Volver" href="{{ route('producto_final.index') }}">
             <i class="bi bi-arrow-left-circle"></i></a>
             Crear Producto Final</h1>
     </div>
@@ -53,7 +53,7 @@
                             asociado a la clasificación registrar mediante el módulo "Volúmenes"
                         </div>
                     </div>
-
+                        <!-- aviso para que llene todos los campos -->
                      @if($errors->has('llenar'))
                     <div class="alert alert-danger">
                         {{ $errors->first('llenar') }}

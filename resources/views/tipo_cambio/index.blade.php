@@ -3,7 +3,7 @@
 @section('content')
 <div class="form-check mb-3">
         <h1 class="text-center">
-            <a class="float-start" title="Volver" href="{{ route('tipo_cambio.resumen') }}">
+            <a class="float-start text-secondary" title="Volver" href="{{ route('tipo_cambio.resumen') }}">
                 <i class="bi bi-arrow-left-circle"></i>
             </a>
             Tipo de Cambio

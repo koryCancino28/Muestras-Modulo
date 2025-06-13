@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('compra_id')->constrained('compras')->onDelete('cascade');
             $table->foreignId('lote_id')->constrained('lotes')->onDelete('cascade');
             $table->integer('cantidad');
-            $table->decimal('precio', 10, 2); // Precio por unidad de artículo
+            $table->decimal('precio', 10, 4); // Precio por unidad de artículo
             $table->timestamps();
         });
 

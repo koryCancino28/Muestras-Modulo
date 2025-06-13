@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('base_id')->constrained('base')->onDelete('cascade');
             $table->foreignId('empaque_id')->constrained('empaques')->onDelete('cascade');
-            $table->decimal('cantidad', 8, 2); // Cuánto se usa de ese empaque en esa base
+            $table->decimal('cantidad', 8, 4); // Cuánto se usa de ese empaque en esa base
             $table->timestamps();
         });
 

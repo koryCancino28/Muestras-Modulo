@@ -20,7 +20,7 @@ class Configuracion extends Model
     ];
 
     protected $casts = [
-        'valor' => 'decimal:3',
+        'valor' => 'decimal:4',
     ];
 
     /**

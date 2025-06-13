@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('articulo_id')->constrained('articulos')->onDelete('cascade');
             $table->string('num_lote');
             $table->date('fecha_vencimiento')->nullable(); 
-            $table->decimal('precio', 10, 2)->nullable();
+            $table->decimal('precio', 10, 4)->nullable();
             $table->timestamps();
         });
 

@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('insumos', function (Blueprint $table) {
            $table->id();
             $table->foreignId('articulo_id')->constrained('articulos')->onDelete('cascade');
-            $table->decimal('precio', 8, 2);
+            $table->decimal('precio', 8, 4);
             $table->foreignId('unidad_de_medida_id')->constrained('unidad_de_medida')->onDelete('cascade');
             $table->boolean('es_caro')->default(false);
         });

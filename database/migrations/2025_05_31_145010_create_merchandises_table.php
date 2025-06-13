@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('merchandises', function (Blueprint $table) {
             $table->id();
             $table->foreignId('articulo_id')->constrained('articulos')->onDelete('cascade');
-            $table->decimal('precio', 8, 2);
+            $table->decimal('precio', 8, 4);
         });
     }
 

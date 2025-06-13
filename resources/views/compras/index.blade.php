@@ -10,26 +10,27 @@
         </div>
 
         <!-- Filtros de búsqueda -->
-            <div class="row mb-3">
-            <form method="GET" action="{{ route('compras.index') }}" class="w-100 d-flex align-items-center">
-                
-                <!-- Proveedor -->
-                <div class="col-md-3 mb-2 pr-3"> <!-- Agregar margen derecho con pr-3 -->
-                    <div class="form-group">
-                        <label for="proveedor" class="mr-2">Proveedor:</label>
-                        <select name="proveedor_id" id="proveedor" class="form-control select2 w-100" id="proveedor">
-                            <option value="">Todos</option>
-                            @foreach($proveedores as $proveedor)
-                                <option value="{{ $proveedor->id }}" {{ request('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
-                                    {{ $proveedor->razon_social }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+        <div class="row mb-3">
+    <form method="GET" action="{{ route('compras.index') }}" class="w-100">
+        <div class="d-flex flex-wrap align-items-center" style="gap: 15px;">
+            <!-- Proveedor -->
+            <div class="flex-grow-1" style="min-width: 200px; max-width: 300px;">
+                <div class="form-group">
+                    <label for="proveedor" class="mr-2">Proveedor:</label>
+                    <select name="proveedor_id" id="proveedor" class="form-control select2 w-100">
+                        <option value="">Todos</option>
+                        @foreach($proveedores as $proveedor)
+                            <option value="{{ $proveedor->id }}" {{ request('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
+                                {{ $proveedor->razon_social }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
+            </div>
 
+            <div class="d-flex" style="gap: 10px; min-width: 200px;">
                 <!-- Fecha Desde -->
-                <div class="col-md-2 mb-2 pr-3"> <!-- Agregar margen derecho con pr-3 -->
+                <div style="min-width: 180px;">
                     <div class="form-group">
                         <label for="fecha_inicio" class="mr-2">Desde:</label>
                         <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-control" value="{{ request('fecha_inicio') }}">
@@ -37,24 +38,26 @@
                 </div>
 
                 <!-- Fecha Hasta -->
-                <div class="col-md-2 mb-2 pr-3"> <!-- Agregar margen derecho con pr-3 -->
+                <div style="min-width: 180px;">
                     <div class="form-group">
                         <label for="fecha_fin" class="mr-2">Hasta:</label>
                         <input type="date" name="fecha_fin" id="fecha_fin" class="form-control" value="{{ request('fecha_fin') }}">
                     </div>
                 </div>
+            </div>
 
-                <!-- Botones Filtrar y Limpiar -->
-                <div class="col-md-3 mb-2 d-flex justify-content-start">
-                    <button type="submit" class="btn btn-primary mr-3" style="border: 1px solid#fe495f; background-color:rgb(255, 113, 130);">  
-                        <i class="fas fa-filter"></i> Filtrar
-                    </button>
-                    <a href="{{ route('compras.index') }}" class="btn btn-secondary">
-                        <i class="fas fa-sync-alt"></i> Limpiar
-                    </a>
-                </div>
-            </form>
+            <!-- Botones Filtrar y Limpiar -->
+            <div class="d-flex" style="gap: 10px; min-width: 200px;">
+                <button type="submit" class="btn btn-primary" style="border: 1px solid #fe495f; background-color: rgb(255, 113, 130);">  
+                    <i class="fas fa-filter"></i> Filtrar
+                </button>
+                <a href="{{ route('compras.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-sync-alt"></i> Limpiar
+                </a>
+            </div>
         </div>
+    </form>
+</div>
 
         <!-- Tabla de compras -->
         <div class="table-responsive">
@@ -71,11 +74,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($compras as $compra)
+                    @forelse($compras as $index => $compra)
                         <tr>
-                            <td>{{ $compra->id}}</td>
+                            <td>{{ $index + 1}}</td>
                             <td>{{ $compra->fecha_emision->format('d/m/Y') }}</td>
-                            <td>{{ $compra->proveedor->razon_social }}</td>
+                            <td style="max-width: 150px;overflow: hidden; 
+                                text-overflow: ellipsis; 
+                                white-space: nowrap;">
+                                {{ $compra->proveedor->razon_social }}
+                            </td>
                             <td>{{ $compra->serie }} - {{ $compra->numero }}</td>
                             <td class="text-right">{{ number_format($compra->precio_total, 2) }}</td>
                             <td>{{ $compra->creador->name ?? 'en sysgrob' }}</td>
@@ -157,4 +164,5 @@ select.form-control, input.form-control {
                 });
             });
     </script>
+    
 @endsection

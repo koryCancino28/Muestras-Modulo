@@ -20,7 +20,7 @@ class DetalleCompra extends Model
 
     protected $casts = [
         'cantidad' => 'integer',
-        'precio' => 'decimal:2',
+        'precio' => 'decimal:4',
         'fecha_vencimiento' => 'date'
     ];
 

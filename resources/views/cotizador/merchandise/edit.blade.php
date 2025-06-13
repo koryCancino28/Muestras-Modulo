@@ -26,7 +26,7 @@
                     <div class="mb-3">
                         <label for="precio{{ $item->articulo_id }}" class="form-label">Precio</label>
                         <input type="number" name="precio" class="form-control" id="precio{{ $item->articulo_id }}"
-                            value="{{ old('precio', $item->precio) }}" step="0.01" min="1" required>
+                            value="{{ old('precio', $item->precio) }}" step="0.0001" min="1" required>
                     </div>
 
                     <div class="form-group mb-3">

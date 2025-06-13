@@ -8,7 +8,7 @@
     <div class="row mb-4">
         <div class="form-check mb-6">
             <h1 class="text-center">
-                <a class="float-start" title="Volver" href="{{ route('bases.create') }}">
+                <a class="float-start text-secondary" title="Volver" href="{{ route('bases.create') }}">
                     <i class="bi bi-arrow-left-circle"></i>
                 </a>
                 Producto Final

@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('articulo_id')->constrained('articulos')->onDelete('cascade');
             $table->enum('tipo', ['prebase', 'final'])->default('final'); // Nueva columna discriminadora
-            $table->decimal('precio', 8, 2); // Precio total de la base sumando insumos + costo humano
+            $table->decimal('precio', 8, 4); // Precio total de la base sumando insumos + costo humano
             $table->foreignId('volumen_id')->constrained('volumenes')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
         });

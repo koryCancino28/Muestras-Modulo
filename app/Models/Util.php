@@ -18,13 +18,6 @@ class Util extends Model
     }
     public function ultimoLote()
     {
-        return $this->hasOneThrough(
-            Lote::class,
-            Articulo::class,
-            'id',           
-            'articulo_id',  
-            'articulo_id',  
-            'id'            
-        )->latestOfMany(); 
+        return $this->hasOne(Lote::class, 'articulo_id', 'articulo_id')->latestOfMany();
     }
 }

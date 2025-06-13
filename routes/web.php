@@ -97,13 +97,9 @@ Route::resource('merchandise', MerchandiseController::class);
 
 Route::resource('compras', CompraController::class);
 // Rutas adicionales para AJAX
-Route::get('articulos/por-tipo', [CompraController::class, 'getArticulosByTipo'])
+/* Route::get('articulos/por-tipo', [CompraController::class, 'getArticulosByTipo'])
     ->name('articulos.por-tipo');
-
-// Ruta principal
-Route::get('/', function () {
-    return redirect()->route('compras.index');
-});
+ */
 
 //Ruta para utiles
 Route::resource('util', UtilController::class);

@@ -7,7 +7,7 @@
         <i class="bi bi-arrow-left-circle"></i></a>
         Detalles: {{ $base->articulo->nombre }}</h1>
     </div>
-     <div class="card mb-4">
+     <div class="card mb-4" style="border-radius: 10px;border: 2px solid #fe495f;">
         <div class="card-body">
             <div class="row">
                 <!-- Primera columna -->
@@ -26,7 +26,7 @@
 
     @if($base->insumos->isNotEmpty())
     <div class="card mt-4">
-        <div class="card-header">
+        <div class="card-header" style="background-color:rgb(254, 107, 124); color: white;"><i class="fa-solid fa-atom"></i>
             Insumos Utilizados
         </div>
         <div class="card-body">
@@ -56,7 +56,7 @@
 
     @if($base->tipo === 'final' && $base->prebases->isNotEmpty())
     <div class="card mt-4">
-        <div class="card-header">
+        <div class="card-header" style="background-color:rgb(254, 107, 124); color: white;"><i class="fa-solid fa-flask"></i>
             Prebases Utilizadas
         </div>
         <div class="card-body">
@@ -86,7 +86,7 @@
 
     @if($base->tipo === 'final' && $base->empaques->isNotEmpty())
     <div class="card mt-4">
-        <div class="card-header">
+        <div class="card-header" style="background-color:rgb(254, 107, 124); color: white;"><i class="fa-solid fa-box"></i>
             Empaques Utilizados
         </div>
         <div class="card-body">

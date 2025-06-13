@@ -18,7 +18,7 @@ class Lote extends Model
 
     protected $casts = [
         'fecha_vencimiento' => 'date',
-        'precio' => 'decimal:2'
+        'precio' => 'decimal:4'
     ];
 
     // Relaciones

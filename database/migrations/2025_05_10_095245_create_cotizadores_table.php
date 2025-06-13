@@ -17,12 +17,12 @@ return new class extends Migration
             $table->string('telefono');
             $table->string('direccion');
             $table->foreignId('producto_final_id')->constrained('producto_final')->onDelete('cascade'); // Relación con producto_final
-            $table->decimal('cantidad', 8, 2);
-            $table->decimal('subtotal', 10, 2);
-            $table->decimal('total', 10, 2);
+            $table->decimal('cantidad', 8, 4);
+            $table->decimal('subtotal', 10, 4);
+            $table->decimal('total', 10, 4);
             $table->enum('estado', ['pendiente', 'confirmada', 'cancelada'])->default('pendiente');
             $table->enum('tipo_delivery', ['Delivery Punto de Encuentro', 'Delivery Provincia'])->nullable();
-            $table->decimal('costo_delivery', 8, 2);
+            $table->decimal('costo_delivery', 8, 4);
             $table->text('observacion')->nullable();
             $table->timestamps();
         });

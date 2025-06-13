@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('articulo_id')->constrained('articulos')->onDelete('cascade');
             $table->enum('tipo', ['material', 'envase']); // Columna discriminadora
-            $table->decimal('precio', 10, 2);
+            $table->decimal('precio', 10, 4);
             $table->index('tipo'); // índice para búsquedas SELECT * FROM empaques WHERE tipo = 'material';
         });
     }

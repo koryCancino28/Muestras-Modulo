@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('base_id')->constrained('base');
             $table->foreignId('prebase_id')->constrained('base');
-            $table->decimal('cantidad', 10, 2);
+            $table->decimal('cantidad', 10, 4);
             $table->timestamps();
         });
     }

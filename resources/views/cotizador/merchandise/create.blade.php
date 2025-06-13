@@ -20,7 +20,7 @@
             </div>
             <div class="mb-3">
                 <label for="precio" class="form-label">Precio</label>
-                <input type="number" name="precio" class="form-control" id="precio" min="1" step="0.01" required>
+                <input type="number" name="precio" class="form-control" id="precio" min="1" step="0.0001" required>
             </div>
 
             <div class="modal-footer">

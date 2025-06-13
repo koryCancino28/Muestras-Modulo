@@ -3,7 +3,7 @@
 @section('content')
     <div class="form-check mb-3">
         <h1 class="text-center">
-            <a class="float-start" title="Volver" href="{{ route('insumo_empaque.index') }}">
+            <a class="float-start text-secondary" title="Volver" href="{{ route('insumo_empaque.index') }}">
                 <i class="bi bi-arrow-left-circle"></i>
             </a>
             Crear Insumos
@@ -13,48 +13,53 @@
     <form action="{{ route('insumo_empaque.store') }}" method="POST">
         @csrf
 
-        <div class="form-group">
-            <label for="tipo">Tipo</label>
-            <select name="tipo" id="tipo" class="form-control" required>
-                @foreach ($tipos as $key => $value)
-                    <option value="{{ $key }}">{{ $value }}</option>
-                @endforeach
-            </select>
+        <div class="row">
+            <div  class="col-md-6 mb-3">
+                <label for="tipo">Tipo</label>
+                <select name="tipo" id="tipo" class="form-control" required>
+                    @foreach ($tipos as $key => $value)
+                        <option value="{{ $key }}">{{ $value }}</option>
+                    @endforeach
+                </select>
+            </div>
+            {{-- SOLO PARA INSUMO --}}
+            <div class="form-group insumo-field d-none col-md-6 mb-3">
+                <label>Unidad de Medida</label>
+                <select name="unidad_de_medida_id" class="form-control">
+                    @foreach ($unidades as $id => $unidad)
+                        <option value="{{ $id }}">{{ $unidad }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div  class="col-md-6 mb-3">
+                <label>Nombre</label>
+                <input name="nombre" class="form-control" required>
+                @error('nombre')
+                    <div class="text-success">
+                        <i class="fa-solid fa-triangle-exclamation"></i>{{ $message }}
+                    </div>
+                @enderror
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Precio</label>
+                <input name="precio" type="number" min="0.50" step="0.0001" class="form-control" required>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label>Nombre</label>
-            <input name="nombre" class="form-control" required>
-            @error('nombre')
-                <div class="text-success">
-                    <i class="fa-solid fa-triangle-exclamation"></i>{{ $message }}
-                </div>
-            @enderror
-        </div>
+        
 
-        <div class="form-group">
-            <label>Precio Unitario</label>
-            <input name="precio" type="number" step="0.01" class="form-control" required>
-        </div>
-
-        {{-- SOLO PARA INSUMO --}}
-        <div class="form-group insumo-field d-none">
-            <label>Unidad de Medida</label>
-            <select name="unidad_de_medida_id" class="form-control">
-                @foreach ($unidades as $id => $unidad)
-                    <option value="{{ $id }}">{{ $unidad }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="form-group insumo-field d-none">
-            <label>
+        <div class="form-group insumo-field d-none col-md-6 mb-3">
+            <label  style="display: flex; align-items: center; gap: 8px;">
                 <input type="checkbox" name="es_caro" value="1" {{ old('es_caro') ? 'checked' : '' }}>
                 ¿Es caro?
             </label>
         </div>
 
-        <button class="btn btn-primary">Guardar</button>
+        <button class="btn btn_crear">Guardar</button>
     </form>
 
     <script>

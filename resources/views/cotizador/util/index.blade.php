@@ -10,7 +10,7 @@
     <div class="row mb-3 align-items-center">
         <div class="col-md-6">
             <button type="button" class="btn btn_crear" data-bs-toggle="modal" data-bs-target="#crearUtilModal">
-                <i class="fa-solid fa-square-plus"></i>Crear Útil
+                <i class="fa-solid fa-square-plus"></i>Crear Útiles
             </button>
         </div>
             @include('cotizador.util.create')
@@ -33,7 +33,7 @@
     <table class="table table-bordered table-responsive table-hover" id="table_muestras">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>N°</th>
                 <th>Nombre</th>
                 <th>Precio <br> Unitario</th>
                 <th>Precio de <br> última compra</th>

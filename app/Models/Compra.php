@@ -23,7 +23,7 @@ class Compra extends Model
 
     protected $casts = [
         'fecha_emision' => 'date',
-        'precio_total' => 'decimal:2',
+        'precio_total' => 'decimal:4',
         'igv' => 'decimal:2'
     ];
 

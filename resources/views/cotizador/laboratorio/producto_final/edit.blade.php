@@ -2,7 +2,7 @@
 
 @section('content')
   <div class="form-check mb-3">
-        <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('producto_final.index') }}">
+        <h1 class="text-center"><a class="float-start text-secondary" title="Volver" href="{{ route('producto_final.index') }}">
         <i class="bi bi-arrow-left-circle"></i></a>
         Editar {{ $producto->nombre }}</h1>
     </div>

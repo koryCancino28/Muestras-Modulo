@@ -3,7 +3,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="form-check mb-4">
-            <h1 class="text-center"><a class="float-start" title="Volver" href="{{ route('compras.index') }}">
+            <h1 class="text-center"><a class="float-start text-secondary" title="Volver" href="{{ route('compras.index') }}">
             <i class="bi bi-arrow-left-circle"></i></a>
             Detalles de la compra</h1>
         </div>
@@ -37,7 +37,8 @@
                         <table id="tablaCompras" class="table table-bordered table-striped table-hover">
                             <thead class="bg-secondary text-white">
                                 <tr>
-                                    <th>Producto</th>
+                                    <th>Tipo</th>
+                                    <th>Articulo</th>
                                     <th>Cantidad</th>
                                     <th>Precio Unitario</th>
                                     <th>SubTotal</th>
@@ -46,6 +47,7 @@
                             <tbody>
                                 @foreach($compra->detalles as $detalle)
                                     <tr>
+                                        <td>{{ ucfirst($detalle->lote->articulo->tipo ?? 'Sin tipo') }}</td>
                                         <td>{{ $detalle->lote->articulo->nombre ?? 'Sin nombre' }}</td>
                                         <td>{{ $detalle->cantidad }}</td>
                                         <td>{{ number_format($detalle->precio, 2) }}</td>

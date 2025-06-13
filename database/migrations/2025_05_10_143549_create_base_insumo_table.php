@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('base_id')->constrained('base')->onDelete('cascade');
             $table->foreignId('insumo_id')->constrained('insumos')->onDelete('cascade');
-            $table->decimal('cantidad', 8, 2); // Cantidad del insumo usada en esta base
+            $table->decimal('cantidad', 8, 4); // Cantidad del insumo usada en esta base
             $table->timestamps();
 });
     }
